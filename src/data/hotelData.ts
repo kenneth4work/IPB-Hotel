@@ -6,6 +6,11 @@ import deluxeRoomImg from '../assets/images/regenerated_image_1789098352552.jpg'
 import superiorRoomImg from '../assets/images/regenerated_image_1789098940245.jpg';
 import standardRoomImg from '../assets/images/regenerated_image_1789098357914.jpg';
 import grandLobbyImg from '../assets/images/regenerated_image_1789105660824.jpg';
+import galleryBallroomImg from '../assets/images/regenerated_image_1789109938317.jpg';
+import galleryDiningImg from '../assets/images/regenerated_image_1789109942226.jpg';
+import gallerySuiteImg from '../assets/images/regenerated_image_1789109946006.jpg';
+import galleryMallImg from '../assets/images/regenerated_image_1789109949049.jpg';
+import galleryLoungeImg from '../assets/images/regenerated_image_1789109954250.jpg';
 
 export const ROOMS_DATA: RoomData[] = [
   {
@@ -241,35 +246,35 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     id: "gal-2",
     title: "IICC Grand Ballroom & Convention",
     category: "MICE & Acara",
-    image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=80",
+    image: galleryBallroomImg,
     spanClass: "col-span-1 md:col-span-1 md:row-span-1"
   },
   {
     id: "gal-3",
     title: "Terrace Dining & Restoran Nusantara",
     category: "Kuliner & Resto",
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+    image: galleryDiningImg,
     spanClass: "col-span-1 md:col-span-1 md:row-span-1"
   },
   {
     id: "gal-4",
     title: "Kenyamanan Suite & Kamar Tamu",
     category: "Akomodasi",
-    image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80",
+    image: gallerySuiteImg,
     spanClass: "col-span-1 md:col-span-1 md:row-span-1"
   },
   {
     id: "gal-5",
     title: "Akses Terintegrasi Mall Botani Square",
     category: "Lokasi & Eksterior",
-    image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80",
+    image: galleryMallImg,
     spanClass: "col-span-1 md:col-span-1 md:row-span-1"
   },
   {
     id: "gal-6",
     title: "Executive Business Lounge",
     category: "Fasilitas Kerja",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+    image: galleryLoungeImg,
     spanClass: "col-span-1 md:col-span-2 md:row-span-1"
   }
 ];
