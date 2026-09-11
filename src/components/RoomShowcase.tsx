@@ -40,8 +40,8 @@ export const RoomShowcase: React.FC = () => {
           </p>
         </div>
 
-        {/* 4-Column Luxury Room Grid with Multi-Photo Carousel Slider */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
+        {/* 6-Room Luxury Showcase Grid with Multi-Photo Carousel Slider */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           {ROOMS_DATA.map((room) => (
             <RoomCard
               key={room.id}

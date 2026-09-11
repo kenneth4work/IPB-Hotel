@@ -1,8 +1,11 @@
 import { HotelConfig, Review, GalleryItem, RoomData } from '../types';
-import suiteRoomImg from '../assets/images/regenerated_image_1789100585013.png';
+import suiteRoomImg from '../assets/images/regenerated_image_1789105967978.jpg';
+import grandExecutiveRoomImg from '../assets/images/regenerated_image_1789108862742.jpg';
 import executiveRoomImg from '../assets/images/regenerated_image_1789098346345.jpg';
 import deluxeRoomImg from '../assets/images/regenerated_image_1789098352552.jpg';
+import superiorRoomImg from '../assets/images/regenerated_image_1789098940245.jpg';
 import standardRoomImg from '../assets/images/regenerated_image_1789098357914.jpg';
+import grandLobbyImg from '../assets/images/regenerated_image_1789105660824.jpg';
 
 export const ROOMS_DATA: RoomData[] = [
   {
@@ -12,15 +15,23 @@ export const ROOMS_DATA: RoomData[] = [
     name: "Suite Room",
     description: "Kamar termewah dengan ruang tamu terpisah, ranjang King berukuran besar, meja santai, dan kamar mandi dengan bathtub.",
     amenities: ["Ruang Tamu", "Ranjang King", "Smart TV", "Bathtub & Mini Bar"],
-    price: "Rp 850.000",
+    price: "Rp 1.350.000",
     priceUnit: "/malam",
     images: [
-      "Suite/SU1.jpg",
-      "Suite/SU2.jpg",
-      "Suite/SU3.jpg",
-      "Suite/SU4.jpg",
-      "Suite/SU5.jpg",
-      "Suite/SU6.jpg"
+      "Suite/SU1.jpg"
+    ]
+  },
+  {
+    id: "grand-executive",
+    badge: "GRAND EXECUTIVE",
+    size: "28 M²",
+    name: "Grand Executive Room",
+    description: "Kamar eksekutif ekstra luas dengan lounge area eksklusif, ranjang King premium, dan fasilitas penunjang bisnis modern.",
+    amenities: ["Ranjang King", "Lounge Area", "Smart TV 50\"", "Mesin Kopi & Teh"],
+    price: "Rp 1.050.000",
+    priceUnit: "/malam",
+    images: [
+      "GrandExecutive/GE1.jpg"
     ]
   },
   {
@@ -30,14 +41,10 @@ export const ROOMS_DATA: RoomData[] = [
     name: "Executive Room",
     description: "Dirancang khusus bagi profesional dan pelaku bisnis dengan meja kerja nyaman serta pemandangan menawan.",
     amenities: ["Ranjang King", "Smart TV", "Meja Kerja", "Balkon Pribadi"],
-    price: "Rp 650.000",
+    price: "Rp 900.000",
     priceUnit: "/malam",
     images: [
-      "Execuitve/X1.jpg",
-      "Execuitve/X2.jpg",
-      "Execuitve/X3.jpg",
-      "Execuitve/X4.jpg",
-      "Execuitve/X5.jpg"
+      "Execuitve/X1.jpg"
     ]
   },
   {
@@ -47,14 +54,23 @@ export const ROOMS_DATA: RoomData[] = [
     name: "Deluxe Room",
     description: "Pilihan favorit untuk pelancong santai dengan pemandangan lanskap kota dan interior kontemporer.",
     amenities: ["Ranjang Queen", "TV Layar Datar", "AC Dingin", "Pemandangan Kota"],
-    price: "Rp 500.000",
+    price: "Rp 800.000",
     priceUnit: "/malam",
     images: [
-      "Deluxe/D1.jpg",
-      "Deluxe/D2.jpg",
-      "Deluxe/D3.jpg",
-      "Deluxe/D4.jpg",
-      "Deluxe/D5.jpg"
+      "Deluxe/D1.jpg"
+    ]
+  },
+  {
+    id: "superior",
+    badge: "SUPERIOR",
+    size: "20 M²",
+    name: "Superior Room",
+    description: "Kenyamanan optimal dengan sentuhan interior hangat kontemporer, pilihan kasur Queen atau Twin, serta suasana tenang yang menenangkan.",
+    amenities: ["Ranjang Queen / Twin", "TV Layar Datar", "AC Dingin", "Water Heater"],
+    price: "Rp 700.000",
+    priceUnit: "/malam",
+    images: [
+      "Superior/SP1.jpg"
     ]
   },
   {
@@ -64,18 +80,16 @@ export const ROOMS_DATA: RoomData[] = [
     name: "Standard Room",
     description: "Kamar modern yang fungsional dan terjangkau dengan koneksi WiFi kencang untuk kenyamanan menginap.",
     amenities: ["Ranjang Double", "TV Layar Datar", "AC Dingin", "WiFi Kencang"],
-    price: "Rp 400.000",
+    price: "Rp 600.000",
     priceUnit: "/malam",
     images: [
-      "Standard/S1.jpg",
-      "Standard/S2.jpg",
-      "Standard/S3.jpg"
+      "Standard/S1.jpg"
     ]
   }
 ];
 
 export const FALLBACK_ROOM_IMAGES: Record<string, string> = {
-  // Suite Room - 6 Images
+  // Suite Room
   "Suite/SU1.jpg": suiteRoomImg,
   "Suite/SU2.jpg": "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80",
   "Suite/SU3.jpg": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
@@ -89,6 +103,12 @@ export const FALLBACK_ROOM_IMAGES: Record<string, string> = {
   "images/rooms/suite-4.jpg": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
   "images/rooms/suite-5.jpg": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
   "images/rooms/suite-6.jpg": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
+
+  // Grand Executive Room
+  "GrandExecutive/GE1.jpg": grandExecutiveRoomImg,
+  "GrandExecutive/GE2.jpg": grandExecutiveRoomImg,
+  "GrandExecutive/GE3.jpg": "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80",
+  "images/rooms/grand-executive-1.jpg": grandExecutiveRoomImg,
 
   // Executive Room - 5 Images
   "Execuitve/X1.jpg": executiveRoomImg,
@@ -112,6 +132,11 @@ export const FALLBACK_ROOM_IMAGES: Record<string, string> = {
   "images/rooms/deluxe-2.jpg": "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?auto=format&fit=crop&w=1200&q=80",
   "images/rooms/deluxe-3.jpg": "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80",
   "images/rooms/deluxe-4.jpg": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
+
+  // Superior Room
+  "Superior/SP1.jpg": superiorRoomImg,
+  "Superior/SP2.jpg": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80",
+  "images/rooms/superior-1.jpg": superiorRoomImg,
 
   // Standard Room - 3 Images
   "Standard/S1.jpg": standardRoomImg,
@@ -162,7 +187,17 @@ export const HOTEL_CONFIG: HotelConfig = {
     images: r.images,
     fallbackImage: FALLBACK_ROOM_IMAGES[r.images[0]] || r.images[0],
     description: r.description,
-    bedType: r.id === 'suite' ? 'King Bed (200x200)' : r.id === 'executive' ? 'King Bed (180x200)' : r.id === 'deluxe' ? 'Queen Bed (160x200)' : 'Double Bed / Twin Bed',
+    bedType: r.id === 'suite'
+      ? 'King Bed (200x200)'
+      : r.id === 'grand-executive'
+      ? 'King Bed (180x200)'
+      : r.id === 'executive'
+      ? 'King Bed (180x200)'
+      : r.id === 'deluxe'
+      ? 'Queen Bed (160x200)'
+      : r.id === 'superior'
+      ? 'Queen / Twin Bed'
+      : 'Double Bed / Twin Bed',
     capacity: r.id === 'suite' ? '2 Dewasa + 1 Anak' : r.id === 'standard' ? '1 - 2 Dewasa' : '2 Dewasa'
   }))
 };
@@ -199,7 +234,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     id: "gal-1",
     title: "Grand Lobby & Hospitality Lounge",
     category: "Lobby & Area Publik",
-    image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80",
+    image: grandLobbyImg,
     spanClass: "col-span-1 md:col-span-2 md:row-span-2"
   },
   {
