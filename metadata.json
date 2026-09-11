@@ -1,0 +1,6 @@
+{
+  "name": "IPB Convention Hotel",
+  "description": "Website resmi IPB Convention Hotel Bogor - Di Jantung Kota Bogor, Dekat Segalanya. Pilihan akomodasi dan convention bergengsi di kawasan Botani Square.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
