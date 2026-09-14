@@ -4,7 +4,7 @@ import { Sparkles, Calendar, MessageSquare, Utensils, CheckCircle2 } from 'lucid
 import { useLanguage } from '../context/LanguageContext';
 
 export const SpecialOfferBanner: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <section className="py-16 sm:py-20 bg-[#0F172A] relative overflow-hidden">
@@ -25,34 +25,32 @@ export const SpecialOfferBanner: React.FC = () => {
         {/* Label: "PENAWARAN SPESIAL" (Uppercase, tracking-widest) */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A880]/20 border border-[#C5A880]/40 text-[#EFE4D2] text-xs font-bold uppercase tracking-[0.25em] mb-6 backdrop-blur-sm">
           <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" />
-          <span>{language === 'id' ? 'PENAWARAN SPESIAL' : 'SPECIAL LIMITED OFFER'}</span>
+          <span>{t.specialOffer.badge}</span>
         </div>
 
         {/* Headline */}
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 tracking-tight leading-tight">
-          {language === 'id' ? 'Pesan Sekarang & Dapatkan Penawaran Terbaik' : 'Book Direct & Secure Exclusive Benefits'}
+          {t.specialOffer.title}
         </h2>
 
         {/* Subtext */}
         <p className="text-slate-200 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto mb-8 font-light leading-relaxed">
-          {language === 'id'
-            ? 'Nikmati potongan harga eksklusif untuk pemesanan langsung melalui website kami. Termasuk sarapan gratis untuk 2 orang.'
-            : 'Enjoy exclusive rates and seasonal privileges when booking directly with our team. Includes complimentary buffet breakfast for 2 guests.'}
+          {t.specialOffer.subtitle}
         </p>
 
         {/* Value badges */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 mb-10 text-xs text-[#EFE4D2]">
           <div className="flex items-center gap-1.5">
             <Utensils className="w-4 h-4 text-[#C5A880]" />
-            <span>{language === 'id' ? 'Gratis Sarapan Buffet 2 Orang' : 'Complimentary Buffet Breakfast for 2'}</span>
+            <span>{t.specialOffer.feature1}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-[#C5A880]" />
-            <span>{language === 'id' ? 'Garansi Tarif Terbaik Langsung' : 'Guaranteed Best Direct Rates'}</span>
+            <span>{t.specialOffer.feature2}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-[#C5A880]" />
-            <span>{language === 'id' ? 'Bebas Biaya Reservasi Tersembunyi' : 'No Hidden Booking Fees'}</span>
+            <span>{t.specialOffer.feature3}</span>
           </div>
         </div>
 
@@ -64,7 +62,7 @@ export const SpecialOfferBanner: React.FC = () => {
             className="w-full sm:w-auto px-8 py-4 bg-[#C5A880] hover:bg-[#b59870] text-slate-950 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 flex items-center justify-center gap-2 border border-[#EFE4D2]/40"
           >
             <Calendar className="w-4 h-4" />
-            <span>{language === 'id' ? 'PESAN SEKARANG' : 'BOOK NOW'}</span>
+            <span>{t.specialOffer.bookNow}</span>
           </a>
 
           <a
@@ -73,7 +71,7 @@ export const SpecialOfferBanner: React.FC = () => {
             className="w-full sm:w-auto px-8 py-4 bg-transparent hover:bg-white/10 text-white text-xs font-semibold uppercase tracking-widest rounded-xl transition-all border border-white/40 hover:border-white/70 backdrop-blur-sm flex items-center justify-center gap-2 hover:-translate-y-0.5"
           >
             <MessageSquare className="w-4 h-4 text-[#C5A880]" />
-            <span>{language === 'id' ? 'HUBUNGI KAMI' : 'CONTACT US'}</span>
+            <span>{t.specialOffer.contactUs}</span>
           </a>
         </div>
       </div>

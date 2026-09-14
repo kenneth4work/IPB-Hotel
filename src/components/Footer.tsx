@@ -2,9 +2,10 @@ import React from 'react';
 import { HOTEL_CONFIG } from '../data/hotelData';
 import { MapPin, Phone, Mail, Instagram, ArrowUp, MessageSquare, Shield } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import brandLogoImg from '../assets/images/regenerated_image_1789095966156.png';
 
 export const Footer: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -17,21 +18,29 @@ export const Footer: React.FC = () => {
           
           {/* Col 1: Brand & Tagline */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#1E3A2B] flex items-center justify-center text-[#C5A880] font-serif font-bold text-lg border border-[#C5A880]/30">
-                IPB
-              </div>
-              <span className="font-serif text-xl font-bold text-white tracking-tight">
-                {HOTEL_CONFIG.name}
-              </span>
-            </div>
+            <a 
+              href="#" 
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToTop();
+              }}
+              className="inline-block group focus:outline-hidden"
+              title={HOTEL_CONFIG.name}
+            >
+              <img 
+                src={brandLogoImg} 
+                alt={HOTEL_CONFIG.name}
+                className="h-14 sm:h-16 md:h-20 w-auto max-w-[240px] sm:max-w-[280px] object-contain object-left transition-transform duration-200 group-hover:scale-[1.02] brightness-0 invert opacity-90 group-hover:opacity-100"
+                onError={(e) => {
+                  e.currentTarget.src = '/images/logo.svg';
+                }}
+              />
+            </a>
             <p className="font-serif italic text-sm text-[#EFE4D2]">
-              "{HOTEL_CONFIG.tagline}"
+              "{t.footer.tagline}"
             </p>
             <p className="text-xs text-slate-400 leading-relaxed">
-              {language === 'id'
-                ? 'Hotel konvensi terkemuka di Kota Bogor yang terhubung langsung dengan Mall Botani Square dan IPB International Convention Center (IICC).'
-                : 'Premier convention hotel in Bogor City, directly connected to Botani Square Mall and IPB International Convention Center (IICC).'}
+              {t.footer.aboutDesc}
             </p>
           </div>
 
@@ -54,7 +63,7 @@ export const Footer: React.FC = () => {
               ))}
               <li className="pt-2">
                 <a href="#kamar" className="text-[#C5A880] hover:underline text-xs font-semibold">
-                  {language === 'id' ? 'Lihat Seluruh 83 Kamar →' : 'View All 83 Rooms →'}
+                  {t.footer.viewAllRooms}
                 </a>
               </li>
             </ul>
@@ -63,7 +72,7 @@ export const Footer: React.FC = () => {
           {/* Col 3: Waktu Operasional & Akses */}
           <div>
             <h4 className="font-serif text-base font-bold text-white mb-4">
-              {language === 'id' ? 'Waktu & Akses' : 'Hours & Access'}
+              {t.footer.hoursAccess}
             </h4>
             <div className="space-y-3 text-xs">
               <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
@@ -71,8 +80,8 @@ export const Footer: React.FC = () => {
                 <span className="text-white font-semibold">In: {HOTEL_CONFIG.checkIn} · Out: {HOTEL_CONFIG.checkOut}</span>
               </div>
               <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                <span className="text-[11px] text-slate-500 block uppercase">{language === 'id' ? 'Front Desk 24 Jam' : '24/7 Front Desk'}</span>
-                <span className="text-white font-semibold">{language === 'id' ? 'Layanan Concierge & Keamanan' : 'Concierge & Security Services'}</span>
+                <span className="text-[11px] text-slate-500 block uppercase">{t.footer.frontDesk}</span>
+                <span className="text-white font-semibold">{t.footer.concierge}</span>
               </div>
             </div>
           </div>
@@ -117,7 +126,7 @@ export const Footer: React.FC = () => {
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
           <div className="flex items-center gap-2 text-slate-500">
             <Shield className="w-4 h-4 text-slate-600" />
-            <span>© {new Date().getFullYear()} {HOTEL_CONFIG.name}. {language === 'id' ? 'Seluruh hak cipta dilindungi.' : 'All rights reserved.'}</span>
+            <span>© {new Date().getFullYear()} {HOTEL_CONFIG.name}. {t.footer.allRightsReserved}</span>
           </div>
 
           <div className="flex items-center gap-6">
@@ -140,7 +149,7 @@ export const Footer: React.FC = () => {
             <button
               onClick={scrollToTop}
               className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-colors"
-              aria-label={language === 'id' ? 'Kembali ke atas' : 'Back to top'}
+              aria-label={t.footer.backToTop}
             >
               <ArrowUp className="w-4 h-4" />
             </button>

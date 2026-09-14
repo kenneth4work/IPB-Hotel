@@ -4,7 +4,7 @@ import { Star, Quote, Award, ThumbsUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const GuestReviews: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   return (
     <section id="ulasan" className="py-20 bg-white border-t border-slate-100 relative">
@@ -33,6 +33,10 @@ export const GuestReviews: React.FC = () => {
               .map((n) => n[0])
               .join('')
               .toUpperCase();
+            
+            const reviewTrans = t.reviews.items[rev.id];
+            const displayQuote = reviewTrans?.quote || rev.quote;
+            const displayDatePlatform = reviewTrans?.datePlatform || rev.datePlatform;
 
             return (
               <div
@@ -65,7 +69,7 @@ export const GuestReviews: React.FC = () => {
 
                   {/* Quote text */}
                   <p className="font-serif italic text-slate-700 text-sm sm:text-base leading-relaxed mb-8 relative z-10">
-                    "{rev.quote}"
+                    "{displayQuote}"
                   </p>
                 </div>
 
@@ -79,7 +83,7 @@ export const GuestReviews: React.FC = () => {
                       {rev.author}
                     </h4>
                     <span className="text-xs text-slate-500 block">
-                      {rev.datePlatform}
+                      {displayDatePlatform}
                     </span>
                   </div>
                 </div>
@@ -92,11 +96,11 @@ export const GuestReviews: React.FC = () => {
         <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 pt-6 border-t border-slate-100 text-center">
           <div className="flex items-center gap-2">
             <Award className="w-4 h-4 text-[#C5A880]" />
-            <span>Skor Kepuasan Tamu: <strong>4.8 / 5.0</strong> dari 1.200+ ulasan terverifikasi</span>
+            <span>{t.reviews.scoreText}</span>
           </div>
           <div className="flex items-center gap-2">
             <ThumbsUp className="w-4 h-4 text-[#1E3A2B]" />
-            <span>Terpilih sebagai salah satu akomodasi bisnis paling direkomendasikan di Bogor</span>
+            <span>{t.reviews.recommendationText}</span>
           </div>
         </div>
 

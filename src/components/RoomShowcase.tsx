@@ -29,7 +29,7 @@ export const RoomShowcase: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#A8865B] block mb-3">
-            {language === 'id' ? 'AKOMODASI & PILIHAN KAMAR' : 'ACCOMMODATIONS & ROOM TYPES'}
+            {t.rooms.badge}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.rooms.title}
@@ -60,12 +60,10 @@ export const RoomShowcase: React.FC = () => {
             </div>
             <div>
               <h4 className="text-sm font-semibold text-slate-900">
-                {language === 'id' ? 'Informasi Tambahan Reservasi' : 'Additional Reservation Information'}
+                {t.rooms.infoTitle}
               </h4>
               <p className="text-xs text-slate-500">
-                {language === 'id'
-                  ? 'Tarif kamar sudah termasuk sarapan (sesuai paket), akses WiFi, dan pajak pemerintah. Waktu check-in 14:00 WIB & check-out 12:00 WIB.'
-                  : 'Room rates include breakfast (as per package), high-speed Wi-Fi, and government taxes. Check-in from 14:00 & check-out by 12:00.'}
+                {t.rooms.infoDesc}
               </p>
             </div>
           </div>
@@ -75,7 +73,7 @@ export const RoomShowcase: React.FC = () => {
             rel="noopener noreferrer"
             className="text-xs font-semibold text-[#1E3A2B] hover:text-[#13261C] hover:underline whitespace-nowrap"
           >
-            {language === 'id' ? 'Pemesanan Grup / Meeting Room →' : 'Group Booking / Meeting Hall Inquiry →'}
+            {t.rooms.groupBooking}
           </a>
         </div>
       </div>

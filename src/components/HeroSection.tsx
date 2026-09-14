@@ -22,7 +22,7 @@ export const HeroSection: React.FC = () => {
           {/* Subtle Luxury Category Chip */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] text-xs font-semibold uppercase tracking-widest mb-6 backdrop-blur-sm">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>{language === 'id' ? 'Kenyamanan Bintang di Kawasan Botani Square' : 'Premier Hospitality in Botani Square Area'}</span>
+            <span>{t.hero.badgeChip}</span>
           </div>
 
           {/* Main Title */}
@@ -32,14 +32,12 @@ export const HeroSection: React.FC = () => {
 
           {/* Tagline */}
           <p className="font-serif italic text-lg sm:text-2xl text-[#EFE4D2] mb-6 font-normal">
-            "{HOTEL_CONFIG.tagline}"
+            "{t.hero.tagline}"
           </p>
 
           {/* Subtitle from user specs */}
           <p className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-light">
-            {language === 'id'
-              ? 'Tersedia 83 kamar dengan 4 tipe pilihan, dirancang untuk kenyamanan maksimal dengan sentuhan modern dan alami. Menjadi pilihan utama akomodasi bisnis, keluarga, dan kegiatan MICE di Kota Bogor.'
-              : 'Offering 83 thoughtfully appointed rooms across 4 curated types, crafted for utmost comfort with contemporary elegance. The prime destination for business, leisure, and MICE events in Bogor.'}
+            {t.hero.subtitle}
           </p>
 
           {/* Action CTAs */}
@@ -60,7 +58,7 @@ export const HeroSection: React.FC = () => {
               className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold uppercase tracking-widest rounded-xl transition-all border border-white/20 backdrop-blur-sm flex items-center justify-center gap-2 hover:-translate-y-0.5"
             >
               <MessageCircle className="w-4 h-4 text-[#25D366]" />
-              <span>{language === 'id' ? 'BOOKING VIA WHATSAPP' : 'BOOK VIA WHATSAPP'}</span>
+              <span>{t.hero.ctaWa}</span>
             </a>
           </div>
 
@@ -68,23 +66,23 @@ export const HeroSection: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
             <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
               <Building2 className="w-5 h-5 text-[#C5A880] mb-2" />
-              <div className="font-semibold text-white text-sm">{language === 'id' ? '83 Kamar Pilihan' : '83 Selected Rooms'}</div>
-              <div className="text-xs text-slate-400">Suite, Executive, Deluxe & Standard</div>
+              <div className="font-semibold text-white text-sm">{t.hero.stats.roomsTitle}</div>
+              <div className="text-xs text-slate-400">{t.hero.stats.roomsDesc}</div>
             </div>
             <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
               <MapPin className="w-5 h-5 text-[#C5A880] mb-2" />
-              <div className="font-semibold text-white text-sm">{language === 'id' ? 'Akses Botani Square' : 'Botani Square Access'}</div>
-              <div className="text-xs text-slate-400">{language === 'id' ? 'Jembatan langsung ke mall & lifestyle' : 'Direct link to mall & lifestyle'}</div>
+              <div className="font-semibold text-white text-sm">{t.hero.stats.locationTitle}</div>
+              <div className="text-xs text-slate-400">{t.hero.stats.locationDesc}</div>
             </div>
             <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
               <ShieldCheck className="w-5 h-5 text-[#C5A880] mb-2" />
-              <div className="font-semibold text-white text-sm">{language === 'id' ? 'Kawasan IICC' : 'IICC Convention Area'}</div>
-              <div className="text-xs text-slate-400">{language === 'id' ? 'Pusat MICE & konvensi bergengsi' : 'Prestigious MICE & event venue'}</div>
+              <div className="font-semibold text-white text-sm">{t.hero.stats.miceTitle}</div>
+              <div className="text-xs text-slate-400">{t.hero.stats.miceDesc}</div>
             </div>
             <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
               <Sparkles className="w-5 h-5 text-[#C5A880] mb-2" />
-              <div className="font-semibold text-white text-sm">{language === 'id' ? 'Check-in Nyaman' : 'Convenient Check-in'}</div>
-              <div className="text-xs text-slate-400">Check-in: 14:00 · Check-out: 12:00</div>
+              <div className="font-semibold text-white text-sm">{t.hero.stats.checkinTitle}</div>
+              <div className="text-xs text-slate-400">{t.hero.stats.checkinDesc}</div>
             </div>
           </div>
         </div>

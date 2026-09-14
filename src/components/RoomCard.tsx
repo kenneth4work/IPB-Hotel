@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { RoomData } from '../types';
 import { getRoomImageUrl } from '../data/hotelData';
 import { Info } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export interface RoomCardProps {
   key?: React.Key;
@@ -11,6 +12,7 @@ export interface RoomCardProps {
 }
 
 export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
+  const { t } = useLanguage();
   const [currentIdx, setCurrentIdx] = useState(0);
   const imagesList = room.images && room.images.length > 0 ? room.images : [];
 
@@ -34,6 +36,9 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
   const activePhoto = imagesList[currentIdx] || '';
   const currentImgSrc = getRoomImageUrl(activePhoto) || activePhoto;
 
+  const translatedBadge = t.rooms.badges[room.id] || room.badge;
+  const translatedDesc = t.rooms.descriptions[room.id] || room.description;
+
   return (
     <div 
       id={`room-card-${room.id}`}
@@ -46,7 +51,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
       >
         <img
           src={currentImgSrc}
-          alt={`${room.name} foto ${currentIdx + 1}`}
+          alt={`${room.name} ${currentIdx + 1}`}
           onError={(e) => {
             const fallback = getRoomImageUrl(imagesList[currentIdx]);
             if (fallback && e.currentTarget.src !== fallback) {
@@ -59,7 +64,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         {/* Badge Kiri Atas */}
         <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
           <span className="bg-white/90 backdrop-blur-sm text-slate-800 text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wider shadow-sm border border-white/40">
-            {room.badge}
+            {translatedBadge}
           </span>
         </div>
 
@@ -82,7 +87,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
             <button
               type="button"
               onClick={prevSlide}
-              aria-label="Foto sebelumnya"
+              aria-label={t.gallery.prevAria}
               className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 cursor-pointer z-10 text-lg shadow"
             >
               &#8249;
@@ -90,7 +95,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
             <button
               type="button"
               onClick={nextSlide}
-              aria-label="Foto berikutnya"
+              aria-label={t.gallery.nextAria}
               className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 cursor-pointer z-10 text-lg shadow"
             >
               &#8250;
@@ -129,11 +134,12 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
           >
             {room.name}
           </h3>
-          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{room.description}</p>
+          <p className="text-xs text-slate-500 mt-1 line-clamp-2">{translatedDesc}</p>
           
           <div className="grid grid-cols-2 gap-2 mt-4">
             {room.amenities.map((item: any, i: number) => {
-              const label = typeof item === 'string' ? item : item.name;
+              const rawName = typeof item === 'string' ? item : item.name;
+              const label = t.rooms.amenityLabels[rawName] || rawName;
               return (
                 <span key={i} className="text-[11px] bg-slate-50 border border-slate-200/60 rounded px-2 py-1 text-slate-600 truncate">
                   ✓ {label}
@@ -144,13 +150,13 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         </div>
 
         <div className="mt-5 pt-4 border-t border-slate-100">
-          <span className="text-[10px] text-slate-400 font-semibold block uppercase">MULAI DARI</span>
+          <span className="text-[10px] text-slate-400 font-semibold block uppercase">{t.rooms.startingFrom}</span>
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-bold text-slate-900">
               {room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price)}
             </span>
             <span className="text-xs text-slate-500">
-              {room.priceUnit || '/ malam'}
+              {t.rooms.perNight}
             </span>
           </div>
 
@@ -160,8 +166,8 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
                 type="button"
                 onClick={() => onOpenDetail(room)}
                 className="p-2.5 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                title="Detail Kamar"
-                aria-label={`Detail Kamar ${room.name}`}
+                title={t.rooms.viewDetails}
+                aria-label={`${t.rooms.viewDetails} ${room.name}`}
               >
                 <Info className="w-4 h-4" />
               </button>
@@ -173,7 +179,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
               rel="noreferrer"
               className="w-full bg-[#1B3D2F] hover:bg-[#142e23] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
-              PESAN KAMAR INI
+              {t.rooms.bookViaWa}
             </a>
           </div>
         </div>

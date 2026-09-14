@@ -26,7 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
     { label: t.navbar.gallery, href: '#galeri' },
     { label: t.navbar.location, href: '#lokasi' },
     { label: t.navbar.reviews, href: '#ulasan' },
-    { label: language === 'id' ? 'Kontak & Bantuan' : 'Contact & Help', href: '#kontak' },
+    { label: t.footer.contact, href: '#kontak' },
   ];
 
   return (
@@ -37,8 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
           <div className="flex items-center space-x-4 sm:space-x-6">
             <span className="flex items-center gap-1.5 text-slate-300">
               <MapPin className="w-3.5 h-3.5 text-[#C5A880]" />
-              <span className="hidden sm:inline">Jl. Padjajaran Raya (Samping Mall Botani Square)</span>
-              <span className="sm:hidden">Botani Square, Bogor</span>
+              <span className="hidden sm:inline">{t.navbar.topAddress}</span>
+              <span className="sm:hidden">{t.navbar.topAddressShort}</span>
             </span>
             <span className="hidden md:inline-flex items-center gap-1.5 text-slate-300">
               <Phone className="w-3.5 h-3.5 text-[#C5A880]" />
@@ -57,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
               className="inline-flex items-center gap-1 text-[#C5A880] hover:text-[#e4caa5] font-medium transition-colors"
             >
               <MessageSquare className="w-3 h-3" />
-              <span>WhatsApp Official</span>
+              <span>{t.navbar.whatsapp}</span>
             </a>
           </div>
         </div>
@@ -178,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
                 className="w-full py-2.5 text-center text-sm font-semibold text-slate-800 bg-slate-50 hover:bg-slate-100 rounded-xl flex items-center justify-center gap-2 border border-slate-200"
               >
                 <Globe className="w-4 h-4 text-[#C5A880]" />
-                <span>{language === 'id' ? 'Bahasa: Indonesia (Ganti ke English)' : 'Language: English (Switch to ID)'}</span>
+                <span>{t.navbar.switchLang}</span>
               </button>
               <a
                 href={`tel:${HOTEL_CONFIG.phones[0].replace(/\D/g, '')}`}
@@ -194,7 +194,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
                 className="w-full py-2.5 text-center text-sm font-semibold text-white bg-[#1E3A2B] rounded-xl flex items-center justify-center gap-2 shadow-sm"
               >
                 <MessageSquare className="w-4 h-4 text-[#C5A880]" />
-                <span>{language === 'id' ? 'Reservasi via WhatsApp' : 'Reservation via WhatsApp'}</span>
+                <span>{t.navbar.reservationWa}</span>
               </a>
             </div>
           </div>

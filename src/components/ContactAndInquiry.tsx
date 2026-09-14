@@ -47,7 +47,7 @@ export const ContactAndInquiry: React.FC = () => {
 
     // Basic Validation
     if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.message.trim()) {
-      setErrorMessage('Mohon lengkapi seluruh formulir sebelum mengirim pesan.');
+      setErrorMessage(t.contact.errorRequired);
       return;
     }
 
@@ -103,7 +103,7 @@ export const ContactAndInquiry: React.FC = () => {
           <div className="lg:col-span-5 space-y-6">
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm">
               <h3 className="font-serif text-2xl font-bold text-slate-900 mb-6">
-                {language === 'id' ? 'Kantor Reservasi & Layanan' : 'Reservations & Concierge'}
+                {t.contact.officeTitle}
               </h3>
 
               <div className="space-y-5">
@@ -114,7 +114,7 @@ export const ContactAndInquiry: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Alamat Lengkap' : 'Full Address'}
+                      {t.location.addressLabel}
                     </span>
                     <p className="text-sm font-medium text-slate-800 leading-snug">
                       {HOTEL_CONFIG.address}
@@ -129,7 +129,7 @@ export const ContactAndInquiry: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Telepon Kantor' : 'Direct Telephone'}
+                      {t.location.phoneLabel}
                     </span>
                     <div className="text-sm font-medium text-slate-800 space-y-0.5">
                       {HOTEL_CONFIG.phones.map((p) => (
@@ -150,7 +150,7 @@ export const ContactAndInquiry: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Email Korespondensi' : 'Correspondence Email'}
+                      {t.contact.formEmail}
                     </span>
                     <a 
                       href={`mailto:${HOTEL_CONFIG.email}`}
@@ -168,7 +168,7 @@ export const ContactAndInquiry: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Media Sosial' : 'Social Media'}
+                      {t.location.instagramLabel}
                     </span>
                     <a 
                       href={`https://instagram.com/${HOTEL_CONFIG.instagram.replace('@', '')}`}
@@ -188,10 +188,10 @@ export const ContactAndInquiry: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Jam Layanan Front Desk' : 'Front Desk Hours'}
+                      {t.location.hoursLabel}
                     </span>
                     <p className="text-sm font-medium text-slate-800">
-                      {language === 'id' ? '24 Jam Setiap Hari' : '24 Hours Daily'}
+                      {t.footer.frontDesk}
                     </p>
                     <span className="text-xs text-slate-500">
                       Check-in {HOTEL_CONFIG.checkIn} · Check-out {HOTEL_CONFIG.checkOut}
@@ -205,10 +205,10 @@ export const ContactAndInquiry: React.FC = () => {
             <div className="p-5 rounded-2xl bg-[#1E3A2B] text-white flex items-center justify-between gap-4 border border-[#C5A880]/30 shadow-md">
               <div>
                 <span className="text-xs font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                  Respon Cepat
+                  {t.contact.quickWaTitle}
                 </span>
                 <p className="text-sm font-medium text-slate-200">
-                  Konsultasi langsung via WhatsApp Hotel Officer
+                  {t.contact.quickWaDesc}
                 </p>
               </div>
               <a
@@ -218,7 +218,7 @@ export const ContactAndInquiry: React.FC = () => {
                 className="px-4 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
               >
                 <MessageSquare className="w-4 h-4" />
-                <span>Chat WA</span>
+                <span>{t.contact.chatWaButton}</span>
               </a>
             </div>
           </div>
@@ -228,15 +228,13 @@ export const ContactAndInquiry: React.FC = () => {
             <div className="bg-white rounded-3xl p-6 sm:p-9 border border-[#E2E8F0] shadow-sm">
               <div className="border-b border-slate-100 pb-5 mb-6">
                 <span className="text-xs font-bold uppercase tracking-widest text-[#A8865B] block mb-1">
-                  {language === 'id' ? 'FORMULIR PERTANYAAN RESMI' : 'OFFICIAL INQUIRY FORM'}
+                  {t.contact.formBadge}
                 </span>
                 <h3 className="font-serif text-2xl font-bold text-slate-900">
                   {t.contact.formTitle}
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  {language === 'id'
-                    ? 'Kirimkan detail kebutuhan Anda dan kami akan menghubungi Anda sesegera mungkin.'
-                    : 'Submit your requirements and our reservation team will follow up promptly.'}
+                  {t.contact.formSubtitle}
                 </p>
               </div>
 
@@ -247,18 +245,10 @@ export const ContactAndInquiry: React.FC = () => {
                     <CheckCircle2 className="w-8 h-8" />
                   </div>
                   <h4 className="font-serif text-2xl font-bold text-slate-900">
-                    {language === 'id' ? 'Pesan Anda Telah Diterima!' : 'Your Message Has Been Received!'}
+                    {t.contact.successTitle}
                   </h4>
                   <p className="text-sm text-slate-600 max-w-md mx-auto">
-                    {language === 'id' ? (
-                      <>
-                        Terima kasih <strong>{formData.name}</strong>. Tim reservasi kami akan segera meninjau permohonan <strong>{formData.subject}</strong> Anda.
-                      </>
-                    ) : (
-                      <>
-                        Thank you, <strong>{formData.name}</strong>. Our guest services team is reviewing your <strong>{formData.subject}</strong> request.
-                      </>
-                    )}
+                    {t.contact.successDescPrefix} <strong>{formData.name}</strong>{t.contact.successDescMid} <strong>{formData.subject}</strong> {t.contact.successDescSuffix}
                   </p>
                   
                   {/* WhatsApp Submission Fallback Button */}
@@ -271,13 +261,13 @@ export const ContactAndInquiry: React.FC = () => {
                       className="w-full sm:w-auto px-6 py-3 bg-[#1E3A2B] hover:bg-[#13261C] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-sm flex items-center justify-center gap-2 border border-[#C5A880]/40"
                     >
                       <MessageSquare className="w-4 h-4 text-[#25D366]" />
-                      <span>{language === 'id' ? 'KIRIM SEBAGAI CHAT WHATSAPP' : 'FORWARD VIA WHATSAPP'}</span>
+                      <span>{t.contact.sendViaWa}</span>
                     </a>
                     <button
                       onClick={resetForm}
                       className="w-full sm:w-auto px-6 py-3 border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors"
                     >
-                      {language === 'id' ? 'Kirim Pesan Lain' : 'Send Another Message'}
+                      {t.contact.sendAnother}
                     </button>
                   </div>
                 </div>
@@ -301,7 +291,7 @@ export const ContactAndInquiry: React.FC = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      placeholder={language === 'id' ? 'Masukkan nama lengkap Anda' : 'Enter your full name'}
+                      placeholder={t.contact.formNamePlaceholder}
                       required
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white"
                     />
@@ -356,10 +346,10 @@ export const ContactAndInquiry: React.FC = () => {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white cursor-pointer"
                     >
-                      <option value="Pemesanan Kamar">{language === 'id' ? 'Pemesanan Kamar' : 'Room Reservation'}</option>
-                      <option value="Meeting Room">{language === 'id' ? 'Ruang Pertemuan (Meeting Room)' : 'Meeting Room'}</option>
-                      <option value="Event / Convention">{language === 'id' ? 'Acara / Konvensi (Event / Convention)' : 'Event / Convention'}</option>
-                      <option value="Informasi Umum">{language === 'id' ? 'Informasi Umum' : 'General Inquiry'}</option>
+                      <option value="Pemesanan Kamar">{t.contact.subjects.room}</option>
+                      <option value="Meeting Room">{t.contact.subjects.meeting}</option>
+                      <option value="Event / Convention">{t.contact.subjects.event}</option>
+                      <option value="Informasi Umum">{t.contact.subjects.general}</option>
                     </select>
                   </div>
 
@@ -380,7 +370,7 @@ export const ContactAndInquiry: React.FC = () => {
                           const displayPrice = typeof r.price === 'number' ? `Rp ${r.price.toLocaleString('id-ID')}` : r.price;
                           return (
                             <option key={r.type} value={r.type}>
-                              {r.type} ({r.badge}) - {displayPrice} {language === 'id' ? '/ malam' : '/ night'}
+                              {r.type} ({r.badge}) - {displayPrice} {t.rooms.perNight}
                             </option>
                           );
                         })}
@@ -399,7 +389,7 @@ export const ContactAndInquiry: React.FC = () => {
                       rows={4}
                       value={formData.message}
                       onChange={handleInputChange}
-                      placeholder={language === 'id' ? 'Tulis pesan Anda di sini...' : 'Write your message or specific requirements here...'}
+                      placeholder={t.contact.formMessagePlaceholder}
                       required
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white resize-y"
                     />
@@ -416,7 +406,7 @@ export const ContactAndInquiry: React.FC = () => {
                       {isLoading ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin text-[#C5A880]" />
-                          <span>{language === 'id' ? 'MENGIRIM PESAN...' : 'SENDING MESSAGE...'}</span>
+                          <span>{t.contact.sendingMessage}</span>
                         </>
                       ) : (
                         <>
@@ -427,9 +417,7 @@ export const ContactAndInquiry: React.FC = () => {
                     </button>
                     
                     <p className="text-center text-[11px] text-slate-400 mt-3">
-                      {language === 'id'
-                        ? 'Data Anda terlindungi dan hanya digunakan untuk keperluan reservasi IPB Convention Hotel.'
-                        : 'Your data is confidential and strictly used for official IPB Convention Hotel reservations.'}
+                      {t.contact.privacyNote}
                     </p>
                   </div>
                 </form>

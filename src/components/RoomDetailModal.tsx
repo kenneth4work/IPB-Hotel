@@ -32,7 +32,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   onBook,
   onOpenGallery 
 }) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const roomName = ('name' in room && room.name) ? room.name : room.type;
   const roomPriceFormatted = room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price);
   const images = (room.images && room.images.length > 0) ? room.images : [room.image || 'images/rooms/suite-1.jpg'];
@@ -67,6 +67,11 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   };
 
   const activeImgUrl = getRoomImageUrl(images[activePhotoIdx]);
+  const roomId = 'id' in room ? room.id : '';
+  const translatedBadge = (roomId && t.rooms.badges[roomId]) || room.badge;
+  const translatedDesc = (roomId && t.rooms.descriptions[roomId]) || room.description;
+  const translatedBed = (roomId && t.rooms.bedTypes[roomId]) || room.bedType || 'King Bed (180x200)';
+  const translatedCapacity = (roomId && t.rooms.capacities[roomId]) || room.capacity || t.modal.defaultCapacity;
 
   return (
     <div 
@@ -81,7 +86,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md flex items-center justify-center shadow-md border border-white/20 transition-transform hover:scale-105"
-          aria-label="Tutup"
+          aria-label={t.modal.close}
         >
           <X className="w-5 h-5" />
         </button>
@@ -91,7 +96,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           <img
             key={activeImgUrl}
             src={activeImgUrl}
-            alt={`${roomName} - Foto ${activePhotoIdx + 1}`}
+            alt={`${roomName} - ${activePhotoIdx + 1}`}
             onError={(e) => {
               const fallback = getRoomImageUrl(images[activePhotoIdx]);
               if (e.currentTarget.src !== fallback) {
@@ -107,14 +112,14 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             <>
               <button
                 onClick={handlePrev}
-                aria-label="Foto sebelumnya"
+                aria-label={t.gallery.prevAria}
                 className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={handleNext}
-                aria-label="Foto berikutnya"
+                aria-label={t.gallery.nextAria}
                 className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -125,7 +130,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           {/* Photo indicator chip */}
           <div className="absolute top-4 left-4 z-10">
             <span className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest bg-[#C5A880] text-slate-950 rounded-md">
-              Tipe {room.badge}
+              {translatedBadge}
             </span>
           </div>
 
@@ -135,7 +140,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 {roomName}
               </h3>
               <span className="text-xs text-slate-300">
-                {language === 'id' ? `Foto ${activePhotoIdx + 1} dari ${images.length}` : `Photo ${activePhotoIdx + 1} of ${images.length}`}
+                {`${t.modal.photoCounterText} ${activePhotoIdx + 1} ${t.modal.ofText} ${images.length}`}
               </span>
             </div>
             <div className="text-right">
@@ -165,7 +170,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <BedDouble className="w-3 h-3 text-[#A8865B]" /> {t.modal.bedType}
               </span>
               <span className="text-sm font-bold text-slate-800">
-                {room.bedType || (room.badge === 'SUITE' ? 'King Bed (200x200)' : room.badge === 'EXECUTIVE' ? 'King Bed (180x200)' : room.badge === 'DELUXE' ? 'Queen Bed (160x200)' : 'Double Bed / Twin Bed')}
+                {translatedBed}
               </span>
             </div>
             <div>
@@ -173,9 +178,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <Users className="w-3 h-3 text-[#A8865B]" /> {t.modal.capacity}
               </span>
               <span className="text-sm font-bold text-slate-800">
-                {language === 'id' 
-                  ? (room.capacity || (room.badge === 'SUITE' ? '2 Dewasa + 1 Anak' : room.badge === 'STANDARD' ? '1 - 2 Dewasa' : '2 Dewasa'))
-                  : (room.badge === 'SUITE' ? '2 Adults + 1 Child' : room.badge === 'STANDARD' ? '1 - 2 Adults' : '2 Adults')}
+                {translatedCapacity}
               </span>
             </div>
           </div>
@@ -186,7 +189,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               {t.modal.description}
             </h4>
             <p className="text-slate-600 text-sm leading-relaxed">
-              {room.description}
+              {translatedDesc}
             </p>
           </div>
 
@@ -213,13 +216,13 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div className="w-5 h-5 rounded-full bg-[#1E3A2B]/10 text-[#1E3A2B] flex items-center justify-center shrink-0">
                   <Check className="w-3 h-3" />
                 </div>
-                <span>{language === 'id' ? 'Kamar Mandi & Amenities Lengkap' : 'Ensuite Bathroom & Full Amenities'}</span>
+                <span>{t.modal.fullAmenities}</span>
               </div>
               <div className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 text-slate-800 text-xs font-medium border border-slate-100">
                 <div className="w-5 h-5 rounded-full bg-[#1E3A2B]/10 text-[#1E3A2B] flex items-center justify-center shrink-0">
                   <Check className="w-3 h-3" />
                 </div>
-                <span>{language === 'id' ? 'Free High-Speed WiFi & Air Mineral' : 'Free High-Speed WiFi & Bottled Water'}</span>
+                <span>{t.modal.freeWifi}</span>
               </div>
             </div>
           </div>
@@ -228,10 +231,8 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-center gap-3">
             <ShieldCheck className="w-5 h-5 text-[#1E3A2B] shrink-0" />
             <div>
-              <strong>{language === 'id' ? 'Jaminan Pemesanan:' : 'Booking Guarantee:'}</strong>{' '}
-              {language === 'id'
-                ? 'Konfirmasi cepat via WhatsApp Hotel Officer resmi. Check-in mulai 14:00 WIB, check-out maksimal 12:00 WIB.'
-                : 'Fast confirmation via official Hotel WhatsApp Officer. Check-in from 14:00, check-out by 12:00.'}
+              <strong>{t.modal.bookingGuarantee}</strong>{' '}
+              {t.modal.bookingGuaranteeDesc}
             </div>
           </div>
 
@@ -242,7 +243,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               className="flex-1 py-3.5 px-5 bg-[#1B3D2F] hover:bg-[#13261C] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-[#C5A880]/30 cursor-pointer"
             >
               <MessageCircle className="w-4 h-4 text-[#25D366]" />
-              <span>{language === 'id' ? `PESAN ${roomName.toUpperCase()} SEKARANG` : `BOOK ${roomName.toUpperCase()} NOW`}</span>
+              <span>{`${t.modal.bookPrefix} ${roomName.toUpperCase()} ${t.modal.bookSuffix}`}</span>
             </button>
             <button
               onClick={onClose}

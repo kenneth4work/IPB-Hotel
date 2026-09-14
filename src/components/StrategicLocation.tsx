@@ -42,7 +42,7 @@ export const StrategicLocation: React.FC = () => {
             <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm">
               <h3 className="font-serif text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Compass className="w-5 h-5 text-[#C5A880]" />
-                <span>{language === 'id' ? 'Informasi Akses & Kontak' : 'Access & Contact Information'}</span>
+                <span>{t.location.infoTitle}</span>
               </h3>
 
               {/* Clean luxury list with subtle rounded icon containers (bg-slate-100/80 p-2.5 text-slate-800) */}
@@ -69,7 +69,7 @@ export const StrategicLocation: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Telepon Reservasi' : 'Reservation Phone'}
+                      {t.location.phoneLabel}
                     </span>
                     <div className="text-sm font-semibold text-slate-800 flex flex-wrap gap-2">
                       {HOTEL_CONFIG.phones.map((phone, idx) => (
@@ -92,7 +92,7 @@ export const StrategicLocation: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Instagram Resmi' : 'Official Instagram'}
+                      {t.location.instagramLabel}
                     </span>
                     <a 
                       href={`https://instagram.com/${HOTEL_CONFIG.instagram.replace('@', '')}`}
@@ -113,7 +113,7 @@ export const StrategicLocation: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {language === 'id' ? 'Waktu Kedatangan & Keberangkatan' : 'Check-in & Check-out Schedule'}
+                      {t.location.hoursLabel}
                     </span>
                     <p className="text-sm font-bold text-slate-900">
                       Check-in: {HOTEL_CONFIG.checkIn} · Check-out: {HOTEL_CONFIG.checkOut}
@@ -130,17 +130,20 @@ export const StrategicLocation: React.FC = () => {
                 {t.location.landmarksTitle}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {NEARBY_LANDMARKS.slice(0, 4).map((item) => (
-                  <div key={item.name} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-bold text-slate-800">{item.name}</span>
-                      <span className="text-[10px] font-bold text-[#1E3A2B] bg-[#1E3A2B]/10 px-2 py-0.5 rounded-full">
-                        {item.time}
-                      </span>
+                {NEARBY_LANDMARKS.slice(0, 4).map((item) => {
+                  const landmarkData = t.location.landmarks[item.name] || item;
+                  return (
+                    <div key={item.name} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex flex-col justify-between">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-bold text-slate-800">{landmarkData.name}</span>
+                        <span className="text-[10px] font-bold text-[#1E3A2B] bg-[#1E3A2B]/10 px-2 py-0.5 rounded-full">
+                          {landmarkData.time}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-slate-500">{landmarkData.desc}</span>
                     </div>
-                    <span className="text-[11px] text-slate-500">{item.desc}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -151,11 +154,11 @@ export const StrategicLocation: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8865B] bg-[#F4ECE1] px-3 py-1 rounded-full">
-                    Pusat Konvensi & Akomodasi
+                    {t.location.conventionPill}
                   </span>
                   <span className="text-xs text-slate-500 flex items-center gap-1">
                     <Car className="w-3.5 h-3.5 text-slate-400" />
-                    Valet & Parkir Tersedia
+                    {t.location.valetPill}
                   </span>
                 </div>
 
@@ -193,7 +196,7 @@ export const StrategicLocation: React.FC = () => {
                       {HOTEL_CONFIG.name}
                     </span>
                     <span className="text-[11px] text-[#C5A880] block font-medium">
-                      Kawasan Mall Botani Square & IICC
+                      {t.location.mapComplexTitle}
                     </span>
                   </div>
                 </div>
@@ -203,7 +206,7 @@ export const StrategicLocation: React.FC = () => {
                   📍 Baranangsiang Junction
                 </div>
                 <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-md text-[10px] font-semibold text-slate-800 shadow-sm border border-slate-200">
-                  🌿 5 Menit ke Kebun Raya Bogor
+                  {t.location.mapBotanicalTag}
                 </div>
               </div>
 
@@ -217,11 +220,11 @@ export const StrategicLocation: React.FC = () => {
                   className="w-full py-3.5 px-6 bg-[#1E3A2B] hover:bg-[#13261C] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-[#C5A880]/40 group hover:-translate-y-0.5"
                 >
                   <Navigation className="w-4 h-4 text-[#C5A880] group-hover:rotate-12 transition-transform" />
-                  <span>{language === 'id' ? 'BUKA DI GOOGLE MAPS' : 'OPEN IN GOOGLE MAPS'}</span>
+                  <span>{t.location.openInMaps}</span>
                   <ExternalLink className="w-3.5 h-3.5 text-slate-300 ml-1" />
                 </a>
                 <p className="text-center text-[11px] text-slate-500 mt-2">
-                  {language === 'id' ? 'Dapatkan petunjuk rute navigasi instan menggunakan Google Maps / Waze.' : 'Get instant turn-by-turn navigation directions via Google Maps or Waze.'}
+                  {t.location.directionsHint}
                 </p>
               </div>
             </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RoomData } from '../types';
 import { getRoomImageUrl } from '../data/hotelData';
 import { X, ChevronLeft, ChevronRight, Maximize2, BedDouble, ShieldCheck, MessageCircle } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface RoomGalleryModalProps {
   room: RoomData;
@@ -16,6 +17,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
   onClose,
   onBookNow
 }) => {
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const total = room.images.length;
   const touchStartXRef = useRef<number | null>(null);
@@ -69,6 +71,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
   const formattedSize = room.size.replace('M²', 'sqm').trim();
   const currentImgSrc = getRoomImageUrl(room.images[currentIndex]);
   const displayPrice = room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price);
+  const translatedBadge = t.rooms.badges[room.id] || room.badge;
 
   const waBookingUrl = `https://wa.me/628111330659?text=${encodeURIComponent(
     `Halo IPB Convention Hotel, saya ingin memesan ${room.name} seharga ${displayPrice}/malam.`
@@ -87,13 +90,13 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
       >
         <div className="flex items-center gap-3">
           <span className="px-2.5 py-1 text-[11px] font-bold tracking-widest uppercase bg-[#C5A880] text-slate-950 rounded-md">
-            {room.badge}
+            {translatedBadge}
           </span>
           <h3 className="font-serif text-lg sm:text-xl font-bold text-white tracking-wide">
             {room.name}
           </h3>
           <span className="hidden sm:inline-block text-xs text-slate-400 font-mono">
-            • {displayPrice}/malam
+            • {displayPrice}{t.rooms.perNight}
           </span>
         </div>
 
@@ -106,7 +109,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
             className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#1B3D2F] hover:bg-[#142e23] text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors border border-[#C5A880]/30"
           >
             <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
-            <span>Pesan</span>
+            <span>{t.modal.quickBook}</span>
           </a>
 
           {/* Close button (X) */}
@@ -114,7 +117,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
             id="close-gallery-modal-btn"
             onClick={onClose}
             className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white/90 hover:text-white flex items-center justify-center transition-all hover:scale-105 border border-white/20"
-            aria-label="Tutup Galeri"
+            aria-label={t.modal.close}
           >
             <X className="w-5 h-5" />
           </button>
@@ -133,7 +136,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         {total > 1 && (
           <button
             onClick={handlePrev}
-            aria-label="Foto sebelumnya"
+            aria-label={t.gallery.prevAria}
             className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-lg active:scale-95"
           >
             <ChevronLeft className="w-7 h-7" />
@@ -145,7 +148,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
           <img
             key={currentImgSrc}
             src={currentImgSrc}
-            alt={`${room.name} - Foto ${currentIndex + 1}`}
+            alt={`${room.name} - ${currentIndex + 1}`}
             onError={(e) => {
               // Direct fallback
               const fallback = getRoomImageUrl(room.images[currentIndex]);
@@ -161,7 +164,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         {total > 1 && (
           <button
             onClick={handleNext}
-            aria-label="Foto berikutnya"
+            aria-label={t.gallery.nextAria}
             className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-lg active:scale-95"
           >
             <ChevronRight className="w-7 h-7" />
@@ -177,10 +180,10 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         {/* Left: Photo index (X / Total) */}
         <div className="flex items-center gap-3 order-2 sm:order-1">
           <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-lg text-xs font-semibold text-white/90 border border-white/15">
-            Foto {currentIndex + 1} / {total}
+            {t.modal.photoCounterText} {currentIndex + 1} / {total}
           </span>
           <span className="hidden sm:inline-block text-xs text-slate-400">
-            Gunakan tombol panah keyboard atau usap layar untuk navigasi
+            {t.modal.keyboardHint}
           </span>
         </div>
 
@@ -190,7 +193,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              aria-label={`Buka foto ${idx + 1}`}
+              aria-label={`${t.modal.photoCounterText} ${idx + 1}`}
               className={`h-2 rounded-full transition-all duration-300 ${
                 idx === currentIndex
                   ? 'w-7 bg-[#C5A880] shadow-sm shadow-[#C5A880]/50'
@@ -204,7 +207,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         <div className="flex items-center gap-2 order-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/20 text-xs font-medium text-slate-200">
             <Maximize2 className="w-3.5 h-3.5 text-[#C5A880]" />
-            <span>Ukuran Kamar: {formattedSize}</span>
+            <span>{t.modal.roomSizeLabel} {formattedSize}</span>
           </div>
         </div>
       </div>
