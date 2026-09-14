@@ -272,7 +272,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
   },
   {
     id: "gal-6",
-    title: "Executive Business Lounge",
+    title: "Rooftop",
     category: "Fasilitas Kerja",
     image: galleryLoungeImg,
     spanClass: "col-span-1 md:col-span-2 md:row-span-1"
