@@ -1,21 +1,22 @@
 import React from 'react';
-import { HOTEL_CONFIG } from '../data/hotelData';
+import { HOTEL_CONFIG, roomCategories, getRoomImageUrl } from '../data/hotelData';
 import { ArrowDown, MessageCircle, MapPin, Building2, ShieldCheck, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const HeroSection: React.FC = () => {
   const { language, t } = useLanguage();
+  const suiteFirstPhoto = getRoomImageUrl(roomCategories["Suite"][0]);
 
   return (
     <section className="relative overflow-hidden bg-[#0F172A] text-white pt-16 pb-20 lg:pt-24 lg:pb-28">
-      {/* Background Subtle Gradient & Architecture Texture */}
+      {/* Background Hero Banner - Foto Kamar Suite Room Slide Pertama */}
       <div 
-        className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-luminosity scale-105 transform transition-transform duration-1000"
+        className="absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=80')`
+          backgroundImage: `url('${suiteFirstPhoto}')`
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/90 via-[#1E3A2B]/80 to-[#0F172A]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/80 via-[#0F172A]/60 to-[#0F172A]/90" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto">

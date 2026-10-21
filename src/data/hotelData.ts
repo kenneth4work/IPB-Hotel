@@ -237,7 +237,7 @@ export const HOTEL_CONFIG: HotelConfig = {
   instagram: "@ipbhotelbotanisquare",
   checkIn: "14:00 WIB",
   checkOut: "12:00 WIB",
-  googleMapsUrl: "https://maps.google.com/?q=IPB+Convention+Hotel+Bogor",
+  googleMapsUrl: "https://www.google.com/maps/place/IPB+Convention+Hotel+Botani+Square/@-6.6019596,106.8065591,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69c5db56e8b071:0xc345ddc97086540e!8m2!3d-6.6019596!4d106.8065591",
   whatsappNumber: "628111330659",
   rooms: ROOMS_DATA.map((r) => ({
     id: r.id,
