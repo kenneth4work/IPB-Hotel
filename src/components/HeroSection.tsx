@@ -19,11 +19,6 @@ export const HeroSection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto">
-          {/* Subtle Luxury Category Chip */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#C5A880]/15 border border-[#C5A880]/30 text-[#C5A880] text-xs font-semibold uppercase tracking-widest mb-6 backdrop-blur-sm">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>{t.hero.badgeChip}</span>
-          </div>
 
           {/* Main Title */}
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">

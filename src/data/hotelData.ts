@@ -12,6 +12,75 @@ import gallerySuiteImg from '../assets/images/regenerated_image_1789109946006.jp
 import galleryMallImg from '../assets/images/regenerated_image_1789109949049.jpg';
 import galleryLoungeImg from '../assets/images/regenerated_image_1789109954250.jpg';
 
+export const roomCategories: Record<string, string[]> = {
+  "Deluxe": [
+    "https://ibb.co.com/DDTkdsYW",
+    "https://ibb.co.com/h1nn8n0D",
+    "https://ibb.co.com/wk6Wvzx",
+    "https://ibb.co.com/v43x1gzF",
+    "https://ibb.co.com/8LhXVCfw"
+  ],
+  "Executive": [
+    "https://ibb.co.com/k28Bw9P0",
+    "https://ibb.co.com/qLf1zX9x",
+    "https://ibb.co.com/Mx62Nt9c",
+    "https://ibb.co.com/WvfR7kLS",
+    "https://ibb.co.com/G480DBhY"
+  ],
+  "Suite": [
+    "https://ibb.co.com/JRjMFxBp",
+    "https://ibb.co.com/pjtktqrd",
+    "https://ibb.co.com/S4DspBzd",
+    "https://ibb.co.com/FLwKvw6s",
+    "https://ibb.co.com/HpHVFHG1"
+  ],
+  "Grand Executive": [
+    "https://ibb.co.com/M5sJthjh"
+  ],
+  "Superior": [
+    "https://ibb.co.com/3mf33p8P",
+    "https://ibb.co.com/chBrGnTX",
+    "https://ibb.co.com/Swgfwqf5"
+  ],
+  "Standar": [
+    "https://ibb.co.com/27BTLcG7"
+  ]
+};
+
+export const IMGBB_DIRECT_MAP: Record<string, string> = {
+  // Deluxe
+  "https://ibb.co.com/DDTkdsYW": "https://i.ibb.co/yn752GpP/D1.jpg",
+  "https://ibb.co.com/h1nn8n0D": "https://i.ibb.co/7NTTyTh2/D2.jpg",
+  "https://ibb.co.com/wk6Wvzx": "https://i.ibb.co/h68Wqmt/D3.jpg",
+  "https://ibb.co.com/v43x1gzF": "https://i.ibb.co/tpqMBkCG/D4.jpg",
+  "https://ibb.co.com/8LhXVCfw": "https://i.ibb.co/Kp1mHPfg/D5.jpg",
+
+  // Executive
+  "https://ibb.co.com/k28Bw9P0": "https://i.ibb.co/jkMfQWjG/X1.jpg",
+  "https://ibb.co.com/qLf1zX9x": "https://i.ibb.co/BHxsmdjw/X2.jpg",
+  "https://ibb.co.com/Mx62Nt9c": "https://i.ibb.co/zTJnfBNX/X3.jpg",
+  "https://ibb.co.com/WvfR7kLS": "https://i.ibb.co/QvMxhP4s/X4.jpg",
+  "https://ibb.co.com/G480DBhY": "https://i.ibb.co/fzy2WBc6/X5.jpg",
+
+  // Suite
+  "https://ibb.co.com/JRjMFxBp": "https://i.ibb.co/pvj9rW0K/SU1.jpg",
+  "https://ibb.co.com/pjtktqrd": "https://i.ibb.co/SwhZhS7B/SU2.jpg",
+  "https://ibb.co.com/S4DspBzd": "https://i.ibb.co/pB60pdSR/SU3.jpg",
+  "https://ibb.co.com/FLwKvw6s": "https://i.ibb.co/tTs4fsBZ/SU4.jpg",
+  "https://ibb.co.com/HpHVFHG1": "https://i.ibb.co/tPJ4mJYk/SU5.jpg",
+
+  // Grand Executive
+  "https://ibb.co.com/M5sJthjh": "https://i.ibb.co/prxkMPsP/Whats-App-Image-2026-04-30-at-07-58-01.jpg",
+
+  // Superior
+  "https://ibb.co.com/3mf33p8P": "https://i.ibb.co/4Rsqq8D0/S1.jpg",
+  "https://ibb.co.com/chBrGnTX": "https://i.ibb.co/jkNrcX4Z/S2.jpg",
+  "https://ibb.co.com/Swgfwqf5": "https://i.ibb.co/r2hd2ndF/S3.jpg",
+
+  // Standar
+  "https://ibb.co.com/27BTLcG7": "https://i.ibb.co/Lzf3q9Vz/regenerated-image-1789098357914.jpg"
+};
+
 export const ROOMS_DATA: RoomData[] = [
   {
     id: "suite",
@@ -22,9 +91,7 @@ export const ROOMS_DATA: RoomData[] = [
     amenities: ["Ruang Tamu", "Ranjang King", "Smart TV", "Bathtub & Mini Bar"],
     price: "Rp 1.350.000",
     priceUnit: "/malam",
-    images: [
-      "Suite/SU1.jpg"
-    ]
+    images: roomCategories["Suite"]
   },
   {
     id: "grand-executive",
@@ -35,9 +102,7 @@ export const ROOMS_DATA: RoomData[] = [
     amenities: ["Ranjang King", "Lounge Area", "Smart TV 50\"", "Mesin Kopi & Teh"],
     price: "Rp 1.050.000",
     priceUnit: "/malam",
-    images: [
-      "GrandExecutive/GE1.jpg"
-    ]
+    images: roomCategories["Grand Executive"]
   },
   {
     id: "executive",
@@ -48,9 +113,7 @@ export const ROOMS_DATA: RoomData[] = [
     amenities: ["Ranjang King", "Smart TV", "Meja Kerja", "Balkon Pribadi"],
     price: "Rp 900.000",
     priceUnit: "/malam",
-    images: [
-      "Execuitve/X1.jpg"
-    ]
+    images: roomCategories["Executive"]
   },
   {
     id: "deluxe",
@@ -61,9 +124,7 @@ export const ROOMS_DATA: RoomData[] = [
     amenities: ["Ranjang Queen", "TV Layar Datar", "AC Dingin", "Pemandangan Kota"],
     price: "Rp 800.000",
     priceUnit: "/malam",
-    images: [
-      "Deluxe/D1.jpg"
-    ]
+    images: roomCategories["Deluxe"]
   },
   {
     id: "superior",
@@ -74,22 +135,18 @@ export const ROOMS_DATA: RoomData[] = [
     amenities: ["Ranjang Queen / Twin", "TV Layar Datar", "AC Dingin", "Water Heater"],
     price: "Rp 700.000",
     priceUnit: "/malam",
-    images: [
-      "Superior/SP1.jpg"
-    ]
+    images: roomCategories["Superior"]
   },
   {
     id: "standard",
-    badge: "STANDARD",
+    badge: "STANDAR",
     size: "19 M²",
     name: "Standard Room",
     description: "Kamar modern yang fungsional dan terjangkau dengan koneksi WiFi kencang untuk kenyamanan menginap.",
     amenities: ["Ranjang Double", "TV Layar Datar", "AC Dingin", "WiFi Kencang"],
     price: "Rp 600.000",
     priceUnit: "/malam",
-    images: [
-      "Standard/S1.jpg"
-    ]
+    images: roomCategories["Standar"]
   }
 ];
 
@@ -154,6 +211,9 @@ export const FALLBACK_ROOM_IMAGES: Record<string, string> = {
 
 export function getRoomImageUrl(imgPath: string): string {
   if (!imgPath) return '';
+  if (IMGBB_DIRECT_MAP[imgPath]) {
+    return IMGBB_DIRECT_MAP[imgPath];
+  }
   if (
     imgPath.startsWith('blob:') ||
     imgPath.startsWith('http://') || 

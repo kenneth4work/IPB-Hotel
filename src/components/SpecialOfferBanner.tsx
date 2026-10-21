@@ -1,6 +1,6 @@
 import React from 'react';
 import { HOTEL_CONFIG } from '../data/hotelData';
-import { Sparkles, Calendar, MessageSquare, Utensils, CheckCircle2 } from 'lucide-react';
+import { Calendar, MessageSquare, Utensils, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const SpecialOfferBanner: React.FC = () => {
@@ -22,11 +22,6 @@ export const SpecialOfferBanner: React.FC = () => {
       <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full border border-[#C5A880]/10 pointer-events-none" />
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Label: "PENAWARAN SPESIAL" (Uppercase, tracking-widest) */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A880]/20 border border-[#C5A880]/40 text-[#EFE4D2] text-xs font-bold uppercase tracking-[0.25em] mb-6 backdrop-blur-sm">
-          <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" />
-          <span>{t.specialOffer.badge}</span>
-        </div>
 
         {/* Headline */}
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-5 tracking-tight leading-tight">

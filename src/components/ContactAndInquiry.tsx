@@ -79,14 +79,11 @@ export const ContactAndInquiry: React.FC = () => {
   };
 
   return (
-    <section id="kontak" className="py-20 bg-[#FDFBF7] relative">
+    <section id="kontak" className="py-20 bg-[#FDFBF7] relative scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#A8865B] block mb-3">
-            {t.contact.badge}
-          </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.contact.title}
           </h2>

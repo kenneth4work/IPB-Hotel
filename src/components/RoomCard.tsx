@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RoomData } from '../types';
-import { getRoomImageUrl } from '../data/hotelData';
-import { Info } from 'lucide-react';
+import { getRoomImageUrl, IMGBB_DIRECT_MAP } from '../data/hotelData';
+import { Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export interface RoomCardProps {
@@ -15,6 +15,10 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
   const { t } = useLanguage();
   const [currentIdx, setCurrentIdx] = useState(0);
   const imagesList = room.images && room.images.length > 0 ? room.images : [];
+  
+  // Touch swipe refs
+  const touchStartXRef = useRef<number | null>(null);
+  const touchEndXRef = useRef<number | null>(null);
 
   // Pastikan currentIdx tidak melebihi jumlah slide
   useEffect(() => {
@@ -23,14 +27,61 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
     }
   }, [imagesList.length, currentIdx]);
 
+  // Preload images in this room carousel
+  useEffect(() => {
+    if (imagesList.length > 1) {
+      imagesList.forEach((imgUrl) => {
+        const direct = getRoomImageUrl(imgUrl);
+        if (direct) {
+          const preImg = new Image();
+          preImg.src = direct;
+        }
+      });
+    }
+  }, [imagesList]);
+
   const prevSlide = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (imagesList.length <= 1) return;
     setCurrentIdx((prev) => (prev === 0 ? imagesList.length - 1 : prev - 1));
   };
 
   const nextSlide = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (imagesList.length <= 1) return;
     setCurrentIdx((prev) => (prev === imagesList.length - 1 ? 0 : prev + 1));
+  };
+
+  // Touch Swipe Handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchEndXRef.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndXRef.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current !== null && touchEndXRef.current !== null) {
+      const diffX = touchStartXRef.current - touchEndXRef.current;
+      const minSwipeDistance = 35;
+      if (diffX > minSwipeDistance) {
+        // Swipe left -> next
+        if (imagesList.length > 1) {
+          e.stopPropagation();
+          setCurrentIdx((prev) => (prev === imagesList.length - 1 ? 0 : prev + 1));
+        }
+      } else if (diffX < -minSwipeDistance) {
+        // Swipe right -> prev
+        if (imagesList.length > 1) {
+          e.stopPropagation();
+          setCurrentIdx((prev) => (prev === 0 ? imagesList.length - 1 : prev - 1));
+        }
+      }
+    }
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
   };
 
   const activePhoto = imagesList[currentIdx] || '';
@@ -42,18 +93,23 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
   return (
     <div 
       id={`room-card-${room.id}`}
-      className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow"
+      className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow group/card"
     >
       {/* Container Foto Carousel */}
       <div 
         className="relative aspect-[4/3] w-full overflow-hidden group cursor-pointer bg-slate-900 select-none"
         onClick={() => onOpenGallery?.(room, currentIdx)}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         <img
+          key={currentImgSrc}
           src={currentImgSrc}
-          alt={`${room.name} ${currentIdx + 1}`}
+          alt={`${room.name} - Foto ${currentIdx + 1}`}
+          loading="lazy"
           onError={(e) => {
-            const fallback = getRoomImageUrl(imagesList[currentIdx]);
+            const fallback = IMGBB_DIRECT_MAP[activePhoto] || getRoomImageUrl(imagesList[currentIdx]);
             if (fallback && e.currentTarget.src !== fallback) {
               e.currentTarget.src = fallback;
             }
@@ -61,16 +117,16 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
           className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
         />
 
-        {/* Badge Kiri Atas */}
+        {/* Badge Kategori Kiri Atas */}
         <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
-          <span className="bg-white/90 backdrop-blur-sm text-slate-800 text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wider shadow-sm border border-white/40">
+          <span className="bg-white/95 backdrop-blur-sm text-slate-900 text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wider shadow-sm border border-white/40">
             {translatedBadge}
           </span>
         </div>
 
         {/* Ukuran Kamar di Kanan Atas */}
         <span 
-          className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer border border-white/20 shadow-sm hover:bg-black/80 transition-colors"
+          className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer border border-white/20 shadow-sm hover:bg-black/80 transition-colors z-10"
           onClick={(e) => {
             if (onOpenGallery) {
               e.stopPropagation();
@@ -81,47 +137,64 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
           {room.size}
         </span>
 
-        {/* Tombol Navigasi Kiri & Kanan (Hanya muncul jika foto > 1) */}
+        {/* Tombol Navigasi Panah Kiri & Kanan (Muncul jika foto > 1) */}
         {imagesList.length > 1 && (
           <>
+            {/* Tombol Panah Kiri */}
             <button
               type="button"
               onClick={prevSlide}
               aria-label={t.gallery.prevAria}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 cursor-pointer z-10 text-lg shadow"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-85 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 shadow-lg z-20 cursor-pointer border border-white/25 active:scale-95"
             >
-              &#8249;
+              <ChevronLeft className="w-5 h-5" />
             </button>
+
+            {/* Tombol Panah Kanan */}
             <button
               type="button"
               onClick={nextSlide}
               aria-label={t.gallery.nextAria}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70 cursor-pointer z-10 text-lg shadow"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-85 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 shadow-lg z-20 cursor-pointer border border-white/25 active:scale-95"
             >
-              &#8250;
+              <ChevronRight className="w-5 h-5" />
             </button>
 
             {/* Counter Slide Kiri Bawah */}
-            <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded border border-white/20 pointer-events-none">
+            <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-medium px-2 py-0.5 rounded-md border border-white/20 pointer-events-none z-10">
               {currentIdx + 1}/{imagesList.length}
             </span>
 
-            {/* Titik Indikator Tengah Bawah */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-10">
-              {imagesList.map((_: string, idx: number) => (
-                <span
+            {/* Titik Indikator Dots di Bawah Tengah */}
+            <div 
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 shadow-sm"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {imagesList.map((_, idx) => (
+                <button
                   key={idx}
+                  type="button"
+                  aria-label={`Slide foto ke-${idx + 1}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     setCurrentIdx(idx);
                   }}
-                  className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                    idx === currentIdx ? "w-4 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
+                  className={`transition-all rounded-full cursor-pointer h-1.5 ${
+                    idx === currentIdx 
+                      ? "w-4 bg-[#C5A880] shadow-sm" 
+                      : "w-1.5 bg-white/60 hover:bg-white"
                   }`}
                 />
               ))}
             </div>
           </>
+        )}
+
+        {/* Jika hanya 1 foto, tampilkan badge 1 Foto */}
+        {imagesList.length === 1 && (
+          <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-0.5 rounded-md border border-white/20 pointer-events-none z-10">
+            1 Foto
+          </span>
         )}
       </div>
 

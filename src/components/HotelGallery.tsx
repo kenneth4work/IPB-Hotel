@@ -41,14 +41,11 @@ export const HotelGallery: React.FC = () => {
   const activeTrans = activeItem ? getItemData(activeItem) : null;
 
   return (
-    <section id="galeri" className="py-20 bg-white border-t border-slate-100 relative">
+    <section id="galeri" className="py-20 bg-white border-t border-slate-100 relative scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#A8865B] block mb-3">
-            {t.gallery.badge}
-          </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.gallery.title}
           </h2>
@@ -58,15 +55,15 @@ export const HotelGallery: React.FC = () => {
           </p>
         </div>
 
-        {/* Asymmetric Magazine-Style Bento Grid (5-6 curated slots) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-[220px] sm:auto-rows-[240px]">
-          {/* Item 1: Large Feature Slot */}
-          {(() => {
-            const item = getItemData(GALLERY_ITEMS[0]);
+        {/* Curated Gallery Grid - Clean, Sequential, No Overlap */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {GALLERY_ITEMS.map((rawItem) => {
+            const item = getItemData(rawItem);
             return (
               <div 
-                onClick={() => openLightbox(GALLERY_ITEMS[0])}
-                className="group relative sm:col-span-2 sm:row-span-2 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900"
+                key={rawItem.id}
+                onClick={() => openLightbox(rawItem)}
+                className="group relative h-64 sm:h-72 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900 border border-slate-100"
               >
                 <img 
                   src={item.image}
@@ -74,163 +71,20 @@ export const HotelGallery: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between">
-                  <div>
-                    <span className="inline-block px-2.5 py-1 rounded bg-[#C5A880]/90 text-slate-950 text-[10px] font-bold uppercase tracking-wider mb-2 backdrop-blur-sm">
-                      {item.category}
-                    </span>
-                    <h3 className="font-serif text-xl sm:text-2xl font-bold text-white leading-tight">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between gap-3">
+                  <div className="flex-1">
+                    <h3 className="font-serif text-lg font-bold text-white leading-snug group-hover:text-[#EFE4D2] transition-colors">
                       {item.title}
                     </h3>
                   </div>
-                  <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                     <Maximize2 className="w-4 h-4" />
                   </div>
                 </div>
               </div>
             );
-          })()}
-
-          {/* Item 2: Ballroom MICE */}
-          {(() => {
-            const item = getItemData(GALLERY_ITEMS[1]);
-            return (
-              <div 
-                onClick={() => openLightbox(GALLERY_ITEMS[1])}
-                className="group relative sm:col-span-1 sm:row-span-1 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900"
-              >
-                <img 
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <span className="text-[10px] font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                    {item.category}
-                  </span>
-                  <h3 className="font-serif text-base font-bold text-white leading-snug">
-                    {item.title}
-                  </h3>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Item 3: Terrace Dining */}
-          {(() => {
-            const item = getItemData(GALLERY_ITEMS[2]);
-            return (
-              <div 
-                onClick={() => openLightbox(GALLERY_ITEMS[2])}
-                className="group relative sm:col-span-1 sm:row-span-1 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900"
-              >
-                <img 
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <span className="text-[10px] font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                    {item.category}
-                  </span>
-                  <h3 className="font-serif text-base font-bold text-white leading-snug">
-                    {item.title}
-                  </h3>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Item 4: Room Suite Interior */}
-          {(() => {
-            const item = getItemData(GALLERY_ITEMS[3]);
-            return (
-              <div 
-                onClick={() => openLightbox(GALLERY_ITEMS[3])}
-                className="group relative sm:col-span-1 sm:row-span-1 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900"
-              >
-                <img 
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <span className="text-[10px] font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                    {item.category}
-                  </span>
-                  <h3 className="font-serif text-base font-bold text-white leading-snug">
-                    {item.title}
-                  </h3>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Item 5: Exterior Botani Square */}
-          {(() => {
-            const item = getItemData(GALLERY_ITEMS[4]);
-            return (
-              <div 
-                onClick={() => openLightbox(GALLERY_ITEMS[4])}
-                className="group relative sm:col-span-1 sm:row-span-1 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900"
-              >
-                <img 
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <span className="text-[10px] font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                    {item.category}
-                  </span>
-                  <h3 className="font-serif text-base font-bold text-white leading-snug">
-                    {item.title}
-                  </h3>
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* Item 6: Rooftop */}
-          {(() => {
-            const item = getItemData(GALLERY_ITEMS[5]);
-            return (
-              <div 
-                onClick={() => openLightbox(GALLERY_ITEMS[5])}
-                className="group relative sm:col-span-2 sm:row-span-1 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900"
-              >
-                <img 
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between">
-                  <div>
-                    <span className="text-[10px] font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                      {item.category}
-                    </span>
-                    <h3 className="font-serif text-lg font-bold text-white leading-snug">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Maximize2 className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              </div>
-            );
-          })()}
+          })}
         </div>
       </div>
 

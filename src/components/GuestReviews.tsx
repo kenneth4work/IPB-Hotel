@@ -7,14 +7,11 @@ export const GuestReviews: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <section id="ulasan" className="py-20 bg-white border-t border-slate-100 relative">
+    <section id="ulasan" className="py-20 bg-white border-t border-slate-100 relative scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#A8865B] block mb-3">
-            {t.reviews.badge}
-          </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.reviews.title}
           </h2>
@@ -25,7 +22,7 @@ export const GuestReviews: React.FC = () => {
         </div>
 
         {/* 3-Column Testimonial Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch">
           {REVIEWS.map((rev) => {
             const fullStars = Math.floor(rev.rating);
             const initials = rev.author
@@ -42,7 +39,7 @@ export const GuestReviews: React.FC = () => {
               <div
                 key={rev.id}
                 id={rev.id}
-                className="flex flex-col justify-between bg-[#FDFBF7] rounded-3xl p-7 sm:p-8 border border-[#E2E8F0] shadow-sm hover:shadow-lg transition-all duration-300 relative group hover:-translate-y-1"
+                className="flex flex-col justify-between h-full bg-[#FDFBF7] rounded-3xl p-7 sm:p-8 border border-[#E2E8F0] shadow-sm hover:shadow-lg transition-all duration-300 relative group hover:-translate-y-1"
               >
                 {/* Elegant quotation mark accent */}
                 <div className="absolute top-6 right-6 text-[#C5A880]/30 group-hover:text-[#C5A880]/60 transition-colors pointer-events-none">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RoomData, Room } from '../types';
-import { getRoomImageUrl } from '../data/hotelData';
+import { getRoomImageUrl, IMGBB_DIRECT_MAP } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
 import { 
   X, 
@@ -98,8 +98,8 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             src={activeImgUrl}
             alt={`${roomName} - ${activePhotoIdx + 1}`}
             onError={(e) => {
-              const fallback = getRoomImageUrl(images[activePhotoIdx]);
-              if (e.currentTarget.src !== fallback) {
+              const fallback = IMGBB_DIRECT_MAP[images[activePhotoIdx]] || getRoomImageUrl(images[activePhotoIdx]);
+              if (fallback && e.currentTarget.src !== fallback) {
                 e.currentTarget.src = fallback;
               }
             }}
@@ -127,11 +127,28 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             </>
           )}
 
-          {/* Photo indicator chip */}
-          <div className="absolute top-4 left-4 z-10">
+          {/* Photo indicator chip & dots */}
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
             <span className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest bg-[#C5A880] text-slate-950 rounded-md">
               {translatedBadge}
             </span>
+            {images.length > 1 && (
+              <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md px-2 py-1 rounded-full border border-white/20">
+                {images.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActivePhotoIdx(idx);
+                    }}
+                    className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                      idx === activePhotoIdx ? 'w-3.5 bg-[#C5A880]' : 'w-1.5 bg-white/60 hover:bg-white'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between z-10">

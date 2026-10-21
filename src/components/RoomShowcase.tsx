@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { HOTEL_CONFIG, ROOMS_DATA } from '../data/hotelData';
+import { ROOMS_DATA } from '../data/hotelData';
 import { RoomData } from '../types';
 import { RoomCard } from './RoomCard';
 import { RoomGalleryModal } from './RoomGalleryModal';
 import { RoomDetailModal } from './RoomDetailModal';
-import { Info } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const RoomShowcase: React.FC = () => {
   const [galleryRoom, setGalleryRoom] = useState<RoomData | null>(null);
   const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [detailRoom, setDetailRoom] = useState<RoomData | null>(null);
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
 
   const handleOpenGallery = (room: RoomData, initialIndex: number) => {
     setGalleryRoom(room);
@@ -23,14 +22,11 @@ export const RoomShowcase: React.FC = () => {
   };
 
   return (
-    <section id="kamar" className="py-20 bg-[#FDFBF7] relative">
+    <section id="kamar" className="py-20 bg-[#FDFBF7] relative scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#A8865B] block mb-3">
-            {t.rooms.badge}
-          </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.rooms.title}
           </h2>
@@ -41,7 +37,7 @@ export const RoomShowcase: React.FC = () => {
         </div>
 
         {/* 6-Room Luxury Showcase Grid with Multi-Photo Carousel Slider */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 items-stretch">
           {ROOMS_DATA.map((room) => (
             <RoomCard
               key={room.id}
@@ -50,31 +46,6 @@ export const RoomShowcase: React.FC = () => {
               onOpenDetail={handleOpenDetail}
             />
           ))}
-        </div>
-
-        {/* Bottom Information Callout */}
-        <div className="mt-12 p-4 sm:p-5 rounded-2xl bg-white border border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 shrink-0">
-              <Info className="w-5 h-5 text-[#A8865B]" />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-slate-900">
-                {t.rooms.infoTitle}
-              </h4>
-              <p className="text-xs text-slate-500">
-                {t.rooms.infoDesc}
-              </p>
-            </div>
-          </div>
-          <a
-            href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20konsultasi%20pemesanan%20kamar%20rombongan/meeting`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs font-semibold text-[#1E3A2B] hover:text-[#13261C] hover:underline whitespace-nowrap"
-          >
-            {t.rooms.groupBooking}
-          </a>
         </div>
       </div>
 

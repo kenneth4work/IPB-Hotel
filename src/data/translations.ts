@@ -326,7 +326,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     },
     gallery: {
       badge: 'DOKUMENTASI VISUAL',
-      title: 'Potret Keindahan Hotel Kami',
+      title: 'Galeri Kami',
       subtitle: 'Jelajahi sudut kenyamanan, estetika arsitektur, dan suasana hangat yang menanti kedatangan Anda.',
       categories: {
         all: 'Semua Koleksi',
@@ -648,7 +648,7 @@ export const translations: Record<Language, TranslationDictionary> = {
     },
     gallery: {
       badge: 'VISUAL GALLERY',
-      title: 'Moments of Hotel Elegance',
+      title: 'Our Gallery',
       subtitle: 'Discover our welcoming corners, tasteful architecture, and warm atmosphere awaiting your arrival.',
       categories: {
         all: 'All Collections',
