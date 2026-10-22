@@ -40,6 +40,15 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     document.documentElement.lang = language;
+    if (language === 'en') {
+      document.title = 'IPB Convention Hotel - In the Heart of Bogor City';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', 'Official website of IPB Convention Hotel Bogor - In the Heart of Bogor, Close to Everything. Premier accommodation and convention center at Botani Square.');
+    } else {
+      document.title = 'IPB Convention Hotel - Di Jantung Kota Bogor';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', 'Website resmi IPB Convention Hotel Bogor - Di Jantung Kota Bogor, Dekat Segalanya. Pilihan akomodasi dan convention bergengsi di kawasan Botani Square.');
+    }
   }, [language]);
 
   return (

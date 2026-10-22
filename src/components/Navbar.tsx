@@ -51,7 +51,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
             </span>
             <a
               id="topbar-wa-link"
-              href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel`}
+              href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                language === 'en' ? 'Hello IPB Convention Hotel' : 'Halo IPB Convention Hotel'
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-[#C5A880] hover:text-[#e4caa5] font-medium transition-colors"
@@ -116,7 +118,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
                 onClick={toggleLanguage}
                 className="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 transition-all inline-flex items-center gap-1.5 shadow-xs cursor-pointer group"
                 title={t.navbar.switchLang}
-                aria-label="Ganti Bahasa (ID / EN)"
+                aria-label={language === 'en' ? 'Switch Language (ID / EN)' : 'Ganti Bahasa (ID / EN)'}
               >
                 <Globe className="w-3.5 h-3.5 text-[#C5A880] group-hover:rotate-12 transition-transform" />
                 <span className="inline-flex items-center gap-1 text-[11px] font-medium tracking-wide">
@@ -149,7 +151,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
               id="mobile-menu-trigger"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1E3A2B]/20"
-              aria-label="Toggle Navigation Menu"
+              aria-label={language === 'en' ? 'Toggle Navigation Menu' : 'Buka Menu Navigasi'}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -188,7 +190,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
                 <span>{t.navbar.call} {HOTEL_CONFIG.phones[0]}</span>
               </a>
               <a
-                href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20reservasi%20kamar`}
+                href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                  language === 'en'
+                    ? 'Hello IPB Convention Hotel, I would like to make a room reservation.'
+                    : 'Halo IPB Convention Hotel, saya ingin reservasi kamar.'
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 text-center text-sm font-semibold text-white bg-[#1E3A2B] rounded-xl flex items-center justify-center gap-2 shadow-sm"

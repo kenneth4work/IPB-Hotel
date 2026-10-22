@@ -364,10 +364,23 @@ export function generateWhatsAppBookingUrl(phone: string, roomType: string, pric
 
 export function generateWhatsAppInquiryUrl(
   phone: string,
-  data: { name: string; email: string; phone: string; subject: string; message: string; roomType?: string }
+  data: { name: string; email: string; phone: string; subject: string; message: string; roomType?: string },
+  language: 'id' | 'en' = 'id'
 ): string {
   const cleanPhone = phone.replace(/\D/g, '');
-  const lines = [
+  const lines = language === 'en' ? [
+    `*OFFICIAL INQUIRY FORM - IPB CONVENTION HOTEL*`,
+    `----------------------------------------`,
+    `*Full Name:* ${data.name}`,
+    `*Email:* ${data.email}`,
+    `*Phone Number:* ${data.phone}`,
+    `*Subject / Inquiry:* ${data.subject}${data.roomType ? ` (${data.roomType})` : ''}`,
+    `----------------------------------------`,
+    `*Message / Request:*`,
+    `${data.message}`,
+    `----------------------------------------`,
+    `Submitted via ipbconventionhotel.com`
+  ] : [
     `*FORMULIR PERTANYAAN RESMI - IPB CONVENTION HOTEL*`,
     `----------------------------------------`,
     `*Nama Lengkap:* ${data.name}`,

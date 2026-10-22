@@ -1,53 +1,69 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
-// Data kategori dan daftar tempat beserta jaraknya
+export interface LocationItem {
+  name: { id: string; en: string } | string;
+  distance: string;
+}
+
+// Data kategori dan daftar tempat beserta jaraknya dalam Bahasa Indonesia dan Bahasa Inggris
 export const locationData = {
   nearbyPlaces: [
-    { name: "Bogor Agricultural University", distance: "72 m" },
-    { name: "IPB International Convention Center", distance: "77 m" },
-    { name: "Kentucky Fried Chicken Pajajaran Bogor", distance: "96 m" },
-    { name: "Kujang Monument", distance: "105 m" },
-    { name: "Pool Bis Wisata Bogor", distance: "115 m" },
-    { name: "Botani Square Mall", distance: "125 m" },
-    { name: "Baranangsiang Terminal", distance: "292 m" },
-    { name: "Masjid Raya Bogor", distance: "654 m" },
-    { name: "Bogor Botanical Garden", distance: "677 m" },
-    { name: "Lippo Plaza Keboen Raya", distance: "711 m" },
+    { name: { id: "Institut Pertanian Bogor (IPB)", en: "Bogor Agricultural University (IPB)" }, distance: "72 m" },
+    { name: { id: "IPB International Convention Center", en: "IPB International Convention Center" }, distance: "77 m" },
+    { name: { id: "KFC Pajajaran Bogor", en: "Kentucky Fried Chicken Pajajaran Bogor" }, distance: "96 m" },
+    { name: { id: "Tugu Kujang", en: "Kujang Monument" }, distance: "105 m" },
+    { name: { id: "Pool Bis Wisata Bogor", en: "Bogor Tour Bus Terminal" }, distance: "115 m" },
+    { name: { id: "Mall Botani Square", en: "Botani Square Mall" }, distance: "125 m" },
+    { name: { id: "Terminal Baranangsiang", en: "Baranangsiang Terminal" }, distance: "292 m" },
+    { name: { id: "Masjid Raya Bogor", en: "Bogor Great Mosque" }, distance: "654 m" },
+    { name: { id: "Kebun Raya Bogor", en: "Bogor Botanical Garden" }, distance: "677 m" },
+    { name: { id: "Lippo Plaza Keboen Raya", en: "Lippo Plaza Keboen Raya" }, distance: "711 m" },
   ],
   transportation: [
-    { name: "Halim Perdanakusuma International Airport", distance: "38.44 km" },
-    { name: "Bogor Station", distance: "1.87 km" },
-    { name: "Baranangsiang Terminal", distance: "292 m" },
-    { name: "Batutulis Station", distance: "2.71 km" },
-    { name: "Pool Bis Wisata Bogor", distance: "115 m" },
-    { name: "Halte Bus Bogor Trade Mall", distance: "1.12 km" },
+    { name: { id: "Bandara Internasional Halim Perdanakusuma", en: "Halim Perdanakusuma International Airport" }, distance: "38.44 km" },
+    { name: { id: "Stasiun Bogor", en: "Bogor Railway Station" }, distance: "1.87 km" },
+    { name: { id: "Terminal Baranangsiang", en: "Baranangsiang Terminal" }, distance: "292 m" },
+    { name: { id: "Stasiun Batutulis", en: "Batutulis Railway Station" }, distance: "2.71 km" },
+    { name: { id: "Pool Bis Wisata Bogor", en: "Bogor Tour Bus Terminal" }, distance: "115 m" },
+    { name: { id: "Halte Bus Bogor Trade Mall", en: "Bogor Trade Mall Bus Stop" }, distance: "1.12 km" },
   ],
   entertainment: [
-    { name: "Bogor Botanical Garden", distance: "677 m" },
-    { name: "Alun-Alun Kota Bogor", distance: "1.78 km" },
-    { name: "Botani Square Mall", distance: "125 m" },
-    { name: "Bogor Trade Mall", distance: "1.13 km" },
-    { name: "Taman Sempur", distance: "1.27 km" },
+    { name: { id: "Kebun Raya Bogor", en: "Bogor Botanical Garden" }, distance: "677 m" },
+    { name: { id: "Alun-Alun Kota Bogor", en: "Bogor City Square" }, distance: "1.78 km" },
+    { name: { id: "Mall Botani Square", en: "Botani Square Mall" }, distance: "125 m" },
+    { name: { id: "Bogor Trade Mall (BTM)", en: "Bogor Trade Mall (BTM)" }, distance: "1.13 km" },
+    { name: { id: "Taman Sempur", en: "Sempur Park" }, distance: "1.27 km" },
   ],
   others: [
-    { name: "IPB International Convention Center", distance: "77 m" },
-    { name: "Bogor Agricultural University", distance: "72 m" },
-    { name: "Masjid Raya Bogor", distance: "654 m" },
-    { name: "Kantor Pos Bogor Sukasari", distance: "2.11 km" },
-    { name: "SDN Cikaret 2", distance: "2.87 km" },
+    { name: { id: "IPB International Convention Center", en: "IPB International Convention Center" }, distance: "77 m" },
+    { name: { id: "Institut Pertanian Bogor (IPB)", en: "Bogor Agricultural University (IPB)" }, distance: "72 m" },
+    { name: { id: "Masjid Raya Bogor", en: "Bogor Great Mosque" }, distance: "654 m" },
+    { name: { id: "Kantor Pos Bogor Sukasari", en: "Bogor Sukasari Post Office" }, distance: "2.11 km" },
+    { name: { id: "SDN Cikaret 2", en: "SDN Cikaret 2 Elementary School" }, distance: "2.87 km" },
   ]
 };
 
 export default function SimpleLocationList() {
+  const { language, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filterItems = (items: { name: string; distance: string }[]) => {
+  const getItemName = (item: LocationItem): string => {
+    if (typeof item.name === 'string') return item.name;
+    return language === 'en' ? item.name.en : item.name.id;
+  };
+
+  const filterItems = (items: LocationItem[]) => {
     if (!searchTerm.trim()) return items;
-    return items.filter(item => 
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.distance.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const term = searchTerm.toLowerCase();
+    return items.filter(item => {
+      const name = getItemName(item).toLowerCase();
+      const rawNameId = typeof item.name === 'object' ? item.name.id.toLowerCase() : '';
+      const rawNameEn = typeof item.name === 'object' ? item.name.en.toLowerCase() : '';
+      const dist = item.distance.toLowerCase();
+      return name.includes(term) || rawNameId.includes(term) || rawNameEn.includes(term) || dist.includes(term);
+    });
   };
 
   const filteredNearby = filterItems(locationData.nearbyPlaces);
@@ -64,18 +80,18 @@ export default function SimpleLocationList() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-bold text-[#A8865B] uppercase tracking-wider">
-              What's Around
+              {t.location.whatsAroundTag}
             </span>
             <span className="text-xs text-slate-400">·</span>
             <span className="text-xs text-slate-500 font-medium">
-              Bogor Tengah, Jawa Barat
+              {t.location.areaTag}
             </span>
           </div>
           <h3 className="font-serif text-2xl sm:text-3xl font-bold text-gray-900">
-            Tempat Penting Sekitar Hotel
+            {t.location.listTitle}
           </h3>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Jarak dihitung dari titik utama IPB Convention Hotel Bogor.
+            {t.location.listSubtitle}
           </p>
         </div>
 
@@ -86,16 +102,16 @@ export default function SimpleLocationList() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Cari tempat atau jarak..."
+            placeholder={t.location.searchPlaceholder}
             className="w-full pl-10 pr-4 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-xs sm:text-sm text-gray-800 rounded-xl border border-gray-200 focus:border-[#C5A880] focus:ring-2 focus:ring-[#C5A880]/20 outline-hidden transition-all placeholder:text-gray-400"
           />
           {searchTerm && (
             <button
               type="button"
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 cursor-pointer font-medium"
             >
-              Clear
+              {t.location.clearSearch}
             </button>
           )}
         </div>
@@ -104,14 +120,14 @@ export default function SimpleLocationList() {
       {totalResults === 0 ? (
         <div className="py-12 text-center">
           <p className="text-sm text-gray-500 font-medium">
-            Tidak ada tempat yang cocok dengan "{searchTerm}"
+            {t.location.noResultsText} "{searchTerm}"
           </p>
           <button
             type="button"
             onClick={() => setSearchTerm('')}
-            className="mt-2 text-xs text-[#1E3A2B] font-bold underline"
+            className="mt-2 text-xs text-[#1E3A2B] font-bold underline cursor-pointer"
           >
-            Reset pencarian
+            {t.location.resetSearch}
           </button>
         </div>
       ) : (
@@ -126,10 +142,12 @@ export default function SimpleLocationList() {
                   <span className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-sm shadow-xs shrink-0">
                     📍
                   </span>
-                  <h4 className="text-base font-bold text-slate-900 tracking-tight">Nearby Places</h4>
+                  <h4 className="text-base font-bold text-slate-900 tracking-tight">
+                    {t.location.nearbyPlaces}
+                  </h4>
                 </div>
                 <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200/60">
-                  {filteredNearby.length} tempat
+                  {filteredNearby.length} {t.location.placesCount}
                 </span>
               </div>
               <ul className="space-y-1 flex-1 divide-y divide-slate-100/80">
@@ -139,7 +157,7 @@ export default function SimpleLocationList() {
                     className="flex justify-between items-center py-2 px-2 hover:bg-slate-50/80 rounded-lg transition-colors group"
                   >
                     <span className="text-slate-700 group-hover:text-slate-900 font-medium pr-2 text-xs sm:text-[13px] leading-snug">
-                      {item.name}
+                      {getItemName(item)}
                     </span>
                     <span className="text-slate-600 font-mono text-xs font-semibold whitespace-nowrap bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60 shadow-2xs shrink-0">
                       {item.distance}
@@ -160,10 +178,12 @@ export default function SimpleLocationList() {
                     <span className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-sm shadow-xs shrink-0">
                       🚗
                     </span>
-                    <h4 className="text-base font-bold text-slate-900 tracking-tight">Transportation Hub</h4>
+                    <h4 className="text-base font-bold text-slate-900 tracking-tight">
+                      {t.location.transportHub}
+                    </h4>
                   </div>
                   <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200/60">
-                    {filteredTransport.length} rute
+                    {filteredTransport.length} {t.location.routesCount}
                   </span>
                 </div>
                 <ul className="space-y-1 divide-y divide-slate-100/80">
@@ -173,7 +193,7 @@ export default function SimpleLocationList() {
                       className="flex justify-between items-center py-2 px-2 hover:bg-slate-50/80 rounded-lg transition-colors group"
                     >
                       <span className="text-slate-700 group-hover:text-slate-900 font-medium pr-2 text-xs sm:text-[13px] leading-snug">
-                        {item.name}
+                        {getItemName(item)}
                       </span>
                       <span className="text-slate-600 font-mono text-xs font-semibold whitespace-nowrap bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60 shadow-2xs shrink-0">
                         {item.distance}
@@ -192,10 +212,12 @@ export default function SimpleLocationList() {
                     <span className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-sm shadow-xs shrink-0">
                       🎡
                     </span>
-                    <h4 className="text-base font-bold text-slate-900 tracking-tight">Entertainment/Attraction</h4>
+                    <h4 className="text-base font-bold text-slate-900 tracking-tight">
+                      {t.location.entertainment}
+                    </h4>
                   </div>
                   <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200/60">
-                    {filteredEntertainment.length} tempat
+                    {filteredEntertainment.length} {t.location.attractionsCount}
                   </span>
                 </div>
                 <ul className="space-y-1 divide-y divide-slate-100/80">
@@ -205,7 +227,7 @@ export default function SimpleLocationList() {
                       className="flex justify-between items-center py-2 px-2 hover:bg-slate-50/80 rounded-lg transition-colors group"
                     >
                       <span className="text-slate-700 group-hover:text-slate-900 font-medium pr-2 text-xs sm:text-[13px] leading-snug">
-                        {item.name}
+                        {getItemName(item)}
                       </span>
                       <span className="text-slate-600 font-mono text-xs font-semibold whitespace-nowrap bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60 shadow-2xs shrink-0">
                         {item.distance}
@@ -226,10 +248,12 @@ export default function SimpleLocationList() {
                     <span className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-sm shadow-xs shrink-0">
                       🏛️
                     </span>
-                    <h4 className="text-base font-bold text-slate-900 tracking-tight">Public Facilities & Others</h4>
+                    <h4 className="text-base font-bold text-slate-900 tracking-tight">
+                      {t.location.publicFacilities}
+                    </h4>
                   </div>
                   <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full border border-slate-200/60">
-                    {filteredOthers.length} fasilitas
+                    {filteredOthers.length} {t.location.facilitiesCount}
                   </span>
                 </div>
                 <ul className="space-y-1 divide-y divide-slate-100/80">
@@ -239,7 +263,7 @@ export default function SimpleLocationList() {
                       className="flex justify-between items-center py-2 px-2 hover:bg-slate-50/80 rounded-lg transition-colors group"
                     >
                       <span className="text-slate-700 group-hover:text-slate-900 font-medium pr-2 text-xs sm:text-[13px] leading-snug">
-                        {item.name}
+                        {getItemName(item)}
                       </span>
                       <span className="text-slate-600 font-mono text-xs font-semibold whitespace-nowrap bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60 shadow-2xs shrink-0">
                         {item.distance}
@@ -253,10 +277,10 @@ export default function SimpleLocationList() {
               <div className="mt-6 pt-4 border-t border-slate-100 bg-[#FDFBF7] p-3.5 rounded-xl border border-[#E7D6C1]/60">
                 <div className="flex items-center gap-2 font-bold text-slate-800 text-xs mb-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <span>Pusat Mobilitas & Bisnis Bogor</span>
+                  <span>{t.location.mobilityTitle}</span>
                 </div>
                 <p className="text-[11px] text-slate-500 leading-relaxed">
-                  Akses terhubung langsung ke Mall Botani Square, Terminal DAMRI Bandara, dan gerbang Tol Jagorawi untuk kenyamanan kunjungan Anda.
+                  {t.location.mobilityDesc}
                 </p>
               </div>
             </div>

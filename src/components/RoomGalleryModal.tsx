@@ -17,7 +17,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
   onClose,
   onBookNow
 }) => {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const total = room.images.length;
   const touchStartXRef = useRef<number | null>(null);
@@ -74,7 +74,9 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
   const translatedBadge = t.rooms.badges[room.id] || room.badge;
 
   const waBookingUrl = `https://wa.me/628111330659?text=${encodeURIComponent(
-    `Halo IPB Convention Hotel, saya ingin memesan ${room.name} seharga ${displayPrice}/malam.`
+    language === 'en'
+      ? `Hello IPB Convention Hotel, I would like to book the ${room.name} at ${displayPrice}/night.`
+      : `Halo IPB Convention Hotel, saya ingin memesan ${room.name} seharga ${displayPrice}/malam.`
   )}`;
 
   return (

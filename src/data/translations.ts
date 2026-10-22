@@ -97,6 +97,26 @@ export interface TranslationDictionary {
     mapComplexTitle: string;
     mapBotanicalTag: string;
     directionsHint: string;
+    mapBadge: string;
+    directionsBtn: string;
+    whatsAroundTag: string;
+    areaTag: string;
+    listTitle: string;
+    listSubtitle: string;
+    searchPlaceholder: string;
+    clearSearch: string;
+    noResultsText: string;
+    resetSearch: string;
+    nearbyPlaces: string;
+    transportHub: string;
+    entertainment: string;
+    publicFacilities: string;
+    placesCount: string;
+    routesCount: string;
+    attractionsCount: string;
+    facilitiesCount: string;
+    mobilityTitle: string;
+    mobilityDesc: string;
     landmarks: Record<string, { name: string; time: string; desc: string }>;
   };
   reviews: {
@@ -382,6 +402,26 @@ export const translations: Record<Language, TranslationDictionary> = {
       mapComplexTitle: 'Kawasan Mall Botani Square & IICC',
       mapBotanicalTag: '🌿 5 Menit ke Kebun Raya Bogor',
       directionsHint: 'Dapatkan petunjuk rute navigasi instan menggunakan Google Maps / Waze.',
+      mapBadge: '1 Menit ke Mall & Terminal DAMRI',
+      directionsBtn: 'Petunjuk Arah',
+      whatsAroundTag: "Tempat Sekitar",
+      areaTag: 'Bogor Tengah, Jawa Barat',
+      listTitle: 'Tempat Penting Sekitar Hotel',
+      listSubtitle: 'Jarak dihitung dari titik utama IPB Convention Hotel Bogor.',
+      searchPlaceholder: 'Cari tempat atau jarak...',
+      clearSearch: 'Hapus',
+      noResultsText: 'Tidak ada tempat yang cocok dengan',
+      resetSearch: 'Reset pencarian',
+      nearbyPlaces: 'Tempat Terdekat',
+      transportHub: 'Pusat Transportasi',
+      entertainment: 'Wisata & Hiburan',
+      publicFacilities: 'Fasilitas Umum & Lainnya',
+      placesCount: 'tempat',
+      routesCount: 'rute',
+      attractionsCount: 'tempat',
+      facilitiesCount: 'fasilitas',
+      mobilityTitle: 'Pusat Mobilitas & Bisnis Bogor',
+      mobilityDesc: 'Akses terhubung langsung ke Mall Botani Square, Terminal DAMRI Bandara, dan gerbang Tol Jagorawi untuk kenyamanan kunjungan Anda.',
       landmarks: {
         'Mall Botani Square': {
           name: 'Mall Botani Square',
@@ -704,6 +744,26 @@ export const translations: Record<Language, TranslationDictionary> = {
       mapComplexTitle: 'Botani Square Mall & IICC Complex',
       mapBotanicalTag: '🌿 5 Mins to Bogor Botanical Gardens',
       directionsHint: 'Get instant turn-by-turn navigation directions via Google Maps or Waze.',
+      mapBadge: '1 Min to Mall & DAMRI Terminal',
+      directionsBtn: 'Get Directions',
+      whatsAroundTag: "What's Around",
+      areaTag: 'Central Bogor, West Java',
+      listTitle: 'Key Locations Around Hotel',
+      listSubtitle: 'Distances calculated from IPB Convention Hotel Bogor.',
+      searchPlaceholder: 'Search place or distance...',
+      clearSearch: 'Clear',
+      noResultsText: 'No places found matching',
+      resetSearch: 'Reset search',
+      nearbyPlaces: 'Nearby Places',
+      transportHub: 'Transportation Hub',
+      entertainment: 'Entertainment & Attractions',
+      publicFacilities: 'Public Facilities & Others',
+      placesCount: 'places',
+      routesCount: 'routes',
+      attractionsCount: 'attractions',
+      facilitiesCount: 'facilities',
+      mobilityTitle: 'Bogor Prime Mobility & Business Hub',
+      mobilityDesc: 'Directly connected to Botani Square Mall, Airport DAMRI Bus Terminal, and Jagorawi Toll Gate for optimal travel convenience.',
       landmarks: {
         'Mall Botani Square': {
           name: 'Botani Square Mall',

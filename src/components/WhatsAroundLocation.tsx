@@ -1,17 +1,23 @@
 import React from 'react';
 import { Footprints, Navigation } from 'lucide-react';
 import SimpleLocationList, { locationData } from './SimpleLocationList';
+import { useLanguage } from '../context/LanguageContext';
 
 export { locationData, SimpleLocationList };
 
 export const WhatsAroundLocation: React.FC = () => {
+  const { language, t } = useLanguage();
+
   // Exact Coordinates for IPB Convention Hotel Botani Square Bogor from official Google Maps pin
   const coordinates = {
     lat: -6.6019596,
     lng: 106.8065591,
   };
 
-  const googleMapsPlaceUrl = "https://www.google.com/maps/place/IPB+Convention+Hotel+Botani+Square/@-6.6019596,106.8065591,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69c5db56e8b071:0xc345ddc97086540e!8m2!3d-6.6019596!4d106.8065591";
+  const sectionTitle = language === 'en' ? 'In the Heart of Bogor, Close to Everything' : 'Di Jantung Kota Bogor, Dekat Segalanya';
+  const sectionSubtitle = language === 'en'
+    ? 'Directly connected to Botani Square Mall and Jagorawi Toll Gate. Explore effortless access to iconic landmarks, transit hubs, and popular destinations in Bogor.'
+    : 'Terhubung langsung dengan Mall Botani Square dan pintu Tol Jagorawi. Jelajahi kemudahan akses ke berbagai ikon wisata, pusat transportasi, dan destinasi menarik Kota Bogor.';
 
   return (
     <section id="lokasi" className="py-16 sm:py-24 bg-[#FDFBF7] relative scroll-mt-24">
@@ -20,11 +26,11 @@ export const WhatsAroundLocation: React.FC = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
-            Di Jantung Kota Bogor, Dekat Segalanya
+            {sectionTitle}
           </h2>
           <div className="w-16 h-0.5 bg-[#C5A880] mx-auto mb-4" />
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Terhubung langsung dengan Mall Botani Square dan pintu Tol Jagorawi. Jelajahi kemudahan akses ke berbagai ikon wisata, pusat transportasi, dan destinasi menarik Kota Bogor.
+            {sectionSubtitle}
           </p>
         </div>
 
@@ -33,7 +39,7 @@ export const WhatsAroundLocation: React.FC = () => {
           <div className="relative w-full h-80 sm:h-96 lg:h-[440px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
             {/* Interactive Centered Google Maps Iframe */}
             <iframe
-              title="Google Maps Lokasi IPB Convention Hotel Botani Square"
+              title={language === 'en' ? 'Google Maps Location of IPB Convention Hotel Botani Square' : 'Google Maps Lokasi IPB Convention Hotel Botani Square'}
               src={`https://maps.google.com/maps?q=${coordinates.lat},${coordinates.lng}+(IPB+Convention+Hotel+Botani+Square)&t=&z=17&ie=UTF8&iwloc=B&output=embed`}
               className="w-full h-full border-0"
               loading="lazy"
@@ -52,19 +58,11 @@ export const WhatsAroundLocation: React.FC = () => {
             {/* Floating Info Badge on Map Top Right */}
             <div className="absolute top-3 right-3 hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md pointer-events-none text-[11px] font-semibold text-slate-700">
               <Footprints className="w-3.5 h-3.5 text-emerald-600" />
-              <span>1 Menit ke Mall & Terminal DAMRI</span>
+              <span>{t.location.mapBadge}</span>
             </div>
 
-            {/* Bottom Floating Buttons: Direction & Open in Google Maps */}
-            <div className="absolute bottom-3 right-3 flex items-center gap-2">
-              <a
-                href={googleMapsPlaceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 bg-white/95 hover:bg-white text-slate-900 text-xs font-bold rounded-xl shadow-lg border border-slate-200 backdrop-blur-sm transition-all hover:scale-105 active:scale-95"
-              >
-                <span>Buka Pin Maps</span>
-              </a>
+            {/* Bottom Floating Direction Button */}
+            <div className="absolute bottom-3 right-3">
               <a
                 href={`https://www.google.com/maps/dir/?api=1&destination=${coordinates.lat},${coordinates.lng}`}
                 target="_blank"
@@ -72,7 +70,7 @@ export const WhatsAroundLocation: React.FC = () => {
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-900/90 hover:bg-slate-950 backdrop-blur-sm text-white text-xs font-bold rounded-xl shadow-lg border border-white/20 transition-all hover:scale-105 active:scale-95"
               >
                 <Navigation className="w-3.5 h-3.5 text-[#C5A880]" />
-                <span>Petunjuk Arah</span>
+                <span>{t.location.directionsBtn}</span>
               </a>
             </div>
           </div>

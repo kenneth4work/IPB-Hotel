@@ -48,37 +48,41 @@ export const HeroSection: React.FC = () => {
             </a>
             <a
               id="hero-whatsapp-booking-button"
-              href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20reservasi%20kamar`}
+              href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                language === 'en'
+                  ? 'Hello IPB Convention Hotel, I would like to make a room reservation.'
+                  : 'Halo IPB Convention Hotel, saya ingin reservasi kamar.'
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold uppercase tracking-widest rounded-xl transition-all border border-white/20 backdrop-blur-sm flex items-center justify-center gap-2 hover:-translate-y-0.5"
+              className="w-full sm:w-auto px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all border border-white/20 backdrop-blur-sm flex items-center justify-center gap-2 hover:-translate-y-0.5 shadow-sm"
             >
               <MessageCircle className="w-4 h-4 text-[#25D366]" />
               <span>{t.hero.ctaWa}</span>
             </a>
           </div>
 
-          {/* Key Quick Highlight Badges */}
+          {/* Key Quick Highlight Badges - Disamakan dengan gaya tombol Booking via WhatsApp */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
-            <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
+            <div className="bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-sm p-4 rounded-xl transition-all hover:-translate-y-0.5 shadow-sm">
               <Building2 className="w-5 h-5 text-[#C5A880] mb-2" />
               <div className="font-semibold text-white text-sm">{t.hero.stats.roomsTitle}</div>
-              <div className="text-xs text-slate-400">{t.hero.stats.roomsDesc}</div>
+              <div className="text-xs text-slate-300 font-light">{t.hero.stats.roomsDesc}</div>
             </div>
-            <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
+            <div className="bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-sm p-4 rounded-xl transition-all hover:-translate-y-0.5 shadow-sm">
               <MapPin className="w-5 h-5 text-[#C5A880] mb-2" />
               <div className="font-semibold text-white text-sm">{t.hero.stats.locationTitle}</div>
-              <div className="text-xs text-slate-400">{t.hero.stats.locationDesc}</div>
+              <div className="text-xs text-slate-300 font-light">{t.hero.stats.locationDesc}</div>
             </div>
-            <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
+            <div className="bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-sm p-4 rounded-xl transition-all hover:-translate-y-0.5 shadow-sm">
               <ShieldCheck className="w-5 h-5 text-[#C5A880] mb-2" />
               <div className="font-semibold text-white text-sm">{t.hero.stats.miceTitle}</div>
-              <div className="text-xs text-slate-400">{t.hero.stats.miceDesc}</div>
+              <div className="text-xs text-slate-300 font-light">{t.hero.stats.miceDesc}</div>
             </div>
-            <div className="bg-slate-900/60 border border-slate-800 backdrop-blur-sm p-4 rounded-xl">
+            <div className="bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-sm p-4 rounded-xl transition-all hover:-translate-y-0.5 shadow-sm">
               <Sparkles className="w-5 h-5 text-[#C5A880] mb-2" />
               <div className="font-semibold text-white text-sm">{t.hero.stats.checkinTitle}</div>
-              <div className="text-xs text-slate-400">{t.hero.stats.checkinDesc}</div>
+              <div className="text-xs text-slate-300 font-light">{t.hero.stats.checkinDesc}</div>
             </div>
           </div>
         </div>

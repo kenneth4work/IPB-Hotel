@@ -55,7 +55,7 @@ export const ContactAndInquiry: React.FC = () => {
     setErrorMessage('');
 
     // Prepare WhatsApp URL fallback
-    const waUrl = generateWhatsAppInquiryUrl(HOTEL_CONFIG.whatsappNumber, formData);
+    const waUrl = generateWhatsAppInquiryUrl(HOTEL_CONFIG.whatsappNumber, formData, language);
     setWhatsappUrlResult(waUrl);
 
     // Simulate reliable dispatch
@@ -209,7 +209,11 @@ export const ContactAndInquiry: React.FC = () => {
                 </p>
               </div>
               <a
-                href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20bertanya`}
+                href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                  language === 'en'
+                    ? 'Hello IPB Convention Hotel, I have an inquiry.'
+                    : 'Halo IPB Convention Hotel, saya ingin bertanya.'
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
@@ -307,7 +311,7 @@ export const ContactAndInquiry: React.FC = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
-                        placeholder="contoh@email.com"
+                        placeholder={language === 'en' ? 'name@example.com' : 'contoh@email.com'}
                         required
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white"
                       />
@@ -324,7 +328,7 @@ export const ContactAndInquiry: React.FC = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="0812xxxxxxx"
+                        placeholder={language === 'en' ? '+62 812xxxxxxx' : '0812xxxxxxx'}
                         required
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white"
                       />

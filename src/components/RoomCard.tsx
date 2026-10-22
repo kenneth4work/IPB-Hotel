@@ -12,7 +12,7 @@ export interface RoomCardProps {
 }
 
 export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const [currentIdx, setCurrentIdx] = useState(0);
   const imagesList = room.images && room.images.length > 0 ? room.images : [];
   
@@ -106,7 +106,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         <img
           key={currentImgSrc}
           src={currentImgSrc}
-          alt={`${room.name} - Foto ${currentIdx + 1}`}
+          alt={language === 'en' ? `${room.name} - Photo ${currentIdx + 1}` : `${room.name} - Foto ${currentIdx + 1}`}
           loading="lazy"
           onError={(e) => {
             const fallback = IMGBB_DIRECT_MAP[activePhoto] || getRoomImageUrl(imagesList[currentIdx]);
@@ -174,7 +174,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
                 <button
                   key={idx}
                   type="button"
-                  aria-label={`Slide foto ke-${idx + 1}`}
+                  aria-label={language === 'en' ? `Photo slide ${idx + 1}` : `Slide foto ke-${idx + 1}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     setCurrentIdx(idx);
@@ -193,7 +193,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         {/* Jika hanya 1 foto, tampilkan badge 1 Foto */}
         {imagesList.length === 1 && (
           <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-medium px-2 py-0.5 rounded-md border border-white/20 pointer-events-none z-10">
-            1 Foto
+            {language === 'en' ? '1 Photo' : '1 Foto'}
           </span>
         )}
       </div>
@@ -247,7 +247,11 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
             )}
             <a
               id={`btn-book-${room.id}`}
-              href={`https://wa.me/628111330659?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20memesan%20${encodeURIComponent(room.name)}`}
+              href={`https://wa.me/628111330659?text=${encodeURIComponent(
+                language === 'en'
+                  ? `Hello IPB Convention Hotel, I would like to book the ${room.name}`
+                  : `Halo IPB Convention Hotel, saya ingin memesan ${room.name}`
+              )}`}
               target="_blank"
               rel="noreferrer"
               className="w-full bg-[#1B3D2F] hover:bg-[#142e23] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
