@@ -53,7 +53,7 @@ export const SpecialOfferBanner: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
             id="banner-book-now-button"
-            href="#kamar"
+            href="#reservasi"
             className="w-full sm:w-auto px-8 py-4 bg-[#C5A880] hover:bg-[#b59870] text-slate-950 text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 flex items-center justify-center gap-2 border border-[#EFE4D2]/40"
           >
             <Calendar className="w-4 h-4" />

@@ -23,6 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
 
   const navLinks = [
     { label: t.navbar.rooms, href: '#kamar' },
+    { label: language === 'en' ? 'Reservation' : 'Reservasi', href: '#reservasi' },
     { label: t.navbar.gallery, href: '#galeri' },
     { label: t.navbar.location, href: '#lokasi' },
     { label: t.navbar.reviews, href: '#ulasan' },
@@ -138,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSelectRoomBooking }) => {
               </a>
               <a
                 id="nav-book-now-button"
-                href="#kamar"
+                href="#reservasi"
                 className="px-4.5 sm:px-5 py-2.5 bg-[#1E3A2B] hover:bg-[#13261C] text-white text-xs font-semibold uppercase tracking-wider rounded-xl transition-all shadow-sm hover:shadow hover:-translate-y-0.5 border border-[#C5A880]/40 flex items-center gap-1.5"
               >
                 <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />

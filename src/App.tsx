@@ -3,6 +3,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
 import { RoomShowcase } from './components/RoomShowcase';
+import { ReservationFormSection } from './components/ReservationFormSection';
 import { HotelGallery } from './components/HotelGallery';
 import { StrategicLocation } from './components/StrategicLocation';
 import { GuestReviews } from './components/GuestReviews';
@@ -24,6 +25,9 @@ export default function App() {
 
           {/* Section A: Header & Room Showcase Section (4-Column Luxury Grid) */}
           <RoomShowcase />
+
+          {/* Section A2: Online Room Reservation Form Feature */}
+          <ReservationFormSection />
 
           {/* Section B: Hotel Gallery Grid ("Potret Keindahan Hotel Kami") */}
           <HotelGallery />

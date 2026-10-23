@@ -220,6 +220,78 @@ export interface TranslationDictionary {
     quickBook: string;
     defaultCapacity: string;
   };
+  reservation: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    step1Title: string;
+    step1Desc: string;
+    step2Title: string;
+    step2Desc: string;
+    step3Title: string;
+    step3Desc: string;
+    checkInLabel: string;
+    checkOutLabel: string;
+    durationLabel: string;
+    nightSingular: string;
+    nightPlural: string;
+    guestsLabel: string;
+    roomsLabel: string;
+    adultsSuffix: string;
+    roomsSuffix: string;
+    selectRoomCard: string;
+    selectRoomDropdown: string;
+    selectedBadge: string;
+    fullNameLabel: string;
+    fullNamePlaceholder: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    emailError: string;
+    phoneLabel: string;
+    phonePlaceholder: string;
+    phoneError: string;
+    specialRequestLabel: string;
+    specialRequestPlaceholder: string;
+    summaryTitle: string;
+    summarySubtitle: string;
+    roomTypeLabel: string;
+    ratePerNight: string;
+    totalStay: string;
+    totalNights: string;
+    taxServiceLabel: string;
+    taxServiceIncluded: string;
+    totalEstimate: string;
+    btnSubmit: string;
+    submitting: string;
+    guaranteeText: string;
+    successTitle: string;
+    successSubtitle: string;
+    bookingCodeLabel: string;
+    guestNameLabel: string;
+    bookingDetails: string;
+    forwardWaBtn: string;
+    makeNewBooking: string;
+    validationAlert: string;
+    bedPreferenceTitle: string;
+    bedPreferenceDesc: string;
+    bedTypeLabel: string;
+    queenBedTitle: string;
+    queenBedDesc: string;
+    kingBedTitle: string;
+    kingBedDesc: string;
+    twinBedTitle: string;
+    twinBedDesc: string;
+    breakfastOptionTitle: string;
+    breakfastOptionDesc: string;
+    breakfastLabel: string;
+    withBreakfastTitle: string;
+    withBreakfastDesc: string;
+    withBreakfastBadge: string;
+    roomOnlyTitle: string;
+    roomOnlyDesc: string;
+    roomOnlyBadge: string;
+    breakfastPerPaxRate: string;
+  };
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -563,6 +635,78 @@ export const translations: Record<Language, TranslationDictionary> = {
       roomSizeLabel: 'Ukuran Kamar:',
       quickBook: 'Pesan',
       defaultCapacity: '2 Dewasa'
+    },
+    reservation: {
+      badge: 'RESERVASI ONLINE RESMI',
+      title: 'Formulir Reservasi Kamar',
+      subtitle: 'Pesan kamar idaman Anda dengan mudah, aman, dan dapatkan garansi tarif langsung terbaik di IPB Convention Hotel Bogor.',
+      step1Title: '1. Jadwal Menginap & Tamu',
+      step1Desc: 'Pilih tanggal Check-in dan Check-out Anda',
+      step2Title: '2. Pilihan Tipe Kamar',
+      step2Desc: 'Pilih tipe kamar yang sesuai kebutuhan Anda',
+      step3Title: '3. Data Kontak Tamu',
+      step3Desc: 'Informasi untuk konfirmasi dan voucher pemesanan',
+      checkInLabel: 'Tanggal Check-in',
+      checkOutLabel: 'Tanggal Check-out',
+      durationLabel: 'Durasi Menginap',
+      nightSingular: 'Malam',
+      nightPlural: 'Malam',
+      guestsLabel: 'Jumlah Tamu',
+      roomsLabel: 'Jumlah Kamar',
+      adultsSuffix: 'Tamu',
+      roomsSuffix: 'Kamar',
+      selectRoomCard: 'Pilih Kamar Ini',
+      selectRoomDropdown: 'Pilih Tipe Kamar (Dropdown)',
+      selectedBadge: 'Dipilih',
+      fullNameLabel: 'Nama Lengkap',
+      fullNamePlaceholder: 'cth. Budi Pratama',
+      emailLabel: 'Alamat Email',
+      emailPlaceholder: 'cth. budi@gmail.com',
+      emailError: 'Format email tidak valid (contoh: nama@domain.com)',
+      phoneLabel: 'Nomor WhatsApp',
+      phonePlaceholder: 'cth. 08123456789 atau +62812xxxx',
+      phoneError: 'Nomor WhatsApp tidak valid (minimal 9 digit angka)',
+      specialRequestLabel: 'Permintaan Khusus (Opsional)',
+      specialRequestPlaceholder: 'cth. Lantai tinggi, non-smoking, twin bed...',
+      summaryTitle: 'Ringkasan Pemesanan',
+      summarySubtitle: 'Rincian estimasi biaya secara real-time',
+      roomTypeLabel: 'Tipe Kamar',
+      ratePerNight: 'Tarif per Malam',
+      totalStay: 'Durasi Menginap',
+      totalNights: 'Malam',
+      taxServiceLabel: 'Pajak & Biaya Layanan',
+      taxServiceIncluded: 'Termasuk (Nett)',
+      totalEstimate: 'Estimasi Total Biaya',
+      btnSubmit: 'Pesan Sekarang',
+      submitting: 'Memproses Reservasi...',
+      guaranteeText: 'Konfirmasi instan & fleksibel. Tim reservasi kami siap membantu via WhatsApp resmi.',
+      successTitle: 'Reservasi Berhasil Diajukan!',
+      successSubtitle: 'Detail reservasi kamar Anda telah tercatat. Silakan lanjutkan konfirmasi ke WhatsApp untuk proses check-in cepat.',
+      bookingCodeLabel: 'Kode Booking:',
+      guestNameLabel: 'Nama Tamu:',
+      bookingDetails: 'Rincian Reservasi:',
+      forwardWaBtn: 'Lanjutkan Konfirmasi via WhatsApp',
+      makeNewBooking: 'Buat Reservasi Baru',
+      validationAlert: 'Mohon lengkapi dan periksa kembali data formulir yang belum sesuai.',
+      bedPreferenceTitle: 'Pilihan Tipe Tempat Tidur',
+      bedPreferenceDesc: 'Pilih konfigurasi kasur yang Anda inginkan untuk kenyamanan menginap Anda',
+      bedTypeLabel: 'Tipe Kasur',
+      queenBedTitle: 'Queen Bed',
+      queenBedDesc: '1 Kasur Queen (160×200 cm) nyaman untuk 2 orang',
+      kingBedTitle: 'King Bed',
+      kingBedDesc: '1 Kasur King ekstra luas (180/200×200 cm)',
+      twinBedTitle: 'Twin Bed',
+      twinBedDesc: '2 Kasur Single terpisah (100×200 cm)',
+      breakfastOptionTitle: 'Opsi Sarapan',
+      breakfastOptionDesc: 'Pilihan paket sarapan buffet di Restoran Nusantara Hotel',
+      breakfastLabel: 'Paket Sarapan',
+      withBreakfastTitle: 'Termasuk Sarapan Buffet',
+      withBreakfastDesc: 'Sarapan prasmanan lezat untuk seluruh tamu setiap pagi',
+      withBreakfastBadge: 'Rekomendasi',
+      roomOnlyTitle: 'Hanya Kamar (Room Only)',
+      roomOnlyDesc: 'Akomodasi tanpa paket sarapan',
+      roomOnlyBadge: 'Tarif Dasar',
+      breakfastPerPaxRate: '+Rp 75.000 / orang / malam'
     }
   },
   en: {
@@ -905,6 +1049,78 @@ export const translations: Record<Language, TranslationDictionary> = {
       roomSizeLabel: 'Room Size:',
       quickBook: 'Book',
       defaultCapacity: '2 Adults'
+    },
+    reservation: {
+      badge: 'OFFICIAL ONLINE RESERVATION',
+      title: 'Room Reservation Form',
+      subtitle: 'Book your preferred room easily, securely, and enjoy the guaranteed best direct rates at IPB Convention Hotel Bogor.',
+      step1Title: '1. Stay Dates & Guests',
+      step1Desc: 'Select your Check-in and Check-out dates',
+      step2Title: '2. Select Room Type',
+      step2Desc: 'Choose the room category that best fits your stay',
+      step3Title: '3. Guest Contact Details',
+      step3Desc: 'Information for reservation confirmation and voucher',
+      checkInLabel: 'Check-in Date',
+      checkOutLabel: 'Check-out Date',
+      durationLabel: 'Duration of Stay',
+      nightSingular: 'Night',
+      nightPlural: 'Nights',
+      guestsLabel: 'Number of Guests',
+      roomsLabel: 'Number of Rooms',
+      adultsSuffix: 'Guests',
+      roomsSuffix: 'Rooms',
+      selectRoomCard: 'Select This Room',
+      selectRoomDropdown: 'Select Room Type (Dropdown)',
+      selectedBadge: 'Selected',
+      fullNameLabel: 'Full Name',
+      fullNamePlaceholder: 'e.g. John Doe',
+      emailLabel: 'Email Address',
+      emailPlaceholder: 'e.g. johndoe@gmail.com',
+      emailError: 'Invalid email address format (example: name@domain.com)',
+      phoneLabel: 'WhatsApp / Phone Number',
+      phonePlaceholder: 'e.g. 08123456789 or +62812xxxx',
+      phoneError: 'Invalid WhatsApp number (minimum 9 digits)',
+      specialRequestLabel: 'Special Requests (Optional)',
+      specialRequestPlaceholder: 'e.g. High floor, non-smoking, twin beds, early check-in...',
+      summaryTitle: 'Booking Summary',
+      summarySubtitle: 'Real-time estimated cost breakdown',
+      roomTypeLabel: 'Room Type',
+      ratePerNight: 'Nightly Rate',
+      totalStay: 'Duration of Stay',
+      totalNights: 'Nights',
+      taxServiceLabel: 'Taxes & Service Charge',
+      taxServiceIncluded: 'Included (Nett)',
+      totalEstimate: 'Estimated Total Price',
+      btnSubmit: 'Book Now',
+      submitting: 'Processing Reservation...',
+      guaranteeText: 'Instant confirmation & flexible assistance. Our reservation team is on standby via official WhatsApp.',
+      successTitle: 'Reservation Successfully Submitted!',
+      successSubtitle: 'Your room reservation details have been recorded. Please proceed to WhatsApp to finalize your fast check-in.',
+      bookingCodeLabel: 'Booking Code:',
+      guestNameLabel: 'Guest Name:',
+      bookingDetails: 'Reservation Details:',
+      forwardWaBtn: 'Confirm via WhatsApp',
+      makeNewBooking: 'Make Another Reservation',
+      validationAlert: 'Please review and fill in all required form fields.',
+      bedPreferenceTitle: 'Bed Type Preference',
+      bedPreferenceDesc: 'Select your preferred bed setup for maximum comfort (Queen, King, or Twin)',
+      bedTypeLabel: 'Bed Configuration',
+      queenBedTitle: 'Queen Bed',
+      queenBedDesc: '1 Queen Bed (160×200 cm) perfect for 2 guests',
+      kingBedTitle: 'King Bed',
+      kingBedDesc: '1 Grand King Bed extra spacious (180/200×200 cm)',
+      twinBedTitle: 'Twin Bed',
+      twinBedDesc: '2 Separate Single Beds (100×200 cm)',
+      breakfastOptionTitle: 'Breakfast Package',
+      breakfastOptionDesc: 'Choose your breakfast dining plan at Nusantara Restaurant',
+      breakfastLabel: 'Breakfast Plan',
+      withBreakfastTitle: 'Buffet Breakfast Included',
+      withBreakfastDesc: 'Full daily morning buffet for all staying guests',
+      withBreakfastBadge: 'Recommended',
+      roomOnlyTitle: 'Room Only (No Breakfast)',
+      roomOnlyDesc: 'Accommodation only without breakfast package',
+      roomOnlyBadge: 'Standard Rate',
+      breakfastPerPaxRate: '+Rp 75,000 / guest / night'
     }
   }
 };
