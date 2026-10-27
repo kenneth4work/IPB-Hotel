@@ -8,7 +8,6 @@ import {
   Loader2, 
   MessageSquare, 
   Check, 
-  Sparkles, 
   ShieldCheck, 
   RefreshCw,
   Phone,
@@ -21,6 +20,7 @@ import {
 } from 'lucide-react';
 import { HOTEL_CONFIG, roomCategories, getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
+import { useBooking, getTomorrow } from '../context/BookingContext';
 
 export interface ReservationRoom {
   id: string;
@@ -103,33 +103,27 @@ const BREAKFAST_RATE_PER_PAX_PER_NIGHT = 75000;
 
 export const ReservationFormSection: React.FC = () => {
   const { language, t } = useLanguage();
+  const {
+    checkInDate,
+    checkOutDate,
+    guestCount,
+    roomCount,
+    totalNights,
+    promoCode,
+    isPromoApplied,
+    setCheckInDate,
+    setCheckOutDate,
+    setGuestCount,
+    setRoomCount,
+    setIsPromoApplied
+  } = useBooking();
 
-  // Helper date formatter: YYYY-MM-DD
-  const formatIsoDate = (d: Date): string => {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  const getTomorrow = (baseDateStr?: string): string => {
-    const base = baseDateStr ? new Date(baseDateStr) : new Date();
-    base.setDate(base.getDate() + 1);
-    return formatIsoDate(base);
-  };
-
-  const todayStr = useMemo(() => formatIsoDate(new Date()), []);
-  const initialCheckIn = todayStr;
-  const initialCheckOut = useMemo(() => getTomorrow(todayStr), [todayStr]);
+  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   // Form States
-  const [checkInDate, setCheckInDate] = useState<string>(initialCheckIn);
-  const [checkOutDate, setCheckOutDate] = useState<string>(initialCheckOut);
   const [selectedRoomId, setSelectedRoomId] = useState<string>("deluxe");
   const [selectedBedType, setSelectedBedType] = useState<BedTypeOption>('king');
   const [breakfastPlan, setBreakfastPlan] = useState<BreakfastOption>('with_breakfast');
-  const [roomCount, setRoomCount] = useState<number>(1);
-  const [guestCount, setGuestCount] = useState<number>(2);
 
   // Guest details
   const [fullName, setFullName] = useState<string>('');
@@ -156,6 +150,7 @@ export const ReservationFormSection: React.FC = () => {
     roomCount: number;
     guestCount: number;
     roomTotal: number;
+    promoDiscount: number;
     breakfastTotal: number;
     totalPrice: number;
     specialRequest?: string;
@@ -166,20 +161,15 @@ export const ReservationFormSection: React.FC = () => {
     return RESERVATION_ROOMS.find(r => r.id === selectedRoomId) || RESERVATION_ROOMS[2];
   }, [selectedRoomId]);
 
-  // Real-time Nights Calculation
-  const totalNights = useMemo(() => {
-    if (!checkInDate || !checkOutDate) return 1;
-    const start = new Date(checkInDate);
-    const end = new Date(checkOutDate);
-    const diffTime = end.getTime() - start.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays > 0 ? diffDays : 1;
-  }, [checkInDate, checkOutDate]);
-
   // Real-time Estimated Price Calculations
   const totalRoomCost = useMemo(() => {
     return selectedRoom.pricePerNight * totalNights * roomCount;
   }, [selectedRoom.pricePerNight, totalNights, roomCount]);
+
+  const promoDiscountAmount = useMemo(() => {
+    if (!isPromoApplied) return 0;
+    return Math.round(totalRoomCost * 0.1);
+  }, [isPromoApplied, totalRoomCost]);
 
   const totalBreakfastCost = useMemo(() => {
     if (breakfastPlan !== 'with_breakfast') return 0;
@@ -187,8 +177,8 @@ export const ReservationFormSection: React.FC = () => {
   }, [breakfastPlan, guestCount, totalNights, roomCount]);
 
   const estimatedTotal = useMemo(() => {
-    return totalRoomCost + totalBreakfastCost;
-  }, [totalRoomCost, totalBreakfastCost]);
+    return Math.max(0, totalRoomCost - promoDiscountAmount + totalBreakfastCost);
+  }, [totalRoomCost, promoDiscountAmount, totalBreakfastCost]);
 
   // Format currency
   const formatRupiah = (val: number): string => {
@@ -282,6 +272,7 @@ export const ReservationFormSection: React.FC = () => {
         roomCount,
         guestCount,
         roomTotal: totalRoomCost,
+        promoDiscount: promoDiscountAmount,
         breakfastTotal: totalBreakfastCost,
         totalPrice: estimatedTotal,
         specialRequest: specialRequest.trim() || undefined
@@ -323,6 +314,7 @@ export const ReservationFormSection: React.FC = () => {
       `*Check-out:* ${submittedData.checkOut}`,
       `*Duration:* ${submittedData.nights} night(s)`,
       `*Room Subtotal:* ${formatRupiah(submittedData.roomTotal)}`,
+      submittedData.promoDiscount > 0 ? `*Promo Discount (IPB2026 -10%):* -${formatRupiah(submittedData.promoDiscount)}` : '',
       submittedData.breakfastTotal > 0 ? `*Breakfast Subtotal:* ${formatRupiah(submittedData.breakfastTotal)}` : `*Breakfast:* Room Only`,
       `*Total Estimated Cost:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
       submittedData.specialRequest ? `*Special Request:* ${submittedData.specialRequest}` : '',
@@ -345,6 +337,7 @@ export const ReservationFormSection: React.FC = () => {
       `*Check-out:* ${submittedData.checkOut}`,
       `*Durasi Menginap:* ${submittedData.nights} malam`,
       `*Subtotal Kamar:* ${formatRupiah(submittedData.roomTotal)}`,
+      submittedData.promoDiscount > 0 ? `*Diskon Promo (IPB2026 -10%):* -${formatRupiah(submittedData.promoDiscount)}` : '',
       submittedData.breakfastTotal > 0 ? `*Subtotal Sarapan:* ${formatRupiah(submittedData.breakfastTotal)}` : `*Sarapan:* Hanya Kamar (Room Only)`,
       `*Estimasi Total Biaya:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
       submittedData.specialRequest ? `*Permintaan Khusus:* ${submittedData.specialRequest}` : '',
@@ -361,10 +354,6 @@ export const ReservationFormSection: React.FC = () => {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#1E3A2B]/10 text-[#1E3A2B] text-xs font-bold uppercase tracking-widest mb-3">
-            <Sparkles className="w-3.5 h-3.5 text-[#C5A880]" />
-            <span>{t.reservation.badge}</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.reservation.title}
           </h2>
@@ -1098,6 +1087,16 @@ export const ReservationFormSection: React.FC = () => {
                     <span>Kamar ({totalNights} mlm × {roomCount} kmr):</span>
                     <span className="font-mono font-bold text-slate-900">{formatRupiah(totalRoomCost)}</span>
                   </div>
+
+                  {/* Promo Diskon 10% IPB2026 */}
+                  {promoDiscountAmount > 0 && (
+                    <div className="flex justify-between items-center text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200/80">
+                      <span className="flex items-center gap-1 text-[11px]">
+                        <span>Kode Promo ({promoCode} · Diskon 10%):</span>
+                      </span>
+                      <span className="font-mono font-bold text-emerald-700">-{formatRupiah(promoDiscountAmount)}</span>
+                    </div>
+                  )}
 
                   {/* Subtotal Sarapan Calculation */}
                   {totalBreakfastCost > 0 ? (

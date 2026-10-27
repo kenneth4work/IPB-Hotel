@@ -292,6 +292,22 @@ export interface TranslationDictionary {
     roomOnlyBadge: string;
     breakfastPerPaxRate: string;
   };
+  quickBar: {
+    title: string;
+    durationPrefix: string;
+    nightSingular: string;
+    nightPlural: string;
+    promoCodeLabel: string;
+    promoDiscount: string;
+    checkInLabel: string;
+    checkOutLabel: string;
+    guestsLabel: string;
+    roomsLabel: string;
+    adultGuestsSuffix: string;
+    roomsSuffix: string;
+    btnCheckAvailability: string;
+    searching: string;
+  };
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -707,6 +723,22 @@ export const translations: Record<Language, TranslationDictionary> = {
       roomOnlyDesc: 'Akomodasi tanpa paket sarapan',
       roomOnlyBadge: 'Tarif Dasar',
       breakfastPerPaxRate: '+Rp 75.000 / orang / malam'
+    },
+    quickBar: {
+      title: 'CEK KETERSEDIAAN KAMAR & TARIF TERBAIK',
+      durationPrefix: 'Durasi Menginap:',
+      nightSingular: 'Malam',
+      nightPlural: 'Malam',
+      promoCodeLabel: 'Kode Promo Diskon 10%:',
+      promoDiscount: 'IPB2026',
+      checkInLabel: 'TANGGAL CHECK-IN',
+      checkOutLabel: 'TANGGAL CHECK-OUT',
+      guestsLabel: 'JUMLAH TAMU',
+      roomsLabel: 'JUMLAH KAMAR',
+      adultGuestsSuffix: 'Tamu Dewasa',
+      roomsSuffix: 'Kamar',
+      btnCheckAvailability: 'Cek Ketersediaan',
+      searching: 'Memeriksa...'
     }
   },
   en: {
@@ -1121,6 +1153,22 @@ export const translations: Record<Language, TranslationDictionary> = {
       roomOnlyDesc: 'Accommodation only without breakfast package',
       roomOnlyBadge: 'Standard Rate',
       breakfastPerPaxRate: '+Rp 75,000 / guest / night'
+    },
+    quickBar: {
+      title: 'CHECK ROOM AVAILABILITY & BEST RATES',
+      durationPrefix: 'Stay Duration:',
+      nightSingular: 'Night',
+      nightPlural: 'Nights',
+      promoCodeLabel: '10% Promo Code:',
+      promoDiscount: 'IPB2026',
+      checkInLabel: 'CHECK-IN DATE',
+      checkOutLabel: 'CHECK-OUT DATE',
+      guestsLabel: 'GUESTS',
+      roomsLabel: 'ROOMS',
+      adultGuestsSuffix: 'Adult Guests',
+      roomsSuffix: 'Rooms',
+      btnCheckAvailability: 'Check Availability',
+      searching: 'Searching...'
     }
   }
 };

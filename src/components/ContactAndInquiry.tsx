@@ -1,432 +1,241 @@
-import React, { useState } from 'react';
-import { HOTEL_CONFIG, generateWhatsAppInquiryUrl } from '../data/hotelData';
-import { InquiryFormData } from '../types';
+import React from 'react';
+import { HOTEL_CONFIG } from '../data/hotelData';
 import { 
   MapPin, 
   Phone, 
   Mail, 
   Instagram, 
-  Send, 
-  CheckCircle2, 
   MessageSquare, 
   Clock, 
-  Loader2,
-  AlertCircle
+  ShieldCheck,
+  Calendar,
+  ExternalLink
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export const ContactAndInquiry: React.FC = () => {
   const { language, t } = useLanguage();
-  const [formData, setFormData] = useState<InquiryFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    subject: 'Pemesanan Kamar',
-    message: '',
-    roomType: 'Suite Room'
-  });
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [whatsappUrlResult, setWhatsappUrlResult] = useState('');
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-    if (errorMessage) setErrorMessage('');
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Basic Validation
-    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.message.trim()) {
-      setErrorMessage(t.contact.errorRequired);
-      return;
-    }
-
-    setIsLoading(true);
-    setErrorMessage('');
-
-    // Prepare WhatsApp URL fallback
-    const waUrl = generateWhatsAppInquiryUrl(HOTEL_CONFIG.whatsappNumber, formData, language);
-    setWhatsappUrlResult(waUrl);
-
-    // Simulate reliable dispatch
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-    }, 900);
-  };
-
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: 'Pemesanan Kamar',
-      message: '',
-      roomType: 'Suite Room'
-    });
-    setIsSuccess(false);
-    setWhatsappUrlResult('');
-  };
+  const isEn = language === 'en';
 
   return (
-    <section id="kontak" className="py-20 bg-[#FDFBF7] relative scroll-mt-24">
+    <section id="kontak" className="py-20 bg-[#FDFBF7] relative scroll-mt-24 border-t border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#1E3A2B]/10 text-[#1E3A2B] text-xs font-bold uppercase tracking-widest mb-3">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#C5A880]" />
+            <span>{t.contact.officeTitle}</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl text-slate-900 font-bold mb-4 tracking-tight">
             {t.contact.title}
           </h2>
-          <div className="w-16 h-0.5 bg-[#C5A880] mx-auto mb-5" />
+          <div className="w-16 h-1 bg-[#C5A880] mx-auto mb-4 rounded-full" />
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             {t.contact.subtitle}
           </p>
         </div>
 
-        {/* 2-Column Split: Left institutional info & Right Inquiry Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* 3-Column Adjusted Layout Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-10">
           
-          {/* Left Column: Institutional address, phone, email, and social media links */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm">
-              <h3 className="font-serif text-2xl font-bold text-slate-900 mb-6">
-                {t.contact.officeTitle}
+          {/* Card 1: Alamat & Lokasi */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#1E3A2B]/10 text-[#1E3A2B] flex items-center justify-center mb-5 group-hover:bg-[#1E3A2B] group-hover:text-white transition-all">
+                <MapPin className="w-6 h-6 text-[#1E3A2B] group-hover:text-[#C5A880] transition-colors" />
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8865B] block mb-1">
+                {t.location.addressLabel}
+              </span>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                {isEn ? 'Official Hotel Address' : 'Alamat Resmi Hotel'}
               </h3>
-
-              <div className="space-y-5">
-                {/* Institutional Address */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#1E3A2B] shrink-0 border border-slate-200">
-                    <MapPin className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {t.location.addressLabel}
-                    </span>
-                    <p className="text-sm font-medium text-slate-800 leading-snug">
-                      {HOTEL_CONFIG.address}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Telepon */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#1E3A2B] shrink-0 border border-slate-200">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {t.location.phoneLabel}
-                    </span>
-                    <div className="text-sm font-medium text-slate-800 space-y-0.5">
-                      {HOTEL_CONFIG.phones.map((p) => (
-                        <p key={p}>
-                          <a href={`tel:${p.replace(/\D/g, '')}`} className="hover:text-[#1E3A2B] hover:underline">
-                            {p}
-                          </a>
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#1E3A2B] shrink-0 border border-slate-200">
-                    <Mail className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {t.contact.formEmail}
-                    </span>
-                    <a 
-                      href={`mailto:${HOTEL_CONFIG.email}`}
-                      className="text-sm font-medium text-slate-800 hover:text-[#1E3A2B] hover:underline"
-                    >
-                      {HOTEL_CONFIG.email}
-                    </a>
-                  </div>
-                </div>
-
-                {/* Social Media (Instagram) */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#1E3A2B] shrink-0 border border-slate-200">
-                    <Instagram className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {t.location.instagramLabel}
-                    </span>
-                    <a 
-                      href={`https://instagram.com/${HOTEL_CONFIG.instagram.replace('@', '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-medium text-[#1E3A2B] hover:underline"
-                    >
-                      {HOTEL_CONFIG.instagram} (Instagram)
-                    </a>
-                  </div>
-                </div>
-
-                {/* Operational Hours */}
-                <div className="flex items-start gap-4 pt-4 border-t border-slate-100">
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-[#A8865B] shrink-0 border border-amber-200">
-                    <Clock className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
-                      {t.location.hoursLabel}
-                    </span>
-                    <p className="text-sm font-medium text-slate-800">
-                      {t.footer.frontDesk}
-                    </p>
-                    <span className="text-xs text-slate-500">
-                      Check-in {HOTEL_CONFIG.checkIn} · Check-out {HOTEL_CONFIG.checkOut}
-                    </span>
-                  </div>
-                </div>
+              <p className="text-sm text-slate-600 leading-relaxed font-medium mb-4">
+                {HOTEL_CONFIG.address}
+              </p>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-500 font-medium leading-snug">
+                {isEn 
+                  ? 'Directly connected to Botani Square Mall and IPB International Convention Center (IICC).'
+                  : 'Terhubung langsung dengan Mall Botani Square dan IPB International Convention Center (IICC).'}
               </div>
             </div>
 
-            {/* Quick Instant WhatsApp Box */}
-            <div className="p-5 rounded-2xl bg-[#1E3A2B] text-white flex items-center justify-between gap-4 border border-[#C5A880]/30 shadow-md">
-              <div>
-                <span className="text-xs font-semibold text-[#EFE4D2] uppercase tracking-wider block mb-1">
-                  {t.contact.quickWaTitle}
-                </span>
-                <p className="text-sm font-medium text-slate-200">
-                  {t.contact.quickWaDesc}
-                </p>
-              </div>
-              <a
-                href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=${encodeURIComponent(
-                  language === 'en'
-                    ? 'Hello IPB Convention Hotel, I have an inquiry.'
-                    : 'Halo IPB Convention Hotel, saya ingin bertanya.'
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
+            <div className="mt-6 pt-4 border-t border-slate-100">
+              <a 
+                href="#lokasi"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E3A2B] hover:text-[#C5A880] transition-colors"
               >
-                <MessageSquare className="w-4 h-4" />
-                <span>{t.contact.chatWaButton}</span>
+                <span>{isEn ? 'View Location & Map' : 'Lihat Peta & Petunjuk Arah'}</span>
+                <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
           </div>
 
-          {/* Right Column: Interactive Inquiry Card */}
-          <div className="lg:col-span-7">
-            <div className="bg-white rounded-3xl p-6 sm:p-9 border border-[#E2E8F0] shadow-sm">
-              <div className="border-b border-slate-100 pb-5 mb-6">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#A8865B] block mb-1">
-                  {t.contact.formBadge}
-                </span>
-                <h3 className="font-serif text-2xl font-bold text-slate-900">
-                  {t.contact.formTitle}
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  {t.contact.formSubtitle}
-                </p>
+          {/* Card 2: Layanan Telepon, Email & Media Sosial */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#1E3A2B]/10 text-[#1E3A2B] flex items-center justify-center mb-5 group-hover:bg-[#1E3A2B] group-hover:text-white transition-all">
+                <Phone className="w-6 h-6 text-[#1E3A2B] group-hover:text-[#C5A880] transition-colors" />
               </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8865B] block mb-1">
+                {t.contact.contactInfoTitle}
+              </span>
+              <h3 className="text-lg font-bold text-slate-900 mb-4">
+                {isEn ? 'Direct Communications' : 'Saluran Komunikasi'}
+              </h3>
 
-              {/* Success Notification State */}
-              {isSuccess ? (
-                <div className="py-8 text-center space-y-4">
-                  <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
-                  </div>
-                  <h4 className="font-serif text-2xl font-bold text-slate-900">
-                    {t.contact.successTitle}
-                  </h4>
-                  <p className="text-sm text-slate-600 max-w-md mx-auto">
-                    {t.contact.successDescPrefix} <strong>{formData.name}</strong>{t.contact.successDescMid} <strong>{formData.subject}</strong> {t.contact.successDescSuffix}
-                  </p>
-                  
-                  {/* WhatsApp Submission Fallback Button */}
-                  <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a
-                      id="wa-fallback-button"
-                      href={whatsappUrlResult}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full sm:w-auto px-6 py-3 bg-[#1E3A2B] hover:bg-[#13261C] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-sm flex items-center justify-center gap-2 border border-[#C5A880]/40"
-                    >
-                      <MessageSquare className="w-4 h-4 text-[#25D366]" />
-                      <span>{t.contact.sendViaWa}</span>
-                    </a>
-                    <button
-                      onClick={resetForm}
-                      className="w-full sm:w-auto px-6 py-3 border border-slate-200 text-slate-700 text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-colors"
-                    >
-                      {t.contact.sendAnother}
-                    </button>
+              <div className="space-y-3.5 text-xs">
+                {/* Phones */}
+                <div>
+                  <span className="text-slate-400 font-semibold block uppercase text-[10px] mb-1">
+                    {t.location.phoneLabel}
+                  </span>
+                  <div className="space-y-1">
+                    {HOTEL_CONFIG.phones.map((p) => (
+                      <p key={p}>
+                        <a 
+                          href={`tel:${p.replace(/\D/g, '')}`} 
+                          className="font-bold text-sm text-slate-800 hover:text-[#1E3A2B] hover:underline"
+                        >
+                          {p}
+                        </a>
+                      </p>
+                    ))}
                   </div>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {errorMessage && (
-                    <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0" />
-                      <span>{errorMessage}</span>
-                    </div>
-                  )}
 
-                  {/* Nama Lengkap */}
-                  <div>
-                    <label htmlFor="field-nama" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                      {t.contact.formName} *
-                    </label>
-                    <input
-                      type="text"
-                      id="field-nama"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder={t.contact.formNamePlaceholder}
-                      required
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white"
-                    />
+                {/* Email */}
+                <div>
+                  <span className="text-slate-400 font-semibold block uppercase text-[10px] mb-1">
+                    {t.contact.formEmail}
+                  </span>
+                  <a 
+                    href={`mailto:${HOTEL_CONFIG.email}`} 
+                    className="font-bold text-sm text-slate-800 hover:text-[#1E3A2B] hover:underline flex items-center gap-1.5"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-[#C5A880]" />
+                    <span>{HOTEL_CONFIG.email}</span>
+                  </a>
+                </div>
+
+                {/* Instagram */}
+                <div>
+                  <span className="text-slate-400 font-semibold block uppercase text-[10px] mb-1">
+                    {t.location.instagramLabel}
+                  </span>
+                  <a 
+                    href={`https://instagram.com/${HOTEL_CONFIG.instagram.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-bold text-xs text-[#1E3A2B] hover:underline flex items-center gap-1.5"
+                  >
+                    <Instagram className="w-3.5 h-3.5 text-rose-600" />
+                    <span>{HOTEL_CONFIG.instagram}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100">
+              <span className="text-[11px] text-slate-400 font-medium">
+                {isEn ? 'Fast response during official hours' : 'Layanan responsif setiap hari'}
+              </span>
+            </div>
+          </div>
+
+          {/* Card 3: Waktu Operasional & Front Desk */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+            <div>
+              <div className="w-12 h-12 rounded-2xl bg-[#1E3A2B]/10 text-[#1E3A2B] flex items-center justify-center mb-5 group-hover:bg-[#1E3A2B] group-hover:text-white transition-all">
+                <Clock className="w-6 h-6 text-[#1E3A2B] group-hover:text-[#C5A880] transition-colors" />
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#A8865B] block mb-1">
+                {t.location.hoursLabel}
+              </span>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">
+                {isEn ? '24/7 Front Desk & Stay Hours' : 'Front Desk & Waktu Menginap'}
+              </h3>
+              
+              <div className="space-y-3 mt-4">
+                <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100/80">
+                  <span className="font-bold text-xs text-emerald-900 block">
+                    {t.footer.frontDesk}
+                  </span>
+                  <span className="text-[11px] text-emerald-700 font-medium block mt-0.5">
+                    {t.footer.concierge}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Check-in</span>
+                    <span className="font-bold text-slate-800 text-sm">{HOTEL_CONFIG.checkIn}</span>
                   </div>
-
-                  {/* Grid Email & Telepon */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Email */}
-                    <div>
-                      <label htmlFor="field-email" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                        {t.contact.formEmail} *
-                      </label>
-                      <input
-                        type="email"
-                        id="field-email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder={language === 'en' ? 'name@example.com' : 'contoh@email.com'}
-                        required
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white"
-                      />
-                    </div>
-
-                    {/* No. Telepon */}
-                    <div>
-                      <label htmlFor="field-telepon" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                        {t.contact.formPhone} *
-                      </label>
-                      <input
-                        type="tel"
-                        id="field-telepon"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder={language === 'en' ? '+62 812xxxxxxx' : '0812xxxxxxx'}
-                        required
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white"
-                      />
-                    </div>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Check-out</span>
+                    <span className="font-bold text-slate-800 text-sm">{HOTEL_CONFIG.checkOut}</span>
                   </div>
+                </div>
+              </div>
+            </div>
 
-                  {/* Keperluan (Dropdown Select with specified options) */}
-                  <div>
-                    <label htmlFor="field-keperluan" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                      {t.contact.formSubject} *
-                    </label>
-                    <select
-                      id="field-keperluan"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white cursor-pointer"
-                    >
-                      <option value="Pemesanan Kamar">{t.contact.subjects.room}</option>
-                      <option value="Meeting Room">{t.contact.subjects.meeting}</option>
-                      <option value="Event / Convention">{t.contact.subjects.event}</option>
-                      <option value="Informasi Umum">{t.contact.subjects.general}</option>
-                    </select>
-                  </div>
-
-                  {/* If Pemesanan Kamar, select room type */}
-                  {(formData.subject.includes('Kamar') || formData.subject.includes('Room')) && (
-                    <div>
-                      <label htmlFor="field-tipe-kamar" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                        {t.contact.formRoomType}
-                      </label>
-                      <select
-                        id="field-tipe-kamar"
-                        name="roomType"
-                        value={formData.roomType}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white cursor-pointer"
-                      >
-                        {HOTEL_CONFIG.rooms.map((r) => {
-                          const displayPrice = typeof r.price === 'number' ? `Rp ${r.price.toLocaleString('id-ID')}` : r.price;
-                          return (
-                            <option key={r.type} value={r.type}>
-                              {r.type} ({r.badge}) - {displayPrice} {t.rooms.perNight}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                  )}
-
-                  {/* Pesan */}
-                  <div>
-                    <label htmlFor="field-pesan" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                      {t.contact.formMessage} *
-                    </label>
-                    <textarea
-                      id="field-pesan"
-                      name="message"
-                      rows={4}
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      placeholder={t.contact.formMessagePlaceholder}
-                      required
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-none text-sm text-slate-800 transition-all bg-slate-50/50 hover:bg-white resize-y"
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      id="submit-inquiry-button"
-                      disabled={isLoading}
-                      className="w-full py-4 px-6 bg-[#1E3A2B] hover:bg-[#13261C] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-[#C5A880]/30 disabled:opacity-75 disabled:cursor-not-allowed hover:-translate-y-0.5"
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin text-[#C5A880]" />
-                          <span>{t.contact.sendingMessage}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 text-[#C5A880]" />
-                          <span>{t.contact.formSubmit}</span>
-                        </>
-                      )}
-                    </button>
-                    
-                    <p className="text-center text-[11px] text-slate-400 mt-3">
-                      {t.contact.privacyNote}
-                    </p>
-                  </div>
-                </form>
-              )}
+            <div className="mt-6 pt-4 border-t border-slate-100">
+              <span className="text-[11px] text-slate-400 font-medium">
+                {isEn ? 'Security & Concierge standby 24 hours' : 'Keamanan & Concierge siaga 24 jam'}
+              </span>
             </div>
           </div>
 
         </div>
+
+        {/* Adjusted Bottom Hero Card: Official Direct WhatsApp & Reservation Action */}
+        <div className="bg-gradient-to-br from-[#1E3A2B] via-[#162e22] to-[#0F172A] rounded-3xl p-6 sm:p-10 text-white border border-[#C5A880]/30 shadow-xl relative overflow-hidden">
+          {/* Subtle Ambient Rings */}
+          <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full border border-white/5 pointer-events-none" />
+          <div className="absolute -left-20 -bottom-20 w-80 h-80 rounded-full border border-[#C5A880]/10 pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="max-w-2xl">
+              <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">
+                {isEn ? 'Need Instant Assistance or Direct Booking?' : 'Butuh Respon Cepat atau Reservasi Langsung?'}
+              </h3>
+              <p className="text-sm sm:text-base text-slate-300 font-light leading-relaxed">
+                {isEn
+                  ? 'Connect directly with our 24/7 Hotel Officer via official WhatsApp for prompt room availability, MICE ballroom inquiries, or special requirements.'
+                  : 'Hubungi petugas hotel kami via WhatsApp resmi 24 jam untuk konfirmasi ketersediaan kamar, penawaran ballroom MICE, atau konsultasi acara Anda.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <a
+                id="contact-whatsapp-chat-button"
+                href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=${encodeURIComponent(
+                  isEn
+                    ? 'Hello IPB Convention Hotel team, I would like to inquire about room reservations / hotel services.'
+                    : 'Halo tim IPB Convention Hotel, saya ingin bertanya mengenai reservasi kamar / layanan hotel.'
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>{t.contact.chatWaButton} WhatsApp</span>
+              </a>
+
+              <a
+                id="contact-book-room-button"
+                href="#reservasi"
+                className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all border border-white/20 backdrop-blur-xs flex items-center justify-center gap-2"
+              >
+                <Calendar className="w-4 h-4 text-[#C5A880]" />
+                <span>{isEn ? 'Online Reservation Form' : 'Formulir Reservasi Kamar'}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
   );
