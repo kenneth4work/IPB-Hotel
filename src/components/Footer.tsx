@@ -1,6 +1,6 @@
 import React from 'react';
 import { HOTEL_CONFIG } from '../data/hotelData';
-import { MapPin, Phone, Mail, Instagram, ArrowUp, MessageSquare, Shield } from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, ArrowUp, MessageSquare, Shield, Download } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import brandLogoImg from '../assets/images/regenerated_image_1789095966156.png';
 
@@ -145,6 +145,15 @@ export const Footer: React.FC = () => {
               className="text-slate-400 hover:text-white hover:underline"
             >
               WhatsApp
+            </a>
+            <a 
+              href="/standalone.html"
+              download="ipb_hotel_landing_page.html"
+              className="text-[#C5A880] hover:text-[#e4caa5] hover:underline flex items-center gap-1 font-semibold transition-colors"
+              title="Download Single HTML File"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download HTML</span>
             </a>
             <button
               onClick={scrollToTop}

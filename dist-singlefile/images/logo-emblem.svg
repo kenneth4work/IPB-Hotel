@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" width="64" height="64">
+  <defs>
+    <linearGradient id="emblemBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E3A2B" />
+      <stop offset="100%" stop-color="#12251B" />
+    </linearGradient>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5C79E" />
+      <stop offset="50%" stop-color="#C5A880" />
+      <stop offset="100%" stop-color="#9E7F55" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#emblemBg)" stroke="url(#goldGradient)" stroke-width="2" />
+  <circle cx="32" cy="32" r="25" stroke="url(#goldGradient)" stroke-width="1" stroke-dasharray="2 2" opacity="0.75" />
+  
+  <!-- IPB Stylized Monogram -->
+  <text x="32" y="39" font-family="'Playfair Display', Georgia, serif" font-size="22" font-weight="700" fill="url(#goldGradient)" text-anchor="middle" letter-spacing="1.2">
+    IPB
+  </text>
+  <path d="M20 46 Q32 49 44 46" stroke="url(#goldGradient)" stroke-width="1.8" stroke-linecap="round" fill="none" />
+</svg>
