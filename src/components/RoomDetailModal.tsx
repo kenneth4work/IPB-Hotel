@@ -35,7 +35,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const { t } = useLanguage();
   const roomName = ('name' in room && room.name) ? room.name : room.type;
   const roomPriceFormatted = room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price);
-  const images = (room.images && room.images.length > 0) ? room.images : [room.image || 'images/rooms/suite-1.jpg'];
+  const images = (room.images && room.images.length > 0) ? room.images : [('image' in room && room.image) || '/images/rooms/suite-1.jpg'];
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
 
   const handlePrev = (e: React.MouseEvent) => {

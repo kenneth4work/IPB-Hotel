@@ -12,10 +12,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @viteReactRefresh
+    @vite('src/main.tsx')
+    <x-inertia::head />
   </head>
   <body class="bg-[#FDFBF7] text-slate-800 antialiased selection:bg-[#C5A880]/30 selection:text-slate-900">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <x-inertia::app />
   </body>
 </html>
 
