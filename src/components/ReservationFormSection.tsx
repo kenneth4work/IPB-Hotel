@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import {bookingRequest, BookingApiError, type SavedReservation, type BookingSelection} from '../lib/bookingApi';
+import {useReservationQuote} from '../hooks/useReservationQuote';
 import { 
   Calendar, 
   Users, 
@@ -27,6 +29,9 @@ export interface ReservationRoom {
   name: string;
   badge: string;
   pricePerNight: number;
+  databaseId?: number;
+  breakfastPrice?: number;
+  allowedBeds?: BedTypeOption[];
   size: string;
   bedType: { id: string; en: string };
   capacity: { id: string; en: string };
@@ -36,72 +41,97 @@ export interface ReservationRoom {
 export type BedTypeOption = 'queen' | 'king' | 'twin';
 export type BreakfastOption = 'with_breakfast' | 'room_only';
 
-export const RESERVATION_ROOMS: ReservationRoom[] = [
+const ROOM_VISUALS: Omit<ReservationRoom, 'pricePerNight'>[] = [
   {
     id: "standard",
     name: "Standard Room",
     badge: "STANDARD",
-    pricePerNight: 600000,
     size: "19 M²",
     bedType: { id: "Double Bed / Twin Bed", en: "Double Bed / Twin Bed" },
     capacity: { id: "1 - 2 Dewasa", en: "1 - 2 Adults" },
-    image: getRoomImageUrl(roomCategories["Standar"]?.[0]) || "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80"
+    image: getRoomImageUrl(roomCategories["Standar"]?.[0])
   },
   {
     id: "superior",
     name: "Superior Room",
     badge: "SUPERIOR",
-    pricePerNight: 700000,
     size: "20 M²",
     bedType: { id: "Queen / Twin Bed", en: "Queen / Twin Bed" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Superior"]?.[0]) || "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80"
+    image: getRoomImageUrl(roomCategories["Superior"]?.[0])
   },
   {
     id: "deluxe",
     name: "Deluxe Room",
     badge: "DELUXE",
-    pricePerNight: 850000,
     size: "22 M²",
     bedType: { id: "Queen Bed (160x200)", en: "Queen Bed (160x200)" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Deluxe"]?.[0]) || "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80"
+    image: getRoomImageUrl(roomCategories["Deluxe"]?.[0])
   },
   {
     id: "executive",
     name: "Executive Room",
     badge: "EXECUTIVE",
-    pricePerNight: 900000,
     size: "24 M²",
     bedType: { id: "King Bed (180x200)", en: "King Bed (180x200)" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Executive"]?.[0]) || "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80"
+    image: getRoomImageUrl(roomCategories["Executive"]?.[0])
   },
   {
     id: "grand-executive",
     name: "Grand Executive Room",
     badge: "GRAND EXECUTIVE",
-    pricePerNight: 1050000,
     size: "28 M²",
     bedType: { id: "King Bed (180x200)", en: "King Bed (180x200)" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Grand Executive"]?.[0]) || "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80"
+    image: getRoomImageUrl(roomCategories["Grand Executive"]?.[0])
   },
   {
     id: "suite",
     name: "Executive Suite Room",
     badge: "SUITE",
-    pricePerNight: 1500000,
     size: "36 M²",
     bedType: { id: "Grand King Bed (200x200)", en: "Grand King Bed (200x200)" },
     capacity: { id: "2 Dewasa + 1 Anak", en: "2 Adults + 1 Child" },
-    image: getRoomImageUrl(roomCategories["Suite"]?.[0]) || "https://i.ibb.co/pvj9rW0K/SU1.jpg"
+    image: getRoomImageUrl(roomCategories["Suite"]?.[0])
   }
 ];
 
-const BREAKFAST_RATE_PER_PAX_PER_NIGHT = 75000;
+interface RoomCatalogItem {
+  id: number; slug: string; name: string; size_sqm: number; max_guests: number;
+  base_price: number; breakfast_price: number; bed_types: BedTypeOption[];
+}
 
 export const ReservationFormSection: React.FC = () => {
+  const {language} = useLanguage();
+  const [rooms, setRooms] = useState<ReservationRoom[] | null>(null);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    setError(false);
+    bookingRequest<{room_types: RoomCatalogItem[]}>('/booking/room-types', undefined, controller.signal)
+      .then(({room_types}) => setRooms(room_types.map(room => {
+        const visual = ROOM_VISUALS.find(item => item.id === room.slug) ?? ROOM_VISUALS[0];
+        return {...visual, id: room.slug, databaseId: room.id, name: room.name,
+          pricePerNight: room.base_price, breakfastPrice: room.breakfast_price,
+          allowedBeds: room.bed_types, size: `${room.size_sqm} M²`,
+          capacity: {id: `${room.max_guests} Tamu / kamar`, en: `${room.max_guests} guests / room`}};
+      })))
+      .catch(() => { if (!controller.signal.aborted) setError(true); });
+    return () => controller.abort();
+  }, [attempt]);
+  if (!rooms?.length) return (
+    <section id="reservasi" className="py-20 text-center" aria-live="polite">
+      <p>{error || rooms ? (language === 'en' ? 'Room booking is currently unavailable.' : 'Reservasi kamar belum tersedia.') : (language === 'en' ? 'Loading rooms…' : 'Memuat tipe kamar…')}</p>
+      {(error || rooms) && <button type="button" className="mt-4 underline" onClick={() => setAttempt(value => value + 1)}>{language === 'en' ? 'Try again' : 'Coba lagi'}</button>}
+    </section>
+  );
+  return <ReservationFormContent rooms={rooms} />;
+};
+
+const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) => {
   const { language, t } = useLanguage();
   const {
     checkInDate,
@@ -115,14 +145,13 @@ export const ReservationFormSection: React.FC = () => {
     setCheckOutDate,
     setGuestCount,
     setRoomCount,
-    setIsPromoApplied
   } = useBooking();
 
-  const todayStr = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const todayStr = useMemo(() => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()), []);
 
   // Form States
-  const [selectedRoomId, setSelectedRoomId] = useState<string>("deluxe");
-  const [selectedBedType, setSelectedBedType] = useState<BedTypeOption>('king');
+  const [selectedRoomId, setSelectedRoomId] = useState<string>(rooms.find(room => room.id === "deluxe")?.id ?? rooms[0].id);
+  const [bedPreference, setSelectedBedType] = useState<BedTypeOption>('queen');
   const [breakfastPlan, setBreakfastPlan] = useState<BreakfastOption>('with_breakfast');
 
   // Guest details
@@ -135,7 +164,10 @@ export const ReservationFormSection: React.FC = () => {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [bookingCode, setBookingCode] = useState<string>('');
+  const [submitError, setSubmitError] = useState<unknown>(null);
+  const [holdExpiresAt, setHoldExpiresAt] = useState('');
+  const pendingRequest = useRef<{payload: string; id: string; expectedTotal: number} | null>(null);
+  const submitting = useRef(false);
   const [submittedData, setSubmittedData] = useState<{
     code: string;
     guestName: string;
@@ -151,34 +183,35 @@ export const ReservationFormSection: React.FC = () => {
     guestCount: number;
     roomTotal: number;
     promoDiscount: number;
+    promoCode: string | null;
     breakfastTotal: number;
     totalPrice: number;
     specialRequest?: string;
   } | null>(null);
 
-  // Selected Room Object
-  const selectedRoom = useMemo(() => {
-    return RESERVATION_ROOMS.find(r => r.id === selectedRoomId) || RESERVATION_ROOMS[2];
-  }, [selectedRoomId]);
-
-  // Real-time Estimated Price Calculations
-  const totalRoomCost = useMemo(() => {
-    return selectedRoom.pricePerNight * totalNights * roomCount;
-  }, [selectedRoom.pricePerNight, totalNights, roomCount]);
-
-  const promoDiscountAmount = useMemo(() => {
-    if (!isPromoApplied) return 0;
-    return Math.round(totalRoomCost * 0.1);
-  }, [isPromoApplied, totalRoomCost]);
-
-  const totalBreakfastCost = useMemo(() => {
-    if (breakfastPlan !== 'with_breakfast') return 0;
-    return BREAKFAST_RATE_PER_PAX_PER_NIGHT * guestCount * totalNights * roomCount;
-  }, [breakfastPlan, guestCount, totalNights, roomCount]);
-
-  const estimatedTotal = useMemo(() => {
-    return Math.max(0, totalRoomCost - promoDiscountAmount + totalBreakfastCost);
-  }, [totalRoomCost, promoDiscountAmount, totalBreakfastCost]);
+  const selectedRoom = rooms.find(room => room.id === selectedRoomId) ?? rooms[0];
+  const allowedBeds = selectedRoom.allowedBeds ?? [];
+  const selectedBedType = allowedBeds.includes(bedPreference) ? bedPreference : allowedBeds[0];
+  const selection: BookingSelection = {
+    room_type_id: selectedRoom.databaseId!, check_in: checkInDate, check_out: checkOutDate,
+    room_count: roomCount, guest_count: guestCount, bed_type: selectedBedType,
+    with_breakfast: breakfastPlan === 'with_breakfast', promo_code: isPromoApplied ? promoCode : null,
+  };
+  const {quote, error: quoteError, loading: quoteLoading, refresh: refreshQuote} = useReservationQuote(selection, !isSuccess);
+  const totalRoomCost = quote?.room_total ?? 0;
+  const promoDiscountAmount = quote?.discount_amount ?? 0;
+  const totalBreakfastCost = quote?.breakfast_total ?? 0;
+  const estimatedTotal = quote?.total_amount ?? 0;
+  const formatError = (error: unknown): string[] => {
+    if (error instanceof BookingApiError) {
+      if (error.status === 419) return [language === 'en' ? 'Your session has expired. Refresh this page before trying again.' : 'Sesi telah berakhir. Muat ulang halaman sebelum mencoba lagi.'];
+      if (error.status === 429) return [language === 'en' ? 'Too many attempts. Please wait one minute.' : 'Terlalu banyak percobaan. Tunggu satu menit lalu coba lagi.'];
+      if (error.status === 422) return Object.values(error.errors).flat();
+    }
+    return [language === 'en' ? 'Unable to contact the booking service. Your form has been kept; try again.' : 'Layanan reservasi belum dapat dihubungi. Data formulir tetap tersimpan; silakan coba lagi.'];
+  };
+  const errorMessages = submitError ? formatError(submitError) : quoteError ? formatError(quoteError) : [];
+  const priceText = (amount: number) => quote ? formatRupiah(amount) : '—';
 
   // Format currency
   const formatRupiah = (val: number): string => {
@@ -197,9 +230,9 @@ export const ReservationFormSection: React.FC = () => {
   };
 
   // Breakfast label helper
-  const getBreakfastLabel = (plan: BreakfastOption): string => {
+  const getBreakfastLabel = (plan: BreakfastOption, guests = guestCount): string => {
     if (plan === 'with_breakfast') {
-      return `${t.reservation.withBreakfastTitle} (${guestCount} ${t.reservation.adultsSuffix})`;
+      return `${t.reservation.withBreakfastTitle} (${guests} ${t.reservation.adultsSuffix})`;
     }
     return t.reservation.roomOnlyTitle;
   };
@@ -219,6 +252,11 @@ export const ReservationFormSection: React.FC = () => {
   const isNameValid = fullName.trim().length >= 2;
 
   const isFormValid = isNameValid && isEmailValid && isPhoneValid && totalNights > 0;
+  const bookingPayload = {...selection, guest_name: fullName.trim(), guest_email: email.trim(), guest_phone: phone.trim(), special_request: specialRequest.trim() || null};
+  const bookingPayloadKey = JSON.stringify(bookingPayload);
+  const retryPending = pendingRequest.current?.payload === bookingPayloadKey;
+  useEffect(() => {setSubmitError(null);}, [bookingPayloadKey]);
+
 
   // Handle Check-in date change
   const handleCheckInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,46 +277,43 @@ export const ReservationFormSection: React.FC = () => {
     }
   };
 
-  // Submission handler
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ name: true, email: true, phone: true });
-
-    if (!isFormValid) {
-      return;
-    }
-
+    setTouched({name: true, email: true, phone: true});
+    if (submitting.current || !isFormValid || (!retryPending && (!quote?.can_book || quoteLoading))) return;
+    submitting.current = true;
     setIsLoading(true);
-
-    // Generate readable Booking Code: IPB-YYYYMMDD-XXXX
-    const randomHex = Math.floor(1000 + Math.random() * 9000).toString();
-    const dateFormatted = checkInDate.replace(/-/g, '');
-    const code = `IPB-${dateFormatted}-${randomHex}`;
-
-    setTimeout(() => {
-      setIsLoading(false);
-      setBookingCode(code);
-      setSubmittedData({
-        code,
-        guestName: fullName.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        roomName: selectedRoom.name,
-        bedTypeLabel: getBedLabel(selectedBedType),
-        breakfastPlanLabel: getBreakfastLabel(breakfastPlan),
-        checkIn: checkInDate,
-        checkOut: checkOutDate,
-        nights: totalNights,
-        roomCount,
-        guestCount,
-        roomTotal: totalRoomCost,
-        promoDiscount: promoDiscountAmount,
-        breakfastTotal: totalBreakfastCost,
-        totalPrice: estimatedTotal,
-        specialRequest: specialRequest.trim() || undefined
+    setSubmitError(null);
+    const payload = bookingPayload;
+    const payloadKey = bookingPayloadKey;
+    if (pendingRequest.current?.payload !== payloadKey) {
+      pendingRequest.current = {payload: payloadKey, id: crypto.randomUUID(), expectedTotal: quote!.total_amount};
+    }
+    try {
+      const {reservation: saved} = await bookingRequest<{reservation: SavedReservation}>('/reservations', {
+        ...payload, request_id: pendingRequest.current.id, expected_total: pendingRequest.current.expectedTotal,
       });
+      setSubmittedData({
+        code: saved.booking_code, guestName: saved.guest_name, email: saved.guest_email,
+        phone: saved.guest_phone, roomName: saved.room_name,
+        bedTypeLabel: getBedLabel(saved.bed_type),
+        breakfastPlanLabel: getBreakfastLabel(saved.with_breakfast ? 'with_breakfast' : 'room_only', saved.guest_count),
+        checkIn: saved.check_in, checkOut: saved.check_out, nights: saved.night_count,
+        roomCount: saved.room_count, guestCount: saved.guest_count, roomTotal: saved.room_total,
+        promoDiscount: saved.discount_amount, promoCode: saved.promo_code,
+        breakfastTotal: saved.breakfast_total, totalPrice: saved.total_amount,
+        specialRequest: saved.special_request ?? undefined,
+      });
+      setHoldExpiresAt(saved.hold_expires_at);
       setIsSuccess(true);
-    }, 900);
+    } catch (error) {
+      if (error instanceof BookingApiError && error.status < 500) pendingRequest.current = null;
+      setSubmitError(error);
+      refreshQuote();
+    } finally {
+      submitting.current = false;
+      setIsLoading(false);
+    }
   };
 
   // Reset form to book again
@@ -290,6 +325,9 @@ export const ReservationFormSection: React.FC = () => {
     setPhone('');
     setSpecialRequest('');
     setTouched({});
+    setSubmitError(null);
+    pendingRequest.current = null;
+    refreshQuote();
   };
 
   // Generate WhatsApp confirmation URL
@@ -314,9 +352,9 @@ export const ReservationFormSection: React.FC = () => {
       `*Check-out:* ${submittedData.checkOut}`,
       `*Duration:* ${submittedData.nights} night(s)`,
       `*Room Subtotal:* ${formatRupiah(submittedData.roomTotal)}`,
-      submittedData.promoDiscount > 0 ? `*Promo Discount (IPB2026 -10%):* -${formatRupiah(submittedData.promoDiscount)}` : '',
+      submittedData.promoDiscount > 0 ? `*Promo Discount (${submittedData.promoCode}):* -${formatRupiah(submittedData.promoDiscount)}` : '',
       submittedData.breakfastTotal > 0 ? `*Breakfast Subtotal:* ${formatRupiah(submittedData.breakfastTotal)}` : `*Breakfast:* Room Only`,
-      `*Total Estimated Cost:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
+      `*Booking Total:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
       submittedData.specialRequest ? `*Special Request:* ${submittedData.specialRequest}` : '',
       `----------------------------------------`,
       `Hello IPB Convention Hotel team, I have submitted this reservation through the website. Please confirm availability and room lock. Thank you!`
@@ -337,9 +375,9 @@ export const ReservationFormSection: React.FC = () => {
       `*Check-out:* ${submittedData.checkOut}`,
       `*Durasi Menginap:* ${submittedData.nights} malam`,
       `*Subtotal Kamar:* ${formatRupiah(submittedData.roomTotal)}`,
-      submittedData.promoDiscount > 0 ? `*Diskon Promo (IPB2026 -10%):* -${formatRupiah(submittedData.promoDiscount)}` : '',
+      submittedData.promoDiscount > 0 ? `*Diskon Promo (${submittedData.promoCode}):* -${formatRupiah(submittedData.promoDiscount)}` : '',
       submittedData.breakfastTotal > 0 ? `*Subtotal Sarapan:* ${formatRupiah(submittedData.breakfastTotal)}` : `*Sarapan:* Hanya Kamar (Room Only)`,
-      `*Estimasi Total Biaya:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
+      `*Total Reservasi:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
       submittedData.specialRequest ? `*Permintaan Khusus:* ${submittedData.specialRequest}` : '',
       `----------------------------------------`,
       `Halo Reservasi IPB Convention Hotel, saya telah mengisi formulir pemesanan ini melalui website. Mohon bantuan konfirmasi ketersediaan dan lock kamar. Terima kasih!`
@@ -380,6 +418,11 @@ export const ReservationFormSection: React.FC = () => {
               </p>
             </div>
 
+            <p className="mt-4 text-center text-sm text-amber-800" role="status">
+              {language === 'en' ? 'Awaiting confirmation. Rooms are held until ' : 'Menunggu konfirmasi. Kamar ditahan hingga '}
+              {new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'id-ID', {dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jakarta'}).format(new Date(holdExpiresAt))} WIB.
+            </p>
+
             {/* Receipt Summary Card */}
             <div className="py-6 space-y-4">
               <div className="bg-[#FDFBF7] rounded-2xl p-4 sm:p-6 border border-[#E7D6C1]/80 shadow-2xs">
@@ -388,18 +431,18 @@ export const ReservationFormSection: React.FC = () => {
                     <span className="text-xs text-slate-400 font-bold uppercase tracking-wider block">
                       {t.reservation.bookingCodeLabel}
                     </span>
-                    <span className="font-mono text-xl sm:text-2xl font-bold text-[#1E3A2B] tracking-tight">
+                    <span className="font-mono break-all text-xl sm:text-2xl font-bold text-[#1E3A2B] tracking-tight">
                       {submittedData.code}
                     </span>
                   </div>
                   <div className="sm:text-right">
                     <span className="text-xs text-slate-400 font-bold uppercase tracking-wider block">
-                      {t.reservation.totalEstimate}
+                      {language === 'en' ? 'Booking total' : 'Total reservasi'}
                     </span>
                     <span className="text-xl sm:text-2xl font-bold text-[#C5A880]">
                       {formatRupiah(submittedData.totalPrice)}
                     </span>
-                    <span className="text-[11px] text-slate-400 block font-medium">Nett (Termasuk Pajak & Service)</span>
+                    <span className="text-[11px] text-slate-400 block font-medium">{language === 'en' ? 'Nett (tax and service included)' : 'Nett (termasuk pajak dan layanan)'}</span>
                   </div>
                 </div>
 
@@ -604,7 +647,7 @@ export const ReservationFormSection: React.FC = () => {
                       className="w-full sm:w-56 px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50 text-slate-800 font-bold focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-hidden cursor-pointer"
                       aria-label={t.reservation.selectRoomDropdown}
                     >
-                      {RESERVATION_ROOMS.map(r => (
+                      {rooms.map(r => (
                         <option key={r.id} value={r.id}>
                           {r.name} - {formatRupiah(r.pricePerNight)}/mlm
                         </option>
@@ -615,7 +658,7 @@ export const ReservationFormSection: React.FC = () => {
 
                 {/* Card Selection Grid (6 Room Types) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  {RESERVATION_ROOMS.map((r) => {
+                  {rooms.map((r) => {
                     const isSelected = r.id === selectedRoomId;
                     return (
                       <div
@@ -694,8 +737,10 @@ export const ReservationFormSection: React.FC = () => {
                     {/* King Bed */}
                     <div
                       id="opt-bed-king"
-                      onClick={() => setSelectedBedType('king')}
-                      className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex flex-col justify-between ${
+                      onClick={() => allowedBeds.includes('king') && setSelectedBedType('king')}
+                      role="button" tabIndex={allowedBeds.includes('king') ? 0 : -1} aria-disabled={!allowedBeds.includes('king')}
+                      onKeyDown={e => { if (allowedBeds.includes('king') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setSelectedBedType('king'); } }}
+                      className={`rounded-2xl p-3.5 border transition-all cursor-pointer aria-disabled:opacity-40 aria-disabled:cursor-not-allowed flex flex-col justify-between ${
                         selectedBedType === 'king'
                           ? 'border-[#1E3A2B] bg-[#1E3A2B]/5 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                           : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50'
@@ -723,8 +768,10 @@ export const ReservationFormSection: React.FC = () => {
                     {/* Queen Bed */}
                     <div
                       id="opt-bed-queen"
-                      onClick={() => setSelectedBedType('queen')}
-                      className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex flex-col justify-between ${
+                      onClick={() => allowedBeds.includes('queen') && setSelectedBedType('queen')}
+                      role="button" tabIndex={allowedBeds.includes('queen') ? 0 : -1} aria-disabled={!allowedBeds.includes('queen')}
+                      onKeyDown={e => { if (allowedBeds.includes('queen') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setSelectedBedType('queen'); } } }
+                      className={`rounded-2xl p-3.5 border transition-all cursor-pointer aria-disabled:opacity-40 aria-disabled:cursor-not-allowed flex flex-col justify-between ${
                         selectedBedType === 'queen'
                           ? 'border-[#1E3A2B] bg-[#1E3A2B]/5 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                           : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50'
@@ -752,8 +799,10 @@ export const ReservationFormSection: React.FC = () => {
                     {/* Twin Bed */}
                     <div
                       id="opt-bed-twin"
-                      onClick={() => setSelectedBedType('twin')}
-                      className={`rounded-2xl p-3.5 border transition-all cursor-pointer flex flex-col justify-between ${
+                      onClick={() => allowedBeds.includes('twin') && setSelectedBedType('twin')}
+                      role="button" tabIndex={allowedBeds.includes('twin') ? 0 : -1} aria-disabled={!allowedBeds.includes('twin')}
+                      onKeyDown={e => { if (allowedBeds.includes('twin') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setSelectedBedType('twin'); } } }
+                      className={`rounded-2xl p-3.5 border transition-all cursor-pointer aria-disabled:opacity-40 aria-disabled:cursor-not-allowed flex flex-col justify-between ${
                         selectedBedType === 'twin'
                           ? 'border-[#1E3A2B] bg-[#1E3A2B]/5 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                           : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50'
@@ -799,7 +848,7 @@ export const ReservationFormSection: React.FC = () => {
                     <div
                       id="opt-breakfast-included"
                       onClick={() => setBreakfastPlan('with_breakfast')}
-                      className={`rounded-2xl p-4 border transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`rounded-2xl p-4 border transition-all cursor-pointer aria-disabled:opacity-40 aria-disabled:cursor-not-allowed flex flex-col justify-between ${
                         breakfastPlan === 'with_breakfast'
                           ? 'border-[#1E3A2B] bg-[#1E3A2B]/5 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                           : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50'
@@ -831,7 +880,7 @@ export const ReservationFormSection: React.FC = () => {
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span className="text-slate-400 font-medium">Tambahan Biaya:</span>
                         <span className="font-bold text-slate-800 font-mono">
-                          +Rp 75.000 <span className="text-[10px] font-normal text-slate-500">/ tamu / mlm</span>
+                          {formatRupiah(selectedRoom.breakfastPrice ?? 0)} <span className="text-[10px] font-normal text-slate-500">/ tamu / mlm</span>
                         </span>
                       </div>
                     </div>
@@ -840,7 +889,7 @@ export const ReservationFormSection: React.FC = () => {
                     <div
                       id="opt-breakfast-room-only"
                       onClick={() => setBreakfastPlan('room_only')}
-                      className={`rounded-2xl p-4 border transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`rounded-2xl p-4 border transition-all cursor-pointer aria-disabled:opacity-40 aria-disabled:cursor-not-allowed flex flex-col justify-between ${
                         breakfastPlan === 'room_only'
                           ? 'border-[#1E3A2B] bg-[#1E3A2B]/5 ring-2 ring-[#1E3A2B]/20 shadow-xs'
                           : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50'
@@ -1085,7 +1134,7 @@ export const ReservationFormSection: React.FC = () => {
                   {/* Subtotal Kamar Calculation */}
                   <div className="flex justify-between items-center pt-2.5 border-t border-dashed border-slate-200 text-slate-700">
                     <span>Kamar ({totalNights} mlm × {roomCount} kmr):</span>
-                    <span className="font-mono font-bold text-slate-900">{formatRupiah(totalRoomCost)}</span>
+                    <span className="font-mono font-bold text-slate-900">{priceText(totalRoomCost)}</span>
                   </div>
 
                   {/* Promo Diskon 10% IPB2026 */}
@@ -1102,7 +1151,7 @@ export const ReservationFormSection: React.FC = () => {
                   {totalBreakfastCost > 0 ? (
                     <div className="flex justify-between items-center text-amber-900 font-medium">
                       <span>Sarapan ({guestCount} pax × {totalNights} mlm):</span>
-                      <span className="font-mono font-bold">{formatRupiah(totalBreakfastCost)}</span>
+                      <span className="font-mono font-bold">{priceText(totalBreakfastCost)}</span>
                     </div>
                   ) : (
                     <div className="flex justify-between items-center text-slate-400">
@@ -1124,17 +1173,26 @@ export const ReservationFormSection: React.FC = () => {
                   </span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-2xl sm:text-3xl font-bold text-[#1E3A2B] tracking-tight">
-                      {formatRupiah(estimatedTotal)}
+                      {priceText(estimatedTotal)}
                     </span>
                     <span className="text-xs text-slate-500 font-bold uppercase">Nett</span>
                   </div>
+                </div>
+
+                <div aria-live="polite" className="mb-4 text-sm">
+                  {quoteLoading && <p className="text-slate-600">{language === 'en' ? 'Checking availability and price…' : 'Memeriksa ketersediaan dan harga…'}</p>}
+                  {quote && !quote.can_book && <p role="status" className="text-amber-800">{language === 'en' ? 'Not enough rooms are available for these dates. Choose other dates or contact the hotel.' : 'Kamar belum tersedia untuk tanggal dan jumlah ini. Pilih tanggal lain atau hubungi hotel.'}</p>}
+                  {errorMessages.length > 0 && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-800">
+                    {errorMessages.map((message, index) => <p key={index}>{message}</p>)}
+                    <button type="button" className="mt-2 font-semibold underline" onClick={() => {setSubmitError(null); refreshQuote();}}>{language === 'en' ? 'Check price again' : 'Periksa harga lagi'}</button>
+                  </div>}
                 </div>
 
                 {/* Submit Button */}
                 <button
                   type="submit"
                   id="btn-submit-reservation"
-                  disabled={isLoading}
+                  disabled={isLoading || (!retryPending && (quoteLoading || !quote?.can_book))}
                   className="w-full py-4 px-6 bg-[#1E3A2B] hover:bg-[#13261C] active:scale-[0.99] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-xl flex items-center justify-center gap-2 border border-[#C5A880]/30 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isLoading ? (

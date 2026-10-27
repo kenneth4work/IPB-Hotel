@@ -1,0 +1,23 @@
+flowchart TD
+    UI["Tamu memilih tanggal, tipe kamar, jumlah kamar dan tamu\nReact: integrasi backend belum terpasang"]
+    UI -. "integrasi berikutnya" .-> V
+    subgraph IMPLEMENTED["Service backend sudah tersedia"]
+        V["Validasi tanggal, kapasitas dan pilihan kasur"] --> L["Mulai transaksi DB dan kunci stok"]
+        L --> Q{"Stok cukup di setiap malam?"}
+        Q -->|Tidak| R["Tolak reservasi; rollback"]
+        Q -->|Ya| S["Hitung harga di server\nSimpan reservasi pending dan reservation_nights"]
+        S --> H["Hold stok 30 menit"]
+        H --> X{"Hold kedaluwarsa?"}
+        X -->|Ya| RELEASE["Pending tidak lagi mengurangi stok\nStatus expired belum diubah otomatis"]
+    end
+    H -. "integrasi berikutnya" .-> P
+    subgraph PLANNED["Rencana integrasi payment gateway"]
+        P["Buat invoice gateway dan payment_transactions pending"] -.-> PAY["Tamu melakukan pembayaran"]
+        PAY -.-> W["Webhook: verifikasi signature, nominal, currency\ndan cegah pemrosesan event berulang"]
+        W -.-> GOOD{"Pembayaran valid dan hold masih berlaku?"}
+        GOOD -. "Ya" .-> CONFIRM["Transaksi paid; reservasi confirmed\nAlokasi stok tetap dipakai"]
+        GOOD -. "Gagal / belum dibayar" .-> RETRY["Catat status pembayaran\nBoleh coba ulang selama hold aktif"]
+        RETRY -.-> P
+        GOOD -. "Terbayar setelah hold habis" .-> REVIEW["Periksa ulang stok; tangani refund atau tindak lanjut\nJangan konfirmasi otomatis"]
+    end
+    CONFIRM -.-> CHECKIN["Rencana operasional: checked_in lalu completed"]

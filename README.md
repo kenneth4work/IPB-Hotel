@@ -4,10 +4,10 @@ Laravel 13, Inertia 3, React 19, TypeScript, dan Tailwind CSS 4.
 
 ## Kebutuhan
 
-- PHP 8.3–8.5 dengan ekstensi Laravel dan `pdo_mysql` (lokal saat setup: PHP 8.4.7).
+- PHP 8.4.1–8.5 (sesuai composer.lock; framework Laravel 13 mendukung mulai 8.3) dengan ekstensi Laravel dan `pdo_mysql` (lokal saat setup: PHP 8.4.7).
 - Composer 2.
 - Node.js 20.19+ atau 22.12+ dan npm.
-- MySQL untuk tahap penyimpanan data reservasi.
+- SQLite untuk pengembangan lokal sementara; MySQL untuk deployment dengan pemesanan bersamaan.
 
 ## Setup
 
@@ -36,17 +36,26 @@ php artisan serve
 
 ## Database
 
-`.env.example` menggunakan koneksi MySQL dengan nama database `ipb_hotel`.
-Isi `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD`
-di `.env` sesuai server lokal. Setelah database tersedia:
+Konfigurasi lokal sementara memakai SQLite di `database/database.sqlite`.
+`.env` berisi path absolut ke file tersebut; file database dan `.env` diabaikan Git.
+Untuk instalasi baru, buat file kosong `database/database.sqlite`, lalu jalankan:
 
 ```sh
 php artisan migrate
+php artisan db:seed --class=RoomTypeSeeder
 ```
 
-Halaman awal memakai session dan cache berbasis file, serta queue `sync`,
-sehingga dapat dijalankan sebelum MySQL terhubung. Migrasi bawaan Laravel
-tersedia; skema kamar, reservasi, dan pembayaran belum dibuat.
+Enam tipe kamar tersedia melalui seeder. Stok per tanggal perlu diisi sesuai
+alokasi hotel, sehingga tidak ada jumlah kamar yang dibuat secara otomatis.
+Lihat [panduan database](docs/database.md) untuk perintah pengisian stok.
+
+Untuk beralih ke MySQL, ubah `DB_CONNECTION=mysql`, isi `DB_HOST`, `DB_PORT`,
+`DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` di `.env`, lalu jalankan
+`php artisan config:clear`, migrasi, dan seeder pada database MySQL yang baru.
+Data SQLite tidak otomatis dipindahkan. Gunakan MySQL untuk produksi; penguncian
+baris pada service reservasi ditujukan untuk MySQL/InnoDB.
+
+Session dan cache tetap berbasis file; queue memakai `sync`.
 
 ## Struktur
 
@@ -57,8 +66,20 @@ tersedia; skema kamar, reservasi, dan pembayaran belum dibuat.
 - `src/components`, `src/data`, `src/assets`: tampilan dan konten yang ada.
 - `public`: aset statis dan entry point Laravel.
 
-Form reservasi dan inquiry masih menggunakan simulasi frontend dan WhatsApp.
-Tahap ini belum menyimpan booking atau memproses pembayaran.
+Form reservasi memuat tipe kamar dari database dan meminta quote ke backend.
+Harga, promo, biaya sarapan, kode booking, serta hold stok diproses server.
+Submit menyimpan reservasi pending beserta rincian malam. WhatsApp dipakai untuk
+menghubungi hotel; inquiry kontak masih memakai alur WhatsApp. Gateway pembayaran
+belum diintegrasikan. Panduan Windows tersedia di `output/pdf/panduan-setup-ipb-hotel.pdf`.
+
+Endpoint web dengan session/CSRF:
+- `GET /booking/room-types`: katalog tipe kamar aktif.
+- `POST /booking/quote`: harga dan ketersediaan; tidak menahan stok.
+- `POST /reservations`: simpan hold; wajib `request_id` UUID dan `expected_total`.
+
+Permintaan ulang dengan UUID dan data yang sama mengembalikan booking yang sudah
+tersimpan. UUID yang sama untuk data berbeda ditolak. Harga dan stok dicek ulang
+saat submit; jika harga berubah, tamu harus memeriksa harga terbaru.
 
 ## Verifikasi
 

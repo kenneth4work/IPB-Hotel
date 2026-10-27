@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { RoomData } from '../types';
-import { getRoomImageUrl, IMGBB_DIRECT_MAP } from '../data/hotelData';
+import { getRoomImageUrl } from '../data/hotelData';
 import { Info, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -108,12 +108,6 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
           src={currentImgSrc}
           alt={language === 'en' ? `${room.name} - Photo ${currentIdx + 1}` : `${room.name} - Foto ${currentIdx + 1}`}
           loading="lazy"
-          onError={(e) => {
-            const fallback = IMGBB_DIRECT_MAP[activePhoto] || getRoomImageUrl(imagesList[currentIdx]);
-            if (fallback && e.currentTarget.src !== fallback) {
-              e.currentTarget.src = fallback;
-            }
-          }}
           className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
         />
 

@@ -1,0 +1,63 @@
+erDiagram
+    room_types ||--o{ room_availabilities : "stok per tanggal"
+    room_types ||--o{ reservations : "tipe yang dipesan"
+    reservations ||--o{ reservation_nights : "alokasi per malam"
+    room_availabilities ||--o{ reservation_nights : "stok yang dipakai"
+    reservations ||--o{ payment_transactions : "percobaan pembayaran"
+
+    room_types {
+        bigint id PK
+        varchar slug UK
+        varchar name
+        smallint max_guests
+        bigint base_price
+        bigint breakfast_price
+        json bed_types
+        boolean is_active
+    }
+    room_availabilities {
+        bigint id PK
+        bigint room_type_id FK
+        date stay_date "UNIQUE bersama room_type_id"
+        smallint total_rooms
+        smallint blocked_rooms
+        bigint nightly_price "nullable: fallback base_price"
+    }
+    reservations {
+        bigint id PK
+        varchar booking_code UK
+        bigint room_type_id FK
+        varchar room_type_name "snapshot"
+        varchar guest_name
+        varchar guest_email
+        varchar guest_phone
+        date check_in
+        date check_out "eksklusif"
+        smallint room_count
+        smallint guest_count "total seluruh booking"
+        varchar status
+        bigint room_total
+        bigint breakfast_total
+        bigint total_amount
+        datetime hold_expires_at
+    }
+    reservation_nights {
+        bigint id PK
+        bigint reservation_id FK
+        bigint room_availability_id FK
+        smallint room_count
+        bigint nightly_price "snapshot per kamar"
+        bigint breakfast_total "total malam ini"
+    }
+    payment_transactions {
+        bigint id PK
+        uuid reference UK
+        bigint reservation_id FK
+        varchar provider
+        varchar provider_transaction_id "nullable; UNIQUE bersama provider"
+        varchar status
+        bigint amount
+        char currency "IDR"
+        datetime expires_at
+        datetime paid_at
+    }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RoomData } from '../types';
-import { getRoomImageUrl, IMGBB_DIRECT_MAP } from '../data/hotelData';
+import { getRoomImageUrl } from '../data/hotelData';
 import { X, ChevronLeft, ChevronRight, Maximize2, BedDouble, ShieldCheck, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -151,12 +151,6 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
             key={currentImgSrc}
             src={currentImgSrc}
             alt={`${room.name} - ${currentIndex + 1}`}
-            onError={(e) => {
-              const fallback = IMGBB_DIRECT_MAP[room.images[currentIndex]] || getRoomImageUrl(room.images[currentIndex]);
-              if (fallback && e.currentTarget.src !== fallback) {
-                e.currentTarget.src = fallback;
-              }
-            }}
             className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl transition-all duration-300"
           />
         </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { RoomData, Room } from '../types';
-import { getRoomImageUrl, IMGBB_DIRECT_MAP } from '../data/hotelData';
+import { getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
 import { 
   X, 
@@ -97,12 +97,6 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
             key={activeImgUrl}
             src={activeImgUrl}
             alt={`${roomName} - ${activePhotoIdx + 1}`}
-            onError={(e) => {
-              const fallback = IMGBB_DIRECT_MAP[images[activePhotoIdx]] || getRoomImageUrl(images[activePhotoIdx]);
-              if (fallback && e.currentTarget.src !== fallback) {
-                e.currentTarget.src = fallback;
-              }
-            }}
             className="w-full h-full object-cover transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none" />
