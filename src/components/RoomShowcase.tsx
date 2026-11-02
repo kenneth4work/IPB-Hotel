@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ROOMS_DATA } from '../data/hotelData';
 import { RoomData } from '../types';
 import { RoomCard } from './RoomCard';
 import { RoomGalleryModal } from './RoomGalleryModal';
 import { RoomDetailModal } from './RoomDetailModal';
 import { useLanguage } from '../context/LanguageContext';
+import { useBooking } from '../context/BookingContext';
 
 export const RoomShowcase: React.FC = () => {
   const [galleryRoom, setGalleryRoom] = useState<RoomData | null>(null);
   const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [detailRoom, setDetailRoom] = useState<RoomData | null>(null);
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
+  const { setSelectedRoomId } = useBooking();
+  const navigate = useNavigate();
 
   const handleOpenGallery = (room: RoomData, initialIndex: number) => {
     setGalleryRoom(room);
@@ -56,10 +60,9 @@ export const RoomShowcase: React.FC = () => {
           initialIndex={galleryInitialIndex}
           onClose={() => setGalleryRoom(null)}
           onBookNow={(room) => {
-            const waText = language === 'en'
-              ? `Hello IPB Convention Hotel, I would like to book the ${room.name} at ${room.priceFormatted}/night.`
-              : `Halo IPB Convention Hotel, saya ingin memesan ${room.name} seharga ${room.priceFormatted}/malam.`;
-            window.open(`https://wa.me/628111330659?text=${encodeURIComponent(waText)}`, '_blank');
+            setSelectedRoomId(room.id);
+            setGalleryRoom(null);
+            navigate('/reservasi');
           }}
         />
       )}
@@ -70,12 +73,11 @@ export const RoomShowcase: React.FC = () => {
           room={detailRoom}
           onClose={() => setDetailRoom(null)}
           onBook={(room) => {
-            const roomName = ('name' in room && room.name) ? room.name : room.type;
-            const priceStr = room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price);
-            const waText = language === 'en'
-              ? `Hello IPB Convention Hotel, I would like to book the ${roomName} at ${priceStr}/night.`
-              : `Halo IPB Convention Hotel, saya ingin memesan ${roomName} seharga ${priceStr}/malam.`;
-            window.open(`https://wa.me/628111330659?text=${encodeURIComponent(waText)}`, '_blank');
+            if ('id' in room && room.id) {
+              setSelectedRoomId(room.id);
+            }
+            setDetailRoom(null);
+            navigate('/reservasi');
           }}
           onOpenGallery={(room, idx) => {
             setDetailRoom(null);

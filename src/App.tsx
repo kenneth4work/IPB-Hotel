@@ -1,56 +1,88 @@
-import React from 'react';
-import { LanguageProvider } from './context/LanguageContext';
-import { BookingProvider } from './context/BookingContext';
-import { Navbar } from './components/Navbar';
-import { HeroSection } from './components/HeroSection';
-import { QuickAvailabilityBar } from './components/QuickAvailabilityBar';
-import { RoomShowcase } from './components/RoomShowcase';
-import { ReservationFormSection } from './components/ReservationFormSection';
-import { HotelGallery } from './components/HotelGallery';
-import { StrategicLocation } from './components/StrategicLocation';
-import { GuestReviews } from './components/GuestReviews';
-import { ContactAndInquiry } from './components/ContactAndInquiry';
-import { Footer } from './components/Footer';
+import React, { useEffect } from "react";
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route,
+    useLocation,
+} from "react-router-dom";
+import { LanguageProvider } from "./context/LanguageContext";
+import { BookingProvider } from "./context/BookingContext";
+import { Navbar } from "./components/Navbar";
+import { HeroSection } from "./components/HeroSection";
+import { AboutHotel } from "./components/AboutHotel";
+import { RoomShowcase } from "./components/RoomShowcase";
+import { HotelGallery } from "./components/HotelGallery";
+import { StrategicLocation } from "./components/StrategicLocation";
+import { GuestReviews } from "./components/GuestReviews";
+import { FaqSection } from "./components/FaqSection";
+import { Footer } from "./components/Footer";
+import ReservationPage from "./pages/ReservationPage";
+
+function ScrollToHash() {
+    const { pathname, hash } = useLocation();
+
+    useEffect(() => {
+        if (hash) {
+            const id = hash.replace("#", "");
+            const timer = setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }, 50);
+            return () => clearTimeout(timer);
+        } else {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    }, [pathname, hash]);
+
+    return null;
+}
+
+// Komponen untuk Halaman Utama (Landing Page Tanpa Formulir Reservasi)
+function HomePage() {
+    return (
+        <>
+            <HeroSection />
+            <AboutHotel />
+            <RoomShowcase />
+            <HotelGallery />
+            <StrategicLocation />
+            <GuestReviews />
+            <FaqSection />
+        </>
+    );
+}
 
 export default function App() {
-  return (
-    <LanguageProvider>
-      <BookingProvider>
-        <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-slate-900 selection:bg-[#C5A880]/30 selection:text-slate-900 font-sans">
-          {/* Sticky Header Navigation */}
-          <Navbar />
+    return (
+        <LanguageProvider>
+            <BookingProvider>
+                <Router>
+                    <ScrollToHash />
+                    <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-slate-900 selection:bg-[#C5A880]/30 selection:text-slate-900 font-sans">
+                        {/* Sticky Header Navigation */}
+                        <Navbar />
 
-          {/* Main Content Sections */}
-          <main className="flex-1">
-            {/* Hero Section with Hotel Intro & Key Highlights */}
-            <HeroSection />
+                        {/* Main Content dengan Router */}
+                        <main className="flex-1">
+                            <Routes>
+                                {/* Halaman Beranda Utama */}
+                                <Route path="/" element={<HomePage />} />
 
-            {/* Quick Room Availability & Best Rates Search Bar (Floating Hero Overlap) */}
-            <QuickAvailabilityBar />
+                                {/* Halaman Khusus Formulir Reservasi */}
+                                <Route
+                                    path="/reservasi"
+                                    element={<ReservationPage />}
+                                />
+                            </Routes>
+                        </main>
 
-            {/* Section A: Header & Room Showcase Section (4-Column Luxury Grid) */}
-            <RoomShowcase />
-
-          {/* Section A2: Online Room Reservation Form Feature */}
-          <ReservationFormSection />
-
-          {/* Section B: Hotel Gallery Grid ("Potret Keindahan Hotel Kami") */}
-          <HotelGallery />
-
-          {/* Section C: Strategic Location & Interactive Map Section */}
-          <StrategicLocation />
-
-          {/* Section D: Verified Guest Reviews ("Apa Kata Tamu Kami") */}
-          <GuestReviews />
-
-          {/* Section F: Contact & Quick Inquiry ("Kami Siap Membantu Anda") */}
-          <ContactAndInquiry />
-        </main>
-
-        {/* Footer */}
-        <Footer />
-      </div>
-      </BookingProvider>
-    </LanguageProvider>
-  );
+                        {/* Footer */}
+                        <Footer />
+                    </div>
+                </Router>
+            </BookingProvider>
+        </LanguageProvider>
+    );
 }

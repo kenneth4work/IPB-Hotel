@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { RoomData } from '../types';
 import { getRoomImageUrl } from '../data/hotelData';
-import { X, ChevronLeft, ChevronRight, Maximize2, BedDouble, ShieldCheck, MessageCircle } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Maximize2, Calendar } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface RoomGalleryModalProps {
@@ -17,7 +17,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
   onClose,
   onBookNow
 }) => {
-  const { language, t } = useLanguage();
+  const { t } = useLanguage();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const total = room.images.length;
   const touchStartXRef = useRef<number | null>(null);
@@ -69,19 +69,13 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
 
   // Convert "36 M²" -> "36 sqm" for display
   const formattedSize = room.size.replace('M²', 'sqm').trim();
-  const currentImgSrc = getRoomImageUrl(room.images[currentIndex]);
   const displayPrice = room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price);
   const translatedBadge = t.rooms.badges[room.id] || room.badge;
-
-  const waBookingUrl = `https://wa.me/628111330659?text=${encodeURIComponent(
-    language === 'en'
-      ? `Hello IPB Convention Hotel, I would like to book the ${room.name} at ${displayPrice}/night.`
-      : `Halo IPB Convention Hotel, saya ingin memesan ${room.name} seharga ${displayPrice}/malam.`
-  )}`;
 
   return (
     <div 
       id="room-gallery-modal"
+      data-popup
       className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between text-white select-none animate-fade-in"
       onClick={onClose}
     >
@@ -91,7 +85,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 text-[11px] font-bold tracking-widest uppercase bg-[#C5A880] text-slate-950 rounded-md">
+          <span className="px-2.5 py-1 text-[11px] font-bold bg-[#C5A880] text-slate-950 rounded-md">
             {translatedBadge}
           </span>
           <h3 className="font-serif text-lg sm:text-xl font-bold text-white tracking-wide">
@@ -103,16 +97,15 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Quick Book Button */}
-          <a
-            href={waBookingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#1B3D2F] hover:bg-[#142e23] text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors border border-[#C5A880]/30"
+          {/* Quick Book Button -> Halaman Reservasi */}
+          <button
+            type="button"
+            onClick={() => onBookNow?.(room)}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#1B3D2F] hover:bg-[#142e23] text-white text-xs font-semibold rounded-lg transition-colors border border-[#C5A880]/30 cursor-pointer"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+            <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />
             <span>{t.modal.quickBook}</span>
-          </a>
+          </button>
 
           {/* Close button (X) */}
           <button
@@ -126,7 +119,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         </div>
       </div>
 
-      {/* Main Photo Viewing Area with Touch Swipe */}
+      {/* Main Photo Viewing Area with Soft Slide Animation & Touch Swipe */}
       <div 
         className="relative flex-1 flex items-center justify-center px-4 sm:px-12 my-auto overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -139,20 +132,31 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
           <button
             onClick={handlePrev}
             aria-label={t.gallery.prevAria}
-            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-lg active:scale-95"
+            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-lg active:scale-95 cursor-pointer"
           >
             <ChevronLeft className="w-7 h-7" />
           </button>
         )}
 
-        {/* High-Resolution Photo Container */}
-        <div className="relative max-w-5xl max-h-[72vh] w-full flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl bg-black/40">
-          <img
-            key={currentImgSrc}
-            src={currentImgSrc}
-            alt={`${room.name} - ${currentIndex + 1}`}
-            className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl transition-all duration-300"
-          />
+        {/* High-Resolution Photo Container with Horizontal Soft Slide Track */}
+        <div className="relative max-w-5xl max-h-[72vh] w-full overflow-hidden rounded-2xl shadow-2xl bg-black/40">
+          <div
+            className="flex w-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform items-center"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {room.images.map((imgUrl, idx) => {
+              const resolvedUrl = getRoomImageUrl(imgUrl);
+              return (
+                <div key={idx} className="w-full shrink-0 flex items-center justify-center">
+                  <img
+                    src={resolvedUrl}
+                    alt={`${room.name} - ${idx + 1}`}
+                    className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl"
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Desktop Large Slide Arrow Right */}
@@ -160,7 +164,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
           <button
             onClick={handleNext}
             aria-label={t.gallery.nextAria}
-            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-lg active:scale-95"
+            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-110 shadow-lg active:scale-95 cursor-pointer"
           >
             <ChevronRight className="w-7 h-7" />
           </button>
@@ -189,7 +193,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               aria-label={`${t.modal.photoCounterText} ${idx + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 ${
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                 idx === currentIndex
                   ? 'w-7 bg-[#C5A880] shadow-sm shadow-[#C5A880]/50'
                   : 'w-2 bg-white/30 hover:bg-white/60'

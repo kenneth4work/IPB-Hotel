@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { Language, translations, TranslationDictionary } from '../data/translations';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
+  isSwitchingLang: boolean;
   t: TranslationDictionary;
 }
 
@@ -24,14 +25,30 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
     return 'id';
   });
+  const [isSwitchingLang, setIsSwitchingLang] = useState(false);
+  const switchTimerRef = useRef<number | null>(null);
+  const endTimerRef = useRef<number | null>(null);
 
   const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    try {
-      localStorage.setItem(STORAGE_KEY, lang);
-    } catch {
-      // ignore
-    }
+    if (lang === language) return;
+
+    if (switchTimerRef.current) window.clearTimeout(switchTimerRef.current);
+    if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+
+    setIsSwitchingLang(true);
+
+    switchTimerRef.current = window.setTimeout(() => {
+      setLanguageState(lang);
+      try {
+        localStorage.setItem(STORAGE_KEY, lang);
+      } catch {
+        // ignore
+      }
+    }, 150);
+
+    endTimerRef.current = window.setTimeout(() => {
+      setIsSwitchingLang(false);
+    }, 460);
   };
 
   const toggleLanguage = () => {
@@ -39,15 +56,22 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   useEffect(() => {
+    return () => {
+      if (switchTimerRef.current) window.clearTimeout(switchTimerRef.current);
+      if (endTimerRef.current) window.clearTimeout(endTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = language;
     if (language === 'en') {
       document.title = 'IPB Convention Hotel - In the Heart of Bogor City';
       const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', 'Official website of IPB Convention Hotel Bogor - In the Heart of Bogor, Close to Everything. Premier accommodation and convention center at Botani Square.');
+      if (metaDesc) metaDesc.setAttribute('content', 'Official website of IPB Convention Hotel Bogor - In the Heart of Bogor. Premier accommodation and convention center at Botani Square.');
     } else {
       document.title = 'IPB Convention Hotel - Di Jantung Kota Bogor';
       const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', 'Website resmi IPB Convention Hotel Bogor - Di Jantung Kota Bogor, Dekat Segalanya. Pilihan akomodasi dan convention bergengsi di kawasan Botani Square.');
+      if (metaDesc) metaDesc.setAttribute('content', 'Website resmi IPB Convention Hotel Bogor - Di Jantung Kota Bogor. Pilihan akomodasi dan convention bergengsi di kawasan Botani Square.');
     }
   }, [language]);
 
@@ -57,10 +81,29 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         language,
         setLanguage,
         toggleLanguage,
+        isSwitchingLang,
         t: translations[language]
       }}
     >
-      {children}
+      {/* Soft Light Veil Animation when switching language */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none fixed inset-0 z-40 transition-opacity duration-300 ease-out ${
+          isSwitchingLang ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          background:
+            'radial-gradient(circle at 50% 15%, rgba(255, 252, 245, 0.55) 0%, rgba(197, 168, 128, 0.14) 45%, rgba(253, 251, 247, 0.35) 100%)',
+          backdropFilter: isSwitchingLang ? 'blur(2px)' : 'blur(0px)',
+        }}
+      />
+      <div
+        className={`transition-opacity duration-300 ease-out ${
+          isSwitchingLang ? 'opacity-85' : 'opacity-100'
+        }`}
+      >
+        {children}
+      </div>
     </LanguageContext.Provider>
   );
 };

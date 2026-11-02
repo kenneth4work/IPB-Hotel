@@ -1,334 +1,462 @@
-import { HotelConfig, Review, GalleryItem, RoomData } from '../types';
-import suiteRoomImg from '../assets/images/regenerated_image_1789105967978.jpg';
-import grandExecutiveRoomImg from '../assets/images/regenerated_image_1789108862742.jpg';
-import executiveRoomImg from '../assets/images/regenerated_image_1789098346345.jpg';
-import deluxeRoomImg from '../assets/images/regenerated_image_1789098352552.jpg';
-import superiorRoomImg from '../assets/images/regenerated_image_1789098940245.jpg';
-import standardRoomImg from '../assets/images/regenerated_image_1789098357914.jpg';
-import grandLobbyImg from '../assets/images/regenerated_image_1789105660824.jpg';
-import galleryBallroomImg from '../assets/images/regenerated_image_1789109938317.jpg';
-import galleryDiningImg from '../assets/images/regenerated_image_1789109942226.jpg';
-import gallerySuiteImg from '../assets/images/regenerated_image_1789109946006.jpg';
-import galleryMallImg from '../assets/images/regenerated_image_1789109949049.jpg';
-import galleryLoungeImg from '../assets/images/regenerated_image_1789109954250.jpg';
+import { HotelConfig, Review, GalleryItem, RoomData } from "../types";
 
+// Impor logo dan foto-foto galeri utama
+import brandLogoImg from "../assets/images/regenerated_image_1789095966156.png";
+import grandExecutiveRoomImg from "../assets/images/regenerated_image_1789108862742.jpg";
+import standardRoomImg from "../assets/images/regenerated_image_1789098357914.jpg";
+import grandLobbyImg from "../assets/images/regenerated_image_1789105660824.jpg";
+import galleryBallroomImg from "../assets/images/regenerated_image_1789109938317.jpg";
+import galleryDiningImg from "../assets/images/regenerated_image_1789109942226.jpg";
+import gallerySuiteImg from "../assets/images/regenerated_image_1789109946006.jpg";
+import galleryMallImg from "../assets/images/regenerated_image_1789109949049.jpg";
+import galleryLoungeImg from "../assets/images/regenerated_image_1789109954250.jpg";
+
+// Impor foto kamar lainnya
+import deluxe1 from "../assets/images/deluxe-1.jpg";
+import deluxe2 from "../assets/images/deluxe-2.jpg";
+import deluxe3 from "../assets/images/deluxe-3.jpg";
+import deluxe4 from "../assets/images/deluxe-4.jpg";
+
+import executive1 from "../assets/images/executive-1.jpg";
+import executive2 from "../assets/images/executive-2.jpg";
+import executive3 from "../assets/images/executive-3.jpg";
+import executive4 from "../assets/images/executive-4.jpg";
+
+import suite1 from "../assets/images/suite-1.jpg";
+import suite2 from "../assets/images/suite-2.jpg";
+import suite3 from "../assets/images/suite-3.jpg";
+import suite4 from "../assets/images/suite-4.jpg";
+
+import superior1 from "../assets/images/superior-1.jpg";
+import superior2 from "../assets/images/superior-2.jpg";
+import superior3 from "../assets/images/superior-3.jpg";
+import superior4 from "../assets/images/superior-4.jpg";
+
+// Daftar kategori dan array foto kamar
 export const roomCategories: Record<string, string[]> = {
-  'Deluxe': ['/Deluxe/D1.jpg'],
-  'Executive': ['/Execuitve/X1.jpg'],
-  'Suite': ['/Suite/SU1.jpg'],
-  'Grand Executive': ['/GrandExecutive/GE1.jpg'],
-  'Superior': ['/Superior/SP1.jpg'],
-  'Standar': ['/Standard/S1.jpg'],
+    Suite: [suite1, suite2, suite3, suite4],
+    "Grand Executive": [
+        grandExecutiveRoomImg,
+        grandExecutiveRoomImg,
+        grandExecutiveRoomImg,
+        grandExecutiveRoomImg,
+    ],
+    Executive: [executive1, executive2, executive3, executive4],
+    Deluxe: [deluxe1, deluxe2, deluxe3, deluxe4],
+    Superior: [superior1, superior2, superior3, superior4],
+    Standar: [
+        standardRoomImg,
+        standardRoomImg,
+        standardRoomImg,
+        standardRoomImg,
+    ],
 };
 
 export const ROOMS_DATA: RoomData[] = [
-  {
-    id: "suite",
-    badge: "SUITE",
-    size: "36 M²",
-    name: "Suite Room",
-    description: "Kamar termewah dengan ruang tamu terpisah, ranjang King berukuran besar, meja santai, dan kamar mandi dengan bathtub.",
-    amenities: ["Ruang Tamu", "Ranjang King", "Smart TV", "Bathtub & Mini Bar"],
-    price: "Rp 1.350.000",
-    priceUnit: "/malam",
-    images: roomCategories["Suite"]
-  },
-  {
-    id: "grand-executive",
-    badge: "GRAND EXECUTIVE",
-    size: "28 M²",
-    name: "Grand Executive Room",
-    description: "Kamar eksekutif ekstra luas dengan lounge area eksklusif, ranjang King premium, dan fasilitas penunjang bisnis modern.",
-    amenities: ["Ranjang King", "Lounge Area", "Smart TV 50\"", "Mesin Kopi & Teh"],
-    price: "Rp 1.050.000",
-    priceUnit: "/malam",
-    images: roomCategories["Grand Executive"]
-  },
-  {
-    id: "executive",
-    badge: "EXECUTIVE",
-    size: "24 M²",
-    name: "Executive Room",
-    description: "Dirancang khusus bagi profesional dan pelaku bisnis dengan meja kerja nyaman serta pemandangan menawan.",
-    amenities: ["Ranjang King", "Smart TV", "Meja Kerja", "Balkon Pribadi"],
-    price: "Rp 900.000",
-    priceUnit: "/malam",
-    images: roomCategories["Executive"]
-  },
-  {
-    id: "deluxe",
-    badge: "DELUXE",
-    size: "22 M²",
-    name: "Deluxe Room",
-    description: "Pilihan favorit untuk pelancong santai dengan pemandangan lanskap kota dan interior kontemporer.",
-    amenities: ["Ranjang Queen", "TV Layar Datar", "AC Dingin", "Pemandangan Kota"],
-    price: "Rp 800.000",
-    priceUnit: "/malam",
-    images: roomCategories["Deluxe"]
-  },
-  {
-    id: "superior",
-    badge: "SUPERIOR",
-    size: "20 M²",
-    name: "Superior Room",
-    description: "Kenyamanan optimal dengan sentuhan interior hangat kontemporer, pilihan kasur Queen atau Twin, serta suasana tenang yang menenangkan.",
-    amenities: ["Ranjang Queen / Twin", "TV Layar Datar", "AC Dingin", "Water Heater"],
-    price: "Rp 700.000",
-    priceUnit: "/malam",
-    images: roomCategories["Superior"]
-  },
-  {
-    id: "standard",
-    badge: "STANDAR",
-    size: "19 M²",
-    name: "Standard Room",
-    description: "Kamar modern yang fungsional dan terjangkau dengan koneksi WiFi kencang untuk kenyamanan menginap.",
-    amenities: ["Ranjang Double", "TV Layar Datar", "AC Dingin", "WiFi Kencang"],
-    price: "Rp 600.000",
-    priceUnit: "/malam",
-    images: roomCategories["Standar"]
-  }
+    {
+        id: "suite",
+        badge: "SUITE",
+        size: "36 M²",
+        name: "Suite Room",
+        description:
+            "Kamar seluas 36 M² dengan ruang tamu terpisah, ranjang King berukuran besar, meja santai, dan kamar mandi dengan bathtub.",
+        amenities: [
+            "Ruang Tamu",
+            "Ranjang King",
+            "Smart TV",
+            "Bathtub & Mini Bar",
+        ],
+        price: "Rp 1.350.000",
+        priceUnit: "/malam",
+        images: roomCategories["Suite"],
+    },
+    {
+        id: "grand-executive",
+        badge: "GRAND EXECUTIVE",
+        size: "28 M²",
+        name: "Grand Executive Room",
+        description:
+            "Kamar eksekutif seluas 28 M² dengan lounge area eksklusif, ranjang King premium, dan fasilitas penunjang bisnis modern.",
+        amenities: [
+            "Ranjang King",
+            "Lounge Area",
+            'Smart TV 50"',
+            "Mesin Kopi & Teh",
+        ],
+        price: "Rp 1.050.000",
+        priceUnit: "/malam",
+        images: roomCategories["Grand Executive"],
+    },
+    {
+        id: "executive",
+        badge: "EXECUTIVE",
+        size: "24 M²",
+        name: "Executive Room",
+        description:
+            "Kamar seluas 24 M² yang dirancang khusus bagi profesional dan pelaku bisnis dengan meja kerja nyaman serta pemandangan menawan.",
+        amenities: ["Ranjang King", "Smart TV", "Meja Kerja", "Balkon Pribadi"],
+        price: "Rp 900.000",
+        priceUnit: "/malam",
+        images: roomCategories["Executive"],
+    },
+    {
+        id: "deluxe",
+        badge: "DELUXE",
+        size: "22 M²",
+        name: "Deluxe Room",
+        description:
+            "Kamar seluas 22 M² yang menjadi pilihan favorit pelancong santai dengan pemandangan lanskap kota dan interior kontemporer.",
+        amenities: [
+            "Ranjang Queen",
+            "TV Layar Datar",
+            "AC Dingin",
+            "Pemandangan Kota",
+        ],
+        price: "Rp 800.000",
+        priceUnit: "/malam",
+        images: roomCategories["Deluxe"],
+    },
+    {
+        id: "superior",
+        badge: "SUPERIOR",
+        size: "20 M²",
+        name: "Superior Room",
+        description:
+            "Kamar seluas 20 M² dengan kenyamanan optimal, sentuhan interior hangat kontemporer, pilihan kasur Queen atau Twin, serta suasana tenang.",
+        amenities: [
+            "Ranjang Queen / Twin",
+            "TV Layar Datar",
+            "AC Dingin",
+            "Water Heater",
+        ],
+        price: "Rp 700.000",
+        priceUnit: "/malam",
+        images: roomCategories["Superior"],
+    },
+    {
+        id: "standard",
+        badge: "STANDAR",
+        size: "19 M²",
+        name: "Standard Room",
+        description:
+            "Kamar modern seluas 19 M² yang fungsional dan terjangkau dengan koneksi WiFi kencang untuk kenyamanan menginap.",
+        amenities: [
+            "Ranjang Double",
+            "TV Layar Datar",
+            "AC Dingin",
+            "WiFi Kencang",
+        ],
+        price: "Rp 600.000",
+        priceUnit: "/malam",
+        images: roomCategories["Standar"],
+    },
 ];
 
 export const FALLBACK_ROOM_IMAGES: Record<string, string> = {
-  // Suite Room
-  "Suite/SU1.jpg": suiteRoomImg,
-  "Suite/SU2.jpg": "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80",
-  "Suite/SU3.jpg": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
-  "Suite/SU4.jpg": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
-  "Suite/SU5.jpg": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
-  "Suite/SU 5.jpg": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
-  "Suite/SU6.jpg": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/suite-1.jpg": suiteRoomImg,
-  "images/rooms/suite-2.jpg": "https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/suite-3.jpg": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/suite-4.jpg": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/suite-5.jpg": "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/suite-6.jpg": "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80",
+    // Suite Room
+    "Suite/SU1.jpg": suite1,
+    "Suite/SU2.jpg": suite2,
+    "Suite/SU3.jpg": suite3,
+    "Suite/SU4.jpg": suite4,
+    "images/rooms/suite-1.jpg": suite1,
+    "images/rooms/suite-2.jpg": suite2,
+    "images/rooms/suite-3.jpg": suite3,
+    "images/rooms/suite-4.jpg": suite4,
 
-  // Grand Executive Room
-  "GrandExecutive/GE1.jpg": grandExecutiveRoomImg,
-  "GrandExecutive/GE2.jpg": grandExecutiveRoomImg,
-  "GrandExecutive/GE3.jpg": "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/grand-executive-1.jpg": grandExecutiveRoomImg,
+    // Grand Executive Room
+    "GrandExecutive/GE1.jpg": grandExecutiveRoomImg,
+    "images/rooms/grand-executive-1.jpg": grandExecutiveRoomImg,
 
-  // Executive Room - 5 Images
-  "Execuitve/X1.jpg": executiveRoomImg,
-  "Execuitve/X2.jpg": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1200&q=80",
-  "Execuitve/X3.jpg": "https://images.unsplash.com/photo-1540518614846-7ede433c4ef0?auto=format&fit=crop&w=1200&q=80",
-  "Execuitve/X4.jpg": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1200&q=80",
-  "Execuitve/X5.jpg": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
-  "Executive/X1.jpg": executiveRoomImg,
-  "images/rooms/executive-1.jpg": executiveRoomImg,
-  "images/rooms/executive-2.jpg": "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/executive-3.jpg": "https://images.unsplash.com/photo-1540518614846-7ede433c4ef0?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/executive-4.jpg": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&w=1200&q=80",
+    // Executive Room
+    "Execuitve/X1.jpg": executive1,
+    "Execuitve/X2.jpg": executive2,
+    "Execuitve/X3.jpg": executive3,
+    "Execuitve/X4.jpg": executive4,
+    "Executive/X1.jpg": executive1,
+    "images/rooms/executive-1.jpg": executive1,
+    "images/rooms/executive-2.jpg": executive2,
+    "images/rooms/executive-3.jpg": executive3,
+    "images/rooms/executive-4.jpg": executive4,
 
-  // Deluxe Room - 5 Images
-  "Deluxe/D1.jpg": deluxeRoomImg,
-  "Deluxe/D2.jpg": "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?auto=format&fit=crop&w=1200&q=80",
-  "Deluxe/D3.jpg": "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80",
-  "Deluxe/D4.jpg": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
-  "Deluxe/D5.jpg": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/deluxe-1.jpg": deluxeRoomImg,
-  "images/rooms/deluxe-2.jpg": "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/deluxe-3.jpg": "https://images.unsplash.com/photo-1620626011761-996317b8d101?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/deluxe-4.jpg": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80",
+    // Deluxe Room
+    "Deluxe/D1.jpg": deluxe1,
+    "Deluxe/D2.jpg": deluxe2,
+    "Deluxe/D3.jpg": deluxe3,
+    "Deluxe/D4.jpg": deluxe4,
+    "images/rooms/deluxe-1.jpg": deluxe1,
+    "images/rooms/deluxe-2.jpg": deluxe2,
+    "images/rooms/deluxe-3.jpg": deluxe3,
+    "images/rooms/deluxe-4.jpg": deluxe4,
 
-  // Superior Room
-  "Superior/SP1.jpg": superiorRoomImg,
-  "Superior/SP2.jpg": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/superior-1.jpg": superiorRoomImg,
+    // Superior Room
+    "Superior/SP1.jpg": superior1,
+    "Superior/SP2.jpg": superior2,
+    "Superior/SP3.jpg": superior3,
+    "Superior/SP4.jpg": superior4,
+    "images/rooms/superior-1.jpg": superior1,
 
-  // Standard Room - 3 Images
-  "Standard/S1.jpg": standardRoomImg,
-  "Standard/S2.jpg": "https://images.unsplash.com/photo-1587985064135-0366536eab42?auto=format&fit=crop&w=1200&q=80",
-  "Standard/S3.jpg": "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/standard-1.jpg": standardRoomImg,
-  "images/rooms/standard-2.jpg": "https://images.unsplash.com/photo-1587985064135-0366536eab42?auto=format&fit=crop&w=1200&q=80",
-  "images/rooms/standard-3.jpg": "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=1200&q=80"
+    // Standard Room
+    "Standard/S1.jpg": standardRoomImg,
+    "images/rooms/standard-1.jpg": standardRoomImg,
 };
 
 export function getRoomImageUrl(imgPath: string): string {
-  if (!imgPath) return '';
-  if (
-    imgPath.startsWith('blob:') ||
-    imgPath.startsWith('http://') || 
-    imgPath.startsWith('https://') || 
-    imgPath.startsWith('data:') || 
-    imgPath.startsWith('/') ||
-    imgPath.startsWith('./') ||
-    imgPath.startsWith('../')
-  ) {
-    return imgPath;
-  }
-  return FALLBACK_ROOM_IMAGES[imgPath] || imgPath;
+    if (!imgPath) return "";
+    if (
+        imgPath.startsWith("blob:") ||
+        imgPath.startsWith("http://") ||
+        imgPath.startsWith("https://") ||
+        imgPath.startsWith("data:") ||
+        imgPath.startsWith("/") ||
+        imgPath.startsWith("./") ||
+        imgPath.startsWith("../")
+    ) {
+        return imgPath;
+    }
+    return FALLBACK_ROOM_IMAGES[imgPath] || standardRoomImg;
 }
 
 export const HOTEL_CONFIG: HotelConfig = {
-  name: "IPB Convention Hotel",
-  tagline: "Di Jantung Kota Bogor, Dekat Segalanya",
-  address: "Jl. Padjajaran Raya, Samping Mall Botani Square, Kota Bogor, Jawa Barat 16128",
-  phones: ["(0251) 834 5698", "(0251) 834 5699"],
-  email: "info@ipbconventionhotel.com",
-  instagram: "@ipbhotelbotanisquare",
-  checkIn: "14:00 WIB",
-  checkOut: "12:00 WIB",
-  googleMapsUrl: "https://www.google.com/maps/place/IPB+Convention+Hotel+Botani+Square/@-6.6019596,106.8065591,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69c5db56e8b071:0xc345ddc97086540e!8m2!3d-6.6019596!4d106.8065591",
-  whatsappNumber: "628111330659",
-  rooms: ROOMS_DATA.map((r) => ({
-    id: r.id,
-    name: r.name,
-    type: r.name,
-    badge: r.badge,
-    size: r.size,
-    price: r.price,
-    priceFormatted: r.priceFormatted || (typeof r.price === 'number' ? `Rp ${r.price.toLocaleString('id-ID')}` : r.price),
-    amenities: r.amenities.map((a) => typeof a === 'string' ? a : a.name),
-    image: r.images[0],
-    images: r.images,
-    fallbackImage: FALLBACK_ROOM_IMAGES[r.images[0]] || r.images[0],
-    description: r.description,
-    bedType: r.id === 'suite'
-      ? 'King Bed (200x200)'
-      : r.id === 'grand-executive'
-      ? 'King Bed (180x200)'
-      : r.id === 'executive'
-      ? 'King Bed (180x200)'
-      : r.id === 'deluxe'
-      ? 'Queen Bed (160x200)'
-      : r.id === 'superior'
-      ? 'Queen / Twin Bed'
-      : 'Double Bed / Twin Bed',
-    capacity: r.id === 'suite' ? '2 Dewasa + 1 Anak' : r.id === 'standard' ? '1 - 2 Dewasa' : '2 Dewasa'
-  }))
+    name: "IPB Convention Hotel",
+    tagline: "Di Jantung Kota Bogor",
+    address:
+        "Jl. Padjajaran Raya, Samping Mall Botani Square, Kota Bogor, Jawa Barat 16128",
+    phones: ["(0251) 834 5698", "(0251) 834 5699"],
+    email: "info@ipbconventionhotel.com",
+    instagram: "@ipbhotelbotanisquare",
+    checkIn: "14:00 WIB",
+    checkOut: "12:00 WIB",
+    googleMapsUrl:
+        "https://www.google.com/maps/place/IPB+Convention+Hotel+Botani+Square/@-6.6019596,106.8065591,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69c5db56e8b071:0xc345ddc97086540e!8m2!3d-6.6019596!4d106.8065591",
+    whatsappNumber: "628111330659",
+    rooms: ROOMS_DATA.map((r) => ({
+        id: r.id,
+        name: r.name,
+        type: r.name,
+        badge: r.badge,
+        size: r.size,
+        price: r.price,
+        priceFormatted:
+            r.priceFormatted ||
+            (typeof r.price === "number"
+                ? `Rp ${roomPriceToNum(r.price).toLocaleString("id-ID")}`
+                : r.price),
+        amenities: r.amenities.map((a) => (typeof a === "string" ? a : a.name)),
+        image: r.images[0],
+        images: r.images,
+        fallbackImage: FALLBACK_ROOM_IMAGES[r.images[0]] || r.images[0],
+        description: r.description,
+        bedType:
+            r.id === "suite"
+                ? "King Bed (200x200)"
+                : r.id === "grand-executive"
+                  ? "King Bed (180x200)"
+                  : r.id === "executive"
+                    ? "King Bed (180x200)"
+                    : r.id === "deluxe"
+                      ? "Queen Bed (160x200)"
+                      : r.id === "superior"
+                        ? "Queen / Twin Bed"
+                        : "Double Bed / Twin Bed",
+        capacity:
+            r.id === "suite"
+                ? "2 Dewasa + 1 Anak"
+                : r.id === "standard"
+                  ? "1 - 2 Dewasa"
+                  : "2 Dewasa",
+    })),
 };
 
+function roomPriceToNum(val: string | number): number {
+    if (typeof val === "number") return val;
+    return Number(String(val).replace(/\D/g, "")) || 0;
+}
+
 export const REVIEWS: Review[] = [
-  {
-    id: "review-1",
-    author: "Ahmad Fauzi",
-    rating: 5.0,
-    quote: "Kamar sangat nyaman dan bersih. Lokasi sangat strategis, langsung terhubung ke mall. Staf hotel ramah dan responsif. Pasti akan menginap lagi!",
-    datePlatform: "Maret 2026 · Google",
-    avatarBg: "bg-amber-100 text-amber-900 border-amber-300"
-  },
-  {
-    id: "review-2",
-    author: "Siti Nurhaliza",
-    rating: 5.0,
-    quote: "Sangat cocok untuk acara seminar dan pertemuan bisnis. Fasilitas lengkap, akses ke IICC sangat mudah. Sarapan enak dan bervariasi.",
-    datePlatform: "Februari 2026 · Booking.com",
-    avatarBg: "bg-emerald-100 text-emerald-900 border-emerald-300"
-  },
-  {
-    id: "review-3",
-    author: "Budi Santoso",
-    rating: 4.0,
-    quote: "Hotel yang bagus dengan harga terjangkau. Kamar Suite sangat luas dan nyaman untuk keluarga. Akan saya rekomendasikan kepada teman-teman.",
-    datePlatform: "Januari 2026 · TripAdvisor",
-    avatarBg: "bg-slate-100 text-slate-800 border-slate-300"
-  }
+    {
+        id: "review-1",
+        author: "Ahmad Fauzi",
+        rating: 5.0,
+        quote: "Kamar sangat nyaman dan bersih. Lokasi sangat strategis, langsung terhubung ke mall. Staf hotel ramah dan responsif. Pasti akan menginap lagi!",
+        datePlatform: "Maret 2026 · Google",
+        avatarBg: "bg-amber-100 text-amber-900 border-amber-300",
+    },
+    {
+        id: "review-2",
+        author: "Siti Nurhaliza",
+        rating: 5.0,
+        quote: "Sangat cocok untuk acara seminar dan pertemuan bisnis. Fasilitas lengkap, akses ke IICC sangat mudah. Sarapan enak dan bervariasi.",
+        datePlatform: "Februari 2026 · Booking.com",
+        avatarBg: "bg-emerald-100 text-emerald-900 border-emerald-300",
+    },
+    {
+        id: "review-3",
+        author: "Budi Santoso",
+        rating: 4.0,
+        quote: "Hotel yang bagus dengan harga terjangkau. Kamar Suite sangat luas dan nyaman untuk keluarga. Akan saya rekomendasikan kepada teman-teman.",
+        datePlatform: "Januari 2026 · TripAdvisor",
+        avatarBg: "bg-slate-100 text-slate-800 border-slate-300",
+    },
+    {
+        id: "review-4",
+        author: "N***g",
+        rating: 5.0,
+        quote: "Sudah beberapa kali menginap di sini, semua oke apalagi menu sarapannya oke banget",
+        datePlatform: "September 2026 · Traveloka",
+        avatarBg: "bg-amber-100 text-amber-900 border-amber-300",
+    },
+    {
+        id: "review-5",
+        author: "E***y",
+        rating: 5.0,
+        quote: "Staf ramah, makanan enak, ruangan nyaman, shower deras, handuk terasa wangi.",
+        datePlatform: "September 2026 · Traveloka",
+        avatarBg: "bg-emerald-100 text-emerald-900 border-emerald-300",
+    },
+    {
+        id: "review-6",
+        author: "D***y",
+        rating: 5.0,
+        quote: "Nyaman, bersih, sarapan banyak pilihan, Wi-Fi di lantai 4 bagus.",
+        datePlatform: "September 2026 · Traveloka",
+        avatarBg: "bg-slate-100 text-slate-800 border-slate-300",
+    },
 ];
 
 export const GALLERY_ITEMS: GalleryItem[] = [
-  {
-    id: "gal-1",
-    title: "Grand Lobby & Hospitality Lounge",
-    category: "Lobby & Area Publik",
-    image: grandLobbyImg,
-    spanClass: "col-span-1 md:col-span-2 md:row-span-2"
-  },
-  {
-    id: "gal-2",
-    title: "IICC Grand Ballroom & Convention",
-    category: "MICE & Acara",
-    image: galleryBallroomImg,
-    spanClass: "col-span-1 md:col-span-1 md:row-span-1"
-  },
-  {
-    id: "gal-3",
-    title: "Terrace Dining & Restoran Nusantara",
-    category: "Kuliner & Resto",
-    image: galleryDiningImg,
-    spanClass: "col-span-1 md:col-span-1 md:row-span-1"
-  },
-  {
-    id: "gal-4",
-    title: "Kenyamanan Suite & Kamar Tamu",
-    category: "Akomodasi",
-    image: gallerySuiteImg,
-    spanClass: "col-span-1 md:col-span-1 md:row-span-1"
-  },
-  {
-    id: "gal-5",
-    title: "Akses Terintegrasi Mall Botani Square",
-    category: "Lokasi & Eksterior",
-    image: galleryMallImg,
-    spanClass: "col-span-1 md:col-span-1 md:row-span-1"
-  },
-  {
-    id: "gal-6",
-    title: "Rooftop",
-    category: "Fasilitas Kerja",
-    image: galleryLoungeImg,
-    spanClass: "col-span-1 md:col-span-2 md:row-span-1"
-  }
+    {
+        id: "gal-1",
+        title: "Grand Lobby & Hospitality Lounge",
+        category: "Lobby & Area Publik",
+        image: grandLobbyImg,
+        spanClass: "col-span-1 md:col-span-2 md:row-span-2",
+    },
+    {
+        id: "gal-2",
+        title: "IICC Grand Ballroom & Convention",
+        category: "MICE & Acara",
+        image: galleryBallroomImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
+    },
+    {
+        id: "gal-3",
+        title: "Terrace Dining & Restoran Nusantara",
+        category: "Kuliner & Resto",
+        image: galleryDiningImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
+    },
+    {
+        id: "gal-4",
+        title: "Kenyamanan Suite & Kamar Tamu",
+        category: "Akomodasi",
+        image: gallerySuiteImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
+    },
+    {
+        id: "gal-5",
+        title: "Akses Terintegrasi Mall Botani Square",
+        category: "Lokasi & Eksterior",
+        image: galleryMallImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
+    },
+    {
+        id: "gal-6",
+        title: "Rooftop",
+        category: "Fasilitas Kerja",
+        image: galleryLoungeImg,
+        spanClass: "col-span-1 md:col-span-2 md:row-span-1",
+    },
 ];
 
 export const NEARBY_LANDMARKS = [
-  { name: "Mall Botani Square", time: "1 Menit", desc: "Akses langsung melalui jembatan penghubung hotel" },
-  { name: "IPB International Convention Center (IICC)", time: "1 Menit", desc: "Terintegrasi langsung di satu kawasan gedung" },
-  { name: "Kebun Raya Bogor", time: "5 Menit", desc: "Ikon paru-paru hijau Kota Hujan dan Istana Kepresidenan" },
-  { name: "Terminal DAMRI Bandara Soekarno-Hatta", time: "2 Menit", desc: "Kemudahan transportasi langsung ke dan dari bandara" },
-  { name: "Gerbang Tol Baranangsiang (Jagorawi)", time: "3 Menit", desc: "Akses tol bebas hambatan menuju Jakarta dan sekitarnya" }
+    {
+        name: "Mall Botani Square",
+        time: "1 Menit",
+        desc: "Akses langsung melalui jembatan penghubung hotel",
+    },
+    {
+        name: "IPB International Convention Center (IICC)",
+        time: "1 Menit",
+        desc: "Terintegrasi langsung di satu kawasan gedung",
+    },
+    {
+        name: "Kebun Raya Bogor",
+        time: "5 Menit",
+        desc: "Ikon paru-paru hijau Kota Hujan dan Istana Kepresidenan",
+    },
+    {
+        name: "Terminal DAMRI Bandara Soekarno-Hatta",
+        time: "2 Menit",
+        desc: "Kemudahan transportasi langsung ke dan dari bandara",
+    },
+    {
+        name: "Gerbang Tol Baranangsiang (Jagorawi)",
+        time: "3 Menit",
+        desc: "Akses tol bebas hambatan menuju Jakarta dan sekitarnya",
+    },
 ];
 
 export function formatRupiah(amount: number): string {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0
-  }).format(amount).replace('IDR', 'Rp');
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0,
+    })
+        .format(amount)
+        .replace("IDR", "Rp");
 }
 
-export function generateWhatsAppBookingUrl(phone: string, roomType: string, price?: number): string {
-  const cleanPhone = phone.replace(/\D/g, '');
-  const priceInfo = price ? ` seharga ${formatRupiah(price)}/malam` : '';
-  const message = `Halo Reservasi IPB Convention Hotel Bogor, saya tertarik untuk memesan kamar tipe *${roomType}*${priceInfo}. Mohon informasi ketersediaan tanggal dan promo terbaru. Terima kasih.`;
-  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+export function generateWhatsAppBookingUrl(
+    phone: string,
+    roomType: string,
+    price?: number,
+): string {
+    const cleanPhone = phone.replace(/\D/g, "");
+    const priceInfo = price ? ` seharga ${formatRupiah(price)}/malam` : "";
+    const message = `Halo Reservasi IPB Convention Hotel Bogor, saya tertarik untuk memesan kamar tipe *${roomType}*${priceInfo}. Mohon informasi ketersediaan tanggal dan promo terbaru. Terima kasih.`;
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
 export function generateWhatsAppInquiryUrl(
-  phone: string,
-  data: { name: string; email: string; phone: string; subject: string; message: string; roomType?: string },
-  language: 'id' | 'en' = 'id'
+    phone: string,
+    data: {
+        name: string;
+        email: string;
+        phone: string;
+        subject: string;
+        message: string;
+        roomType?: string;
+    },
+    language: "id" | "en" = "id",
 ): string {
-  const cleanPhone = phone.replace(/\D/g, '');
-  const lines = language === 'en' ? [
-    `*OFFICIAL INQUIRY FORM - IPB CONVENTION HOTEL*`,
-    `----------------------------------------`,
-    `*Full Name:* ${data.name}`,
-    `*Email:* ${data.email}`,
-    `*Phone Number:* ${data.phone}`,
-    `*Subject / Inquiry:* ${data.subject}${data.roomType ? ` (${data.roomType})` : ''}`,
-    `----------------------------------------`,
-    `*Message / Request:*`,
-    `${data.message}`,
-    `----------------------------------------`,
-    `Submitted via ipbconventionhotel.com`
-  ] : [
-    `*FORMULIR PERTANYAAN RESMI - IPB CONVENTION HOTEL*`,
-    `----------------------------------------`,
-    `*Nama Lengkap:* ${data.name}`,
-    `*Email:* ${data.email}`,
-    `*No. Telepon:* ${data.phone}`,
-    `*Keperluan:* ${data.subject}${data.roomType ? ` (${data.roomType})` : ''}`,
-    `----------------------------------------`,
-    `*Pesan / Permintaan:*`,
-    `${data.message}`,
-    `----------------------------------------`,
-    `Dikirim melalui website ipbconventionhotel.com`
-  ];
-  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(lines.join('\n'))}`;
+    const cleanPhone = phone.replace(/\D/g, "");
+    const lines =
+        language === "en"
+            ? [
+                  `*OFFICIAL INQUIRY FORM - IPB CONVENTION HOTEL*`,
+                  `----------------------------------------`,
+                  `*Full Name:* ${data.name}`,
+                  `*Email:* ${data.email}`,
+                  `*Phone Number:* ${data.phone}`,
+                  `*Subject / Inquiry:* ${data.subject}${data.roomType ? ` (${data.roomType})` : ""}`,
+                  `----------------------------------------`,
+                  `*Message / Request:*`,
+                  `${data.message}`,
+                  `----------------------------------------`,
+                  `Submitted via ipbconventionhotel.com`,
+              ]
+            : [
+                  `*FORMULIR PERTANYAAN RESMI - IPB CONVENTION HOTEL*`,
+                  `----------------------------------------`,
+                  `*Nama Lengkap:* ${data.name}`,
+                  `*Email:* ${data.email}`,
+                  `*No. Telepon:* ${data.phone}`,
+                  `*Keperluan:* ${data.subject}${data.roomType ? ` (${data.roomType})` : ""}`,
+                  `----------------------------------------`,
+                  `*Pesan / Permintaan:*`,
+                  `${data.message}`,
+                  `----------------------------------------`,
+                  `Dikirim melalui website ipbconventionhotel.com`,
+              ];
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(lines.join("\n"))}`;
 }

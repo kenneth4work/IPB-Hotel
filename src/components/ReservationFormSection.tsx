@@ -18,7 +18,7 @@ import {
   ArrowRight,
   Utensils,
   Coffee,
-  Crown
+  Crown, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { HOTEL_CONFIG, roomCategories, getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
@@ -35,7 +35,7 @@ export interface ReservationRoom {
   size: string;
   bedType: { id: string; en: string };
   capacity: { id: string; en: string };
-  image: string;
+  image: string; images: string[];
 }
 
 export type BedTypeOption = 'queen' | 'king' | 'twin';
@@ -45,56 +45,62 @@ const ROOM_VISUALS: Omit<ReservationRoom, 'pricePerNight'>[] = [
   {
     id: "standard",
     name: "Standard Room",
-    badge: "STANDARD",
+    badge: "Standard",
     size: "19 M²",
     bedType: { id: "Double Bed / Twin Bed", en: "Double Bed / Twin Bed" },
     capacity: { id: "1 - 2 Dewasa", en: "1 - 2 Adults" },
-    image: getRoomImageUrl(roomCategories["Standar"]?.[0])
+    image: getRoomImageUrl(roomCategories["Standar"]?.[0]),
+    images: (roomCategories["Standar"] || []).map(getRoomImageUrl)
   },
   {
     id: "superior",
     name: "Superior Room",
-    badge: "SUPERIOR",
+    badge: "Superior",
     size: "20 M²",
     bedType: { id: "Queen / Twin Bed", en: "Queen / Twin Bed" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Superior"]?.[0])
+    image: getRoomImageUrl(roomCategories["Superior"]?.[0]),
+    images: (roomCategories["Superior"] || []).map(getRoomImageUrl)
   },
   {
     id: "deluxe",
     name: "Deluxe Room",
-    badge: "DELUXE",
+    badge: "Deluxe",
     size: "22 M²",
     bedType: { id: "Queen Bed (160x200)", en: "Queen Bed (160x200)" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Deluxe"]?.[0])
+    image: getRoomImageUrl(roomCategories["Deluxe"]?.[0]),
+    images: (roomCategories["Deluxe"] || []).map(getRoomImageUrl)
   },
   {
     id: "executive",
     name: "Executive Room",
-    badge: "EXECUTIVE",
+    badge: "Executive",
     size: "24 M²",
     bedType: { id: "King Bed (180x200)", en: "King Bed (180x200)" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Executive"]?.[0])
+    image: getRoomImageUrl(roomCategories["Executive"]?.[0]),
+    images: (roomCategories["Executive"] || []).map(getRoomImageUrl)
   },
   {
     id: "grand-executive",
     name: "Grand Executive Room",
-    badge: "GRAND EXECUTIVE",
+    badge: "Grand Executive",
     size: "28 M²",
     bedType: { id: "King Bed (180x200)", en: "King Bed (180x200)" },
     capacity: { id: "2 Dewasa", en: "2 Adults" },
-    image: getRoomImageUrl(roomCategories["Grand Executive"]?.[0])
+    image: getRoomImageUrl(roomCategories["Grand Executive"]?.[0]),
+    images: (roomCategories["Grand Executive"] || []).map(getRoomImageUrl)
   },
   {
     id: "suite",
     name: "Executive Suite Room",
-    badge: "SUITE",
+    badge: "Suite",
     size: "36 M²",
     bedType: { id: "Grand King Bed (200x200)", en: "Grand King Bed (200x200)" },
     capacity: { id: "2 Dewasa + 1 Anak", en: "2 Adults + 1 Child" },
-    image: getRoomImageUrl(roomCategories["Suite"]?.[0])
+    image: getRoomImageUrl(roomCategories["Suite"]?.[0]),
+    images: (roomCategories["Suite"] || []).map(getRoomImageUrl)
   }
 ];
 
@@ -102,6 +108,80 @@ interface RoomCatalogItem {
   id: number; slug: string; name: string; size_sqm: number; max_guests: number;
   base_price: number; breakfast_price: number; bed_types: BedTypeOption[];
 }
+
+const RoomCarouselThumb: React.FC<{ room: ReservationRoom }> = ({ room }) => {
+  const [idx, setIdx] = useState(0);
+  const imgs = room.images && room.images.length > 0 ? room.images : [room.image];
+  const activeIdx = idx % imgs.length;
+
+  return (
+    <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-900 group/thumb select-none">
+      <div
+        className="flex w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+        style={{ transform: `translateX(-${activeIdx * 100}%)` }}
+      >
+        {imgs.map((imgSrc, i) => (
+          <div key={i} className="w-full h-full shrink-0 overflow-hidden">
+            <img
+              src={imgSrc}
+              alt={`${room.name} - ${i + 1}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        ))}
+      </div>
+      {imgs.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIdx((prev) => (prev === 0 ? imgs.length - 1 : prev - 1));
+            }}
+            aria-label="Foto sebelumnya"
+            className="absolute left-1 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center transition-opacity opacity-90 sm:opacity-0 sm:group-hover/thumb:opacity-100 z-10 cursor-pointer"
+          >
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIdx((prev) => (prev === imgs.length - 1 ? 0 : prev + 1));
+            }}
+            aria-label="Foto berikutnya"
+            className="absolute right-1 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-black/60 hover:bg-black/85 text-white flex items-center justify-center transition-opacity opacity-90 sm:opacity-0 sm:group-hover/thumb:opacity-100 z-10 cursor-pointer"
+          >
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+          <div
+            className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/55 px-1.5 py-0.5 rounded-full z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {imgs.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIdx(i);
+                }}
+                aria-label={`Slide ${i + 1}`}
+                className={`h-1 rounded-full transition-all cursor-pointer ${
+                  i === idx ? 'w-2.5 bg-[#C5A880]' : 'w-1 bg-white/60 hover:bg-white'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+      <span className="absolute top-1 right-1 bg-black/70 backdrop-blur-xs text-white text-[9px] font-mono font-bold px-1 py-0.5 rounded pointer-events-none">
+        {room.size}
+      </span>
+    </div>
+  );
+};
 
 export const ReservationFormSection: React.FC = () => {
   const {language} = useLanguage();
@@ -144,13 +224,13 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
     setCheckInDate,
     setCheckOutDate,
     setGuestCount,
-    setRoomCount,
+    setRoomCount, selectedRoomId, setSelectedRoomId,
   } = useBooking();
 
   const todayStr = useMemo(() => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()), []);
 
   // Form States
-  const [selectedRoomId, setSelectedRoomId] = useState<string>(rooms.find(room => room.id === "deluxe")?.id ?? rooms[0].id);
+  // Form States (selectedRoomId synced with BookingContext)
   const [bedPreference, setSelectedBedType] = useState<BedTypeOption>('queen');
   const [breakfastPlan, setBreakfastPlan] = useState<BreakfastOption>('with_breakfast');
 
@@ -387,7 +467,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
   };
 
   return (
-    <section id="reservasi" className="py-20 bg-gradient-to-b from-white via-[#FDFBF7] to-white relative scroll-mt-24 border-t border-slate-200/60 font-sans">
+    <section id="reservasi" className="pt-8 pb-20 bg-gradient-to-b from-[#FDFBF7] via-white to-[#FDFBF7] relative scroll-mt-24 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -428,7 +508,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
               <div className="bg-[#FDFBF7] rounded-2xl p-4 sm:p-6 border border-[#E7D6C1]/80 shadow-2xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-200/80 gap-2">
                   <div>
-                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-xs text-slate-400 font-bold block">
                       {t.reservation.bookingCodeLabel}
                     </span>
                     <span className="font-mono break-all text-xl sm:text-2xl font-bold text-[#1E3A2B] tracking-tight">
@@ -436,7 +516,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                     </span>
                   </div>
                   <div className="sm:text-right">
-                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-xs text-slate-400 font-bold block">
                       {language === 'en' ? 'Booking total' : 'Total reservasi'}
                     </span>
                     <span className="text-xl sm:text-2xl font-bold text-[#C5A880]">
@@ -448,27 +528,27 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700">
                   <div>
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.guestNameLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.guestNameLabel}</span>
                     <span className="font-bold text-sm text-slate-900">{submittedData.guestName}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.phoneLabel} / {t.reservation.emailLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.phoneLabel} / {t.reservation.emailLabel}</span>
                     <span className="font-medium text-slate-800">{submittedData.phone} · {submittedData.email}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.roomTypeLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.roomTypeLabel}</span>
                     <span className="font-bold text-sm text-slate-900">{submittedData.roomName} ({submittedData.roomCount} {t.reservation.roomsSuffix})</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.bedTypeLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.bedTypeLabel}</span>
                     <span className="font-bold text-sm text-[#1E3A2B]">{submittedData.bedTypeLabel}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.breakfastLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.breakfastLabel}</span>
                     <span className="font-bold text-sm text-amber-800">{submittedData.breakfastPlanLabel}</span>
                   </div>
                   <div>
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.durationLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.durationLabel}</span>
                     <span className="font-bold text-sm text-slate-900">
                       {submittedData.checkIn} → {submittedData.checkOut} ({submittedData.nights} {submittedData.nights > 1 ? t.reservation.nightPlural : t.reservation.nightSingular})
                     </span>
@@ -477,7 +557,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
                 {submittedData.specialRequest && (
                   <div className="mt-4 pt-3 border-t border-slate-200/60 text-xs">
-                    <span className="text-slate-400 font-semibold block uppercase text-[10px]">{t.reservation.specialRequestLabel}</span>
+                    <span className="text-slate-400 font-semibold block text-[10px]">{t.reservation.specialRequestLabel}</span>
                     <p className="text-slate-700 italic mt-0.5">"{submittedData.specialRequest}"</p>
                   </div>
                 )}
@@ -491,7 +571,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                 href={getWhatsAppBookingUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-7 py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                className="w-full sm:w-auto px-7 py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 text-xs font-bold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:-translate-y-0.5"
               >
                 <MessageSquare className="w-4 h-4 fill-slate-950" />
                 <span>{t.reservation.forwardWaBtn}</span>
@@ -500,7 +580,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>{t.reservation.makeNewBooking}</span>
@@ -516,22 +596,17 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
               
               {/* STEP 1: DATE & GUESTS SELECTION (Selector 1) */}
               <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs">
-                <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
-                  <div className="w-8 h-8 rounded-xl bg-[#1E3A2B] text-white flex items-center justify-center text-sm font-bold shadow-xs">
-                    1
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 leading-tight">
-                      {t.reservation.step1Title}
-                    </h3>
-                    <p className="text-xs text-slate-500">{t.reservation.step1Desc}</p>
-                  </div>
+                <div className="mb-5 pb-3 border-b border-slate-100">
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                    {t.reservation.step1Title}
+                  </h3>
+                  <p className="text-xs text-slate-500">{t.reservation.step1Desc}</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   {/* Check-in Date */}
                   <div>
-                    <label htmlFor="res-checkin" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <label htmlFor="res-checkin" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />
                       <span>{t.reservation.checkInLabel} *</span>
                     </label>
@@ -549,7 +624,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
                   {/* Check-out Date */}
                   <div>
-                    <label htmlFor="res-checkout" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <label htmlFor="res-checkout" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-[#C5A880]" />
                       <span>{t.reservation.checkOutLabel} *</span>
                     </label>
@@ -575,7 +650,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                     </span>
                     <span className="text-slate-500 font-medium">({checkInDate} → {checkOutDate})</span>
                   </div>
-                  <span className="text-[11px] font-bold text-[#A8865B] uppercase tracking-wide">
+                  <span className="text-[11px] font-bold text-[#A8865B]">
                     Check-in 14:00 · Out 12:00
                   </span>
                 </div>
@@ -583,7 +658,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                 {/* Guests & Room Count Row */}
                 <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100">
                   <div>
-                    <label htmlFor="res-guests" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <label htmlFor="res-guests" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                       <Users className="w-3.5 h-3.5 text-[#C5A880]" />
                       <span>{t.reservation.guestsLabel}</span>
                     </label>
@@ -602,7 +677,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                   </div>
 
                   <div>
-                    <label htmlFor="res-rooms" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <label htmlFor="res-rooms" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                       <BedDouble className="w-3.5 h-3.5 text-[#C5A880]" />
                       <span>{t.reservation.roomsLabel}</span>
                     </label>
@@ -626,16 +701,11 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                 
                 {/* 2A. Room Type Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5 pb-3 border-b border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-[#1E3A2B] text-white flex items-center justify-center text-sm font-bold shadow-xs">
-                      2
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 leading-tight">
-                        {t.reservation.step2Title}
-                      </h3>
-                      <p className="text-xs text-slate-500">{t.reservation.step2Desc}</p>
-                    </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                      {t.reservation.step2Title}
+                    </h3>
+                    <p className="text-xs text-slate-500">{t.reservation.step2Desc}</p>
                   </div>
 
                   {/* Quick Dropdown select on mobile/tablet */}
@@ -670,7 +740,9 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                             : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50'
                         }`}
                       >
-                        {/* Thumbnail image */}
+                        {/* Thumbnail image with 4-photo carousel */}
+                        <RoomCarouselThumb room={r} />
+                        <div className="hidden">
                         <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-slate-900">
                           <img
                             src={r.image}
@@ -683,10 +755,11 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                           </span>
                         </div>
 
+                        </div>
                         {/* Details */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-1">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#A8865B]">
+                            <span className="text-[10px] font-bold text-[#A8865B]">
                               {r.badge}
                             </span>
                             {isSelected && (
@@ -864,7 +937,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                               <span className="font-bold text-xs sm:text-sm text-slate-900 block">
                                 {t.reservation.withBreakfastTitle}
                               </span>
-                              <span className="text-[10px] text-amber-700 font-bold uppercase tracking-wider bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5">
+                              <span className="text-[10px] text-amber-700 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5">
                                 {t.reservation.withBreakfastBadge}
                               </span>
                             </div>
@@ -905,7 +978,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                               <span className="font-bold text-xs sm:text-sm text-slate-900 block">
                                 {t.reservation.roomOnlyTitle}
                               </span>
-                              <span className="text-[10px] text-slate-600 font-bold uppercase tracking-wider bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
+                              <span className="text-[10px] text-slate-600 font-bold bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
                                 {t.reservation.roomOnlyBadge}
                               </span>
                             </div>
@@ -932,22 +1005,17 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
               {/* STEP 3: GUEST CONTACT DATA */}
               <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs">
-                <div className="flex items-center gap-3 mb-5 pb-3 border-b border-slate-100">
-                  <div className="w-8 h-8 rounded-xl bg-[#1E3A2B] text-white flex items-center justify-center text-sm font-bold shadow-xs">
-                    3
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 leading-tight">
-                      {t.reservation.step3Title}
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium">{t.reservation.step3Desc}</p>
-                  </div>
+                <div className="mb-5 pb-3 border-b border-slate-100">
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                    {t.reservation.step3Title}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">{t.reservation.step3Desc}</p>
                 </div>
 
                 <div className="space-y-4">
                   {/* Full Name */}
                   <div>
-                    <label htmlFor="res-name" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                    <label htmlFor="res-name" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-[#C5A880]" />
                       <span>{t.reservation.fullNameLabel} *</span>
                     </label>
@@ -978,7 +1046,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Email */}
                     <div>
-                      <label htmlFor="res-email" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                      <label htmlFor="res-email" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                         <Mail className="w-3.5 h-3.5 text-[#C5A880]" />
                         <span>{t.reservation.emailLabel} *</span>
                       </label>
@@ -1007,7 +1075,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
                     {/* WhatsApp Phone */}
                     <div>
-                      <label htmlFor="res-phone" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                      <label htmlFor="res-phone" className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
                         <Phone className="w-3.5 h-3.5 text-[#C5A880]" />
                         <span>{t.reservation.phoneLabel} *</span>
                       </label>
@@ -1037,7 +1105,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
                   {/* Special Requests (Optional) */}
                   <div>
-                    <label htmlFor="res-special" className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                    <label htmlFor="res-special" className="block text-xs font-bold text-slate-700 mb-1.5">
                       {t.reservation.specialRequestLabel}
                     </label>
                     <textarea
@@ -1061,7 +1129,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                 <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#1E3A2B] via-[#C5A880] to-[#1E3A2B]" />
 
                 <div className="border-b border-slate-100 pb-4 mb-4">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#A8865B] block mb-1">
+                  <span className="text-[10px] font-bold text-[#A8865B] block mb-1">
                     {t.reservation.summaryTitle}
                   </span>
                   <h3 className="text-xl font-bold text-slate-900">
@@ -1168,14 +1236,14 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
 
                 {/* Big Grand Total Callout */}
                 <div className="p-4 rounded-2xl bg-[#FDFBF7] border border-[#E7D6C1] mb-5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                  <span className="text-[10px] font-bold text-slate-500 block">
                     {t.reservation.totalEstimate}
                   </span>
                   <div className="flex items-baseline justify-between mt-1">
                     <span className="text-2xl sm:text-3xl font-bold text-[#1E3A2B] tracking-tight">
                       {priceText(estimatedTotal)}
                     </span>
-                    <span className="text-xs text-slate-500 font-bold uppercase">Nett</span>
+                    <span className="text-xs text-slate-500 font-bold">Nett</span>
                   </div>
                 </div>
 
@@ -1193,7 +1261,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
                   type="submit"
                   id="btn-submit-reservation"
                   disabled={isLoading || (!retryPending && (quoteLoading || !quote?.can_book))}
-                  className="w-full py-4 px-6 bg-[#1E3A2B] hover:bg-[#13261C] active:scale-[0.99] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-xl flex items-center justify-center gap-2 border border-[#C5A880]/30 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
+                  className="w-full py-4 px-6 bg-[#1E3A2B] hover:bg-[#13261C] active:scale-[0.99] text-white text-xs font-bold rounded-xl transition-all shadow-md hover:shadow-xl flex items-center justify-center gap-2 border border-[#C5A880]/30 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isLoading ? (
                     <>

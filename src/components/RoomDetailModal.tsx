@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { RoomData, Room } from '../types';
 import { getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
@@ -8,7 +8,7 @@ import {
   Maximize2, 
   Users, 
   BedDouble, 
-  MessageCircle, 
+  Calendar, 
   ShieldCheck, 
   ChevronLeft, 
   ChevronRight,
@@ -30,13 +30,35 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   room, 
   onClose, 
   onBook,
-  onOpenGallery 
 }) => {
   const { t } = useLanguage();
   const roomName = ('name' in room && room.name) ? room.name : room.type;
   const roomPriceFormatted = room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price);
   const images = (room.images && room.images.length > 0) ? room.images : [('image' in room && room.image) || '/images/rooms/suite-1.jpg'];
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setIsVisible(true);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 240);
+  }, [onClose]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [handleClose]);
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -66,7 +88,6 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
     }
   };
 
-  const activeImgUrl = getRoomImageUrl(images[activePhotoIdx]);
   const roomId = 'id' in room ? room.id : '';
   const translatedBadge = (roomId && t.rooms.badges[roomId]) || room.badge;
   const translatedDesc = (roomId && t.rooms.descriptions[roomId]) || room.description;
@@ -74,31 +95,50 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
   const translatedCapacity = (roomId && t.rooms.capacities[roomId]) || room.capacity || t.modal.defaultCapacity;
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm animate-fade-in"
-      onClick={onClose}
+    <div
+      data-popup
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+      onClick={handleClose}
     >
       <div 
-        className="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 relative max-h-[92vh] flex flex-col animate-scale-up"
+        className={`bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 relative max-h-[92vh] flex flex-col transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+          isVisible
+            ? 'opacity-100 translate-y-0 scale-100'
+            : 'opacity-0 translate-y-4 scale-95'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md flex items-center justify-center shadow-md border border-white/20 transition-transform hover:scale-105"
+          onClick={handleClose}
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md flex items-center justify-center shadow-md border border-white/20 transition-transform hover:scale-105 cursor-pointer"
           aria-label={t.modal.close}
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* Modal Top Image Carousel */}
+        {/* Modal Top Image Carousel dengan Soft Slide Animation */}
         <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-900 shrink-0 group">
-          <img
-            key={activeImgUrl}
-            src={activeImgUrl}
-            alt={`${roomName} - ${activePhotoIdx + 1}`}
-            className="w-full h-full object-cover transition-transform duration-500"
-          />
+          <div
+            className="flex w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+            style={{ transform: `translateX(-${activePhotoIdx * 100}%)` }}
+          >
+            {images.map((imgUrl, idx) => {
+              const resolvedUrl = getRoomImageUrl(imgUrl);
+              return (
+                <div key={idx} className="w-full h-full shrink-0 overflow-hidden">
+                  <img
+                    src={resolvedUrl}
+                    alt={`${roomName} - ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              );
+            })}
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none" />
 
           {/* Prev/Next buttons if multiple images */}
@@ -107,14 +147,14 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               <button
                 onClick={handlePrev}
                 aria-label={t.gallery.prevAria}
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all"
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={handleNext}
                 aria-label={t.gallery.nextAria}
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all"
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -123,7 +163,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
           {/* Photo indicator chip & dots */}
           <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
-            <span className="px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest bg-[#C5A880] text-slate-950 rounded-md">
+            <span className="px-2.5 py-1 text-[11px] font-bold bg-[#C5A880] text-slate-950 rounded-md">
               {translatedBadge}
             </span>
             {images.length > 1 && (
@@ -136,7 +176,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                       e.stopPropagation();
                       setActivePhotoIdx(idx);
                     }}
-                    className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                       idx === activePhotoIdx ? 'w-3.5 bg-[#C5A880]' : 'w-1.5 bg-white/60 hover:bg-white'
                     }`}
                   />
@@ -155,7 +195,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               </span>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-slate-300 block uppercase tracking-wider">
+              <span className="text-[10px] text-slate-300 block">
                 {t.rooms.startingFrom}
               </span>
               <span className="font-serif text-2xl font-bold text-[#EFE4D2]">
@@ -171,13 +211,13 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           {/* Quick Specs Grid */}
           <div className="grid grid-cols-3 gap-3 p-3.5 bg-[#FDFBF7] rounded-2xl border border-slate-200/80 text-center">
             <div>
-              <span className="text-[11px] text-slate-500 uppercase flex items-center justify-center gap-1 mb-1 font-medium">
+              <span className="text-[11px] text-slate-500 flex items-center justify-center gap-1 mb-1 font-medium">
                 <Maximize2 className="w-3 h-3 text-[#A8865B]" /> {t.modal.size}
               </span>
               <span className="text-sm font-bold text-slate-800">{room.size}</span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 uppercase flex items-center justify-center gap-1 mb-1 font-medium">
+              <span className="text-[11px] text-slate-500 flex items-center justify-center gap-1 mb-1 font-medium">
                 <BedDouble className="w-3 h-3 text-[#A8865B]" /> {t.modal.bedType}
               </span>
               <span className="text-sm font-bold text-slate-800">
@@ -185,7 +225,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               </span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 uppercase flex items-center justify-center gap-1 mb-1 font-medium">
+              <span className="text-[11px] text-slate-500 flex items-center justify-center gap-1 mb-1 font-medium">
                 <Users className="w-3 h-3 text-[#A8865B]" /> {t.modal.capacity}
               </span>
               <span className="text-sm font-bold text-slate-800">
@@ -196,7 +236,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
           {/* Description */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">
+            <h4 className="text-xs font-bold text-slate-400 mb-2">
               {t.modal.description}
             </h4>
             <p className="text-slate-600 text-sm leading-relaxed">
@@ -206,7 +246,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
           {/* Facilities & Amenities */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+            <h4 className="text-xs font-bold text-slate-400 mb-3">
               {t.modal.facilities}
             </h4>
             <div className="grid grid-cols-2 gap-2.5">
@@ -251,14 +291,14 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
           <div className="pt-2 flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => onBook(room)}
-              className="flex-1 py-3.5 px-5 bg-[#1B3D2F] hover:bg-[#13261C] text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-[#C5A880]/30 cursor-pointer"
+              className="flex-1 py-3.5 px-5 bg-[#1B3D2F] hover:bg-[#13261C] text-white text-xs font-bold rounded-xl transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 border border-[#C5A880]/30 cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4 text-[#25D366]" />
-              <span>{`${t.modal.bookPrefix} ${roomName.toUpperCase()} ${t.modal.bookSuffix}`}</span>
+              <Calendar className="w-4 h-4 text-[#C5A880]" />
+              <span>{`${t.modal.bookPrefix} ${roomName} ${t.modal.bookSuffix}`}</span>
             </button>
             <button
-              onClick={onClose}
-              className="py-3.5 px-5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold uppercase tracking-wider rounded-xl transition-colors cursor-pointer"
+              onClick={handleClose}
+              className="py-3.5 px-5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
             >
               {t.modal.close}
             </button>

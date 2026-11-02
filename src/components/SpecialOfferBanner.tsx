@@ -62,7 +62,7 @@ export const SpecialOfferBanner: React.FC = () => {
 
           <a
             id="banner-contact-us-button"
-            href="#kontak"
+            href="#faq"
             className="w-full sm:w-auto px-8 py-4 bg-transparent hover:bg-white/10 text-white text-xs font-semibold uppercase tracking-widest rounded-xl transition-all border border-white/40 hover:border-white/70 backdrop-blur-sm flex items-center justify-center gap-2 hover:-translate-y-0.5"
           >
             <MessageSquare className="w-4 h-4 text-[#C5A880]" />

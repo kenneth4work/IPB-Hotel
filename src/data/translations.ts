@@ -45,6 +45,12 @@ export interface TranslationDictionary {
       checkinDesc: string;
     };
   };
+  about: {
+    title: string;
+    intro: string;
+    detail: string;
+    imageAlt: string;
+  };
   rooms: {
     badge: string;
     title: string;
@@ -97,37 +103,25 @@ export interface TranslationDictionary {
     mapComplexTitle: string;
     mapBotanicalTag: string;
     directionsHint: string;
-    mapBadge: string;
     directionsBtn: string;
-    whatsAroundTag: string;
-    areaTag: string;
     listTitle: string;
     listSubtitle: string;
-    searchPlaceholder: string;
-    clearSearch: string;
-    noResultsText: string;
-    resetSearch: string;
     nearbyPlaces: string;
+    nearestAirport: string;
     transportHub: string;
     entertainment: string;
-    publicFacilities: string;
-    placesCount: string;
-    routesCount: string;
-    attractionsCount: string;
-    facilitiesCount: string;
-    mobilityTitle: string;
-    mobilityDesc: string;
+    others: string;
     landmarks: Record<string, { name: string; time: string; desc: string }>;
   };
   reviews: {
-    badge: string;
     title: string;
     subtitle: string;
     overallRating: string;
     verifiedGuests: string;
     filterAll: string;
     scoreText: string;
-    recommendationText: string;
+    prevAria: string;
+    nextAria: string;
     items: Record<string, { quote: string; datePlatform: string }>;
   };
   specialOffer: {
@@ -143,44 +137,11 @@ export interface TranslationDictionary {
     bookNow: string;
     contactUs: string;
   };
-  contact: {
-    badge: string;
+  faq: {
     title: string;
     subtitle: string;
-    officeTitle: string;
-    quickWaTitle: string;
-    quickWaDesc: string;
-    chatWaButton: string;
-    formBadge: string;
-    formTitle: string;
-    formSubtitle: string;
-    formName: string;
-    formNamePlaceholder: string;
-    formEmail: string;
-    formPhone: string;
-    formSubject: string;
-    formRoomType: string;
-    formDate: string;
-    formRoom: string;
-    formMessage: string;
-    formMessagePlaceholder: string;
-    formSubmit: string;
-    sendingMessage: string;
-    contactInfoTitle: string;
-    privacyNote: string;
-    subjects: {
-      room: string;
-      meeting: string;
-      event: string;
-      general: string;
-    };
-    successTitle: string;
-    successDescPrefix: string;
-    successDescMid: string;
-    successDescSuffix: string;
-    sendViaWa: string;
-    sendAnother: string;
-    errorRequired: string;
+    seeAll: string;
+    items: { question: string; answer: string }[];
   };
   footer: {
     aboutTitle: string;
@@ -356,11 +317,17 @@ export const translations: Record<Language, TranslationDictionary> = {
         checkinDesc: 'Check-in: 14:00 · Check-out: 12:00'
       }
     },
+    about: {
+      title: 'Tentang IPB Convention Hotel',
+      intro: 'IPB Convention Hotel adalah hotel konvensi di Kota Bogor yang terhubung langsung dengan Mall Botani Square dan IPB International Convention Center (IICC).',
+      detail: 'Dengan 83 kamar bernuansa modern dan alami, hotel ini menjadi pilihan untuk perjalanan bisnis, liburan keluarga, maupun kegiatan MICE. Kebun Raya Bogor dan Terminal Baranangsiang juga berjarak kurang dari satu kilometer dari hotel.',
+      imageAlt: 'Meja resepsionis di lobi IPB Convention Hotel'
+    },
     rooms: {
       badge: 'AKOMODASI & PILIHAN KAMAR',
-      title: 'Pilihan Kamar & Suite Eksklusif',
+      title: 'Pilihan Kamar',
       subtitle: 'Setiap kamar dirancang dengan sentuhan kontemporer berkelas untuk memastikan istirahat berkualitas Anda di Kota Hujan.',
-      startingFrom: 'MULAI DARI',
+      startingFrom: 'Mulai dari',
       perNight: '/ malam',
       viewDetails: 'Detail Kamar',
       bookViaWa: 'PESAN KAMAR INI',
@@ -400,20 +367,20 @@ export const translations: Record<Language, TranslationDictionary> = {
         'WiFi': 'WiFi Kecepatan Tinggi'
       },
       descriptions: {
-        'suite': 'Kamar termewah dengan ruang tamu terpisah, ranjang King berukuran besar, meja santai, dan kamar mandi dengan bathtub.',
-        'grand-executive': 'Kamar eksekutif ekstra luas dengan lounge area eksklusif, ranjang King premium, dan fasilitas penunjang bisnis modern.',
-        'executive': 'Dirancang khusus bagi profesional dan pelaku bisnis dengan meja kerja nyaman serta pemandangan menawan.',
-        'deluxe': 'Pilihan favorit untuk pelancong santai dengan pemandangan lanskap kota dan interior kontemporer.',
-        'superior': 'Kenyamanan optimal dengan sentuhan interior hangat kontemporer, pilihan kasur Queen atau Twin, serta suasana tenang yang menenangkan.',
-        'standard': 'Kamar modern yang fungsional dan terjangkau dengan koneksi WiFi kencang untuk kenyamanan menginap.'
+        'suite': 'Kamar seluas 36 M² dengan ruang tamu terpisah, ranjang King berukuran besar, meja santai, dan kamar mandi dengan bathtub.',
+        'grand-executive': 'Kamar eksekutif seluas 28 M² dengan lounge area eksklusif, ranjang King premium, dan fasilitas penunjang bisnis modern.',
+        'executive': 'Kamar seluas 24 M² yang dirancang khusus bagi profesional dan pelaku bisnis dengan meja kerja nyaman serta pemandangan menawan.',
+        'deluxe': 'Kamar seluas 22 M² yang menjadi pilihan favorit pelancong santai dengan pemandangan lanskap kota dan interior kontemporer.',
+        'superior': 'Kamar seluas 20 M² dengan kenyamanan optimal, sentuhan interior hangat kontemporer, pilihan kasur Queen atau Twin, serta suasana tenang.',
+        'standard': 'Kamar modern seluas 19 M² yang fungsional dan terjangkau dengan koneksi WiFi kencang untuk kenyamanan menginap.'
       },
       badges: {
-        'suite': 'SUITE',
-        'grand-executive': 'GRAND EXECUTIVE',
-        'executive': 'EXECUTIVE',
-        'deluxe': 'DELUXE',
-        'superior': 'SUPERIOR',
-        'standard': 'STANDARD'
+        'suite': 'Suite',
+        'grand-executive': 'Grand Executive',
+        'executive': 'Executive',
+        'deluxe': 'Deluxe',
+        'superior': 'Superior',
+        'standard': 'Standard'
       },
       capacities: {
         'suite': '2 Dewasa + 1 Anak',
@@ -490,26 +457,14 @@ export const translations: Record<Language, TranslationDictionary> = {
       mapComplexTitle: 'Kawasan Mall Botani Square & IICC',
       mapBotanicalTag: '🌿 5 Menit ke Kebun Raya Bogor',
       directionsHint: 'Dapatkan petunjuk rute navigasi instan menggunakan Google Maps / Waze.',
-      mapBadge: '1 Menit ke Mall & Terminal DAMRI',
       directionsBtn: 'Petunjuk Arah',
-      whatsAroundTag: "Tempat Sekitar",
-      areaTag: 'Bogor Tengah, Jawa Barat',
       listTitle: 'Tempat Penting Sekitar Hotel',
       listSubtitle: 'Jarak dihitung dari titik utama IPB Convention Hotel Bogor.',
-      searchPlaceholder: 'Cari tempat atau jarak...',
-      clearSearch: 'Hapus',
-      noResultsText: 'Tidak ada tempat yang cocok dengan',
-      resetSearch: 'Reset pencarian',
       nearbyPlaces: 'Tempat Terdekat',
+      nearestAirport: 'Bandara Terdekat',
       transportHub: 'Pusat Transportasi',
-      entertainment: 'Wisata & Hiburan',
-      publicFacilities: 'Fasilitas Umum & Lainnya',
-      placesCount: 'tempat',
-      routesCount: 'rute',
-      attractionsCount: 'tempat',
-      facilitiesCount: 'fasilitas',
-      mobilityTitle: 'Pusat Mobilitas & Bisnis Bogor',
-      mobilityDesc: 'Akses terhubung langsung ke Mall Botani Square, Terminal DAMRI Bandara, dan gerbang Tol Jagorawi untuk kenyamanan kunjungan Anda.',
+      entertainment: 'Hiburan/Atraksi',
+      others: 'Lainnya',
       landmarks: {
         'Mall Botani Square': {
           name: 'Mall Botani Square',
@@ -539,14 +494,14 @@ export const translations: Record<Language, TranslationDictionary> = {
       }
     },
     reviews: {
-      badge: 'TESTIMONI ASLI',
-      title: 'Apa Kata Tamu Kami',
+      title: 'Kisah & Kesan',
       subtitle: 'Kepuasan dan kenyamanan Anda adalah prioritas utama setiap layanan kami.',
       overallRating: 'Skor Keseluruhan',
       verifiedGuests: 'Ulasan dari tamu yang telah menginap',
       filterAll: 'Semua Ulasan',
       scoreText: 'Skor Kepuasan Tamu: 4.8 / 5.0 dari 1.200+ ulasan terverifikasi',
-      recommendationText: 'Terpilih sebagai salah satu akomodasi bisnis paling direkomendasikan di Bogor',
+      prevAria: 'Ulasan Sebelumnya',
+      nextAria: 'Ulasan Berikutnya',
       items: {
         'review-1': {
           quote: 'Kamar sangat nyaman dan bersih. Lokasi sangat strategis, langsung terhubung ke mall. Staf hotel ramah dan responsif. Pasti akan menginap lagi!',
@@ -559,6 +514,18 @@ export const translations: Record<Language, TranslationDictionary> = {
         'review-3': {
           quote: 'Hotel yang bagus dengan harga terjangkau. Kamar Suite sangat luas dan nyaman untuk keluarga. Akan saya rekomendasikan kepada teman-teman.',
           datePlatform: 'Januari 2026 · TripAdvisor'
+        },
+        'review-4': {
+          quote: 'Sudah beberapa kali menginap di sini, semua oke apalagi menu sarapannya oke banget',
+          datePlatform: 'September 2026 · Traveloka'
+        },
+        'review-5': {
+          quote: 'Staf ramah, makanan enak, ruangan nyaman, shower deras, handuk terasa wangi.',
+          datePlatform: 'September 2026 · Traveloka'
+        },
+        'review-6': {
+          quote: 'Nyaman, bersih, sarapan banyak pilihan, Wi-Fi di lantai 4 bagus.',
+          datePlatform: 'September 2026 · Traveloka'
         }
       }
     },
@@ -575,44 +542,56 @@ export const translations: Record<Language, TranslationDictionary> = {
       bookNow: 'PESAN SEKARANG',
       contactUs: 'HUBUNGI KAMI'
     },
-    contact: {
-      badge: 'LAYANAN BANTUAN 24/7',
-      title: 'Kami Siap Membantu Anda',
-      subtitle: 'Punya pertanyaan mengenai sewa ballroom, reservasi kamar, atau paket pertemuan? Tim kami siap melayani Anda.',
-      officeTitle: 'Kantor Reservasi & Layanan',
-      quickWaTitle: 'Respon Cepat',
-      quickWaDesc: 'Konsultasi langsung via WhatsApp Hotel Officer',
-      chatWaButton: 'Chat WA',
-      formBadge: 'FORMULIR PERTANYAAN RESMI',
-      formTitle: 'Kirim Pesan',
-      formSubtitle: 'Kirimkan detail kebutuhan Anda dan kami akan menghubungi Anda sesegera mungkin.',
-      formName: 'Nama Lengkap',
-      formNamePlaceholder: 'Masukkan nama lengkap Anda',
-      formEmail: 'Email',
-      formPhone: 'Nomor WhatsApp / Telepon',
-      formSubject: 'Keperluan',
-      formRoomType: 'Pilihan Tipe Kamar',
-      formDate: 'Tanggal Menginap / Acara',
-      formRoom: 'Tipe Kamar / Kebutuhan',
-      formMessage: 'Pesan Tambahan atau Pertanyaan',
-      formMessagePlaceholder: 'Tulis pesan Anda di sini...',
-      formSubmit: 'KIRIM PESAN',
-      sendingMessage: 'MENGIRIM PESAN...',
-      contactInfoTitle: 'Kontak Langsung',
-      privacyNote: 'Data Anda terlindungi dan hanya digunakan untuk keperluan reservasi IPB Convention Hotel.',
-      subjects: {
-        room: 'Pemesanan Kamar',
-        meeting: 'Ruang Pertemuan (Meeting Room)',
-        event: 'Acara / Konvensi (Event / Convention)',
-        general: 'Informasi Umum'
-      },
-      successTitle: 'Pesan Anda Telah Diterima!',
-      successDescPrefix: 'Terima kasih',
-      successDescMid: '. Tim reservasi kami akan segera meninjau permohonan',
-      successDescSuffix: 'Anda.',
-      sendViaWa: 'KIRIM SEBAGAI CHAT WHATSAPP',
-      sendAnother: 'Kirim Pesan Lain',
-      errorRequired: 'Mohon lengkapi seluruh formulir sebelum mengirim pesan.'
+    faq: {
+      title: 'FAQ',
+      subtitle: 'Pertanyaan yang sering diajukan seputar menginap di IPB Convention Hotel.',
+      seeAll: 'Lihat Lebih Banyak',
+      items: [
+        {
+          question: 'Jam berapa waktu check-in dan check-out?',
+          answer: 'Check-in mulai pukul 14:00 WIB dan check-out paling lambat pukul 12:00 WIB.'
+        },
+        {
+          question: 'Apakah tarif kamar sudah termasuk sarapan?',
+          answer: 'Tarif kamar sudah termasuk sarapan (sesuai paket), akses WiFi, dan pajak pemerintah.'
+        },
+        {
+          question: 'Bagaimana cara memesan kamar?',
+          answer: 'Anda dapat memesan melalui formulir di halaman Reservasi, atau menghubungi petugas hotel via WhatsApp resmi maupun telepon.'
+        },
+        {
+          question: 'Tipe kamar apa saja yang tersedia?',
+          answer: 'Kami memiliki 83 kamar dengan tipe Standard, Superior, Deluxe, Executive, Grand Executive, dan Suite, berukuran 19 hingga 36 m².'
+        },
+        {
+          question: 'Berapa kapasitas tamu per kamar?',
+          answer: 'Suite untuk 2 dewasa + 1 anak, Standard untuk 1 - 2 dewasa, dan tipe lainnya untuk 2 dewasa.'
+        },
+        {
+          question: 'Di mana lokasi hotel?',
+          answer: 'Jl. Padjajaran Raya, Samping Mall Botani Square, Kota Bogor, Jawa Barat 16128. Hotel terhubung langsung dengan Mall Botani Square dan IPB International Convention Center (IICC).'
+        },
+        {
+          question: 'Bagaimana akses menuju hotel dari bandara atau jalan tol?',
+          answer: 'Terminal DAMRI Bandara Soekarno-Hatta berjarak sekitar 2 menit dari hotel, dan Gerbang Tol Baranangsiang (Jagorawi) sekitar 3 menit.'
+        },
+        {
+          question: 'Apakah tersedia parkir?',
+          answer: 'Ya, tersedia fasilitas parkir dan valet untuk tamu hotel.'
+        },
+        {
+          question: 'Apakah hotel menyediakan ballroom dan ruang meeting?',
+          answer: 'Ya, tersedia ballroom dan ruang meeting berkapasitas hingga 1.000 delegasi di kawasan IICC. Hubungi petugas kami via WhatsApp untuk penawaran acara Anda.'
+        },
+        {
+          question: 'Apakah front desk buka 24 jam?',
+          answer: 'Ya, front desk serta layanan concierge dan keamanan siaga 24 jam setiap hari.'
+        },
+        {
+          question: 'Bagaimana cara menghubungi hotel?',
+          answer: 'WhatsApp: +62 811-1330-659. Telepon: (0251) 834 5698 atau (0251) 834 5699. Email: info@ipbconventionhotel.com. Instagram: @ipbhotelbotanisquare.'
+        }
+      ]
     },
     footer: {
       aboutTitle: 'IPB Hotel & Convention',
@@ -645,8 +624,8 @@ export const translations: Record<Language, TranslationDictionary> = {
       bookingGuaranteeDesc: 'Konfirmasi cepat via WhatsApp Hotel Officer resmi. Check-in mulai 14:00 WIB, check-out maksimal 12:00 WIB.',
       fullAmenities: 'Kamar Mandi & Amenities Lengkap',
       freeWifi: 'Free High-Speed WiFi & Air Mineral',
-      bookPrefix: 'PESAN',
-      bookSuffix: 'SEKARANG',
+      bookPrefix: 'Pesan',
+      bookSuffix: 'Sekarang',
       keyboardHint: 'Gunakan tombol panah keyboard atau usap layar untuk navigasi',
       roomSizeLabel: 'Ukuran Kamar:',
       quickBook: 'Pesan',
@@ -656,11 +635,11 @@ export const translations: Record<Language, TranslationDictionary> = {
       badge: 'RESERVASI ONLINE RESMI',
       title: 'Formulir Reservasi Kamar',
       subtitle: 'Pesan kamar idaman Anda dengan mudah, aman, dan dapatkan garansi tarif langsung terbaik di IPB Convention Hotel Bogor.',
-      step1Title: '1. Jadwal Menginap & Tamu',
+      step1Title: 'Jadwal Menginap & Tamu',
       step1Desc: 'Pilih tanggal Check-in dan Check-out Anda',
-      step2Title: '2. Pilihan Tipe Kamar',
+      step2Title: 'Pilihan Tipe Kamar',
       step2Desc: 'Pilih tipe kamar yang sesuai kebutuhan Anda',
-      step3Title: '3. Data Kontak Tamu',
+      step3Title: 'Data Kontak Tamu',
       step3Desc: 'Informasi untuk konfirmasi dan voucher pemesanan',
       checkInLabel: 'Tanggal Check-in',
       checkOutLabel: 'Tanggal Check-out',
@@ -725,16 +704,16 @@ export const translations: Record<Language, TranslationDictionary> = {
       breakfastPerPaxRate: '+Rp 75.000 / orang / malam'
     },
     quickBar: {
-      title: 'CEK KETERSEDIAAN KAMAR & TARIF TERBAIK',
+      title: 'Cek Ketersediaan Kamar & Tarif Terbaik',
       durationPrefix: 'Durasi Menginap:',
       nightSingular: 'Malam',
       nightPlural: 'Malam',
       promoCodeLabel: 'Kode Promo Diskon 10%:',
       promoDiscount: 'IPB2026',
-      checkInLabel: 'TANGGAL CHECK-IN',
-      checkOutLabel: 'TANGGAL CHECK-OUT',
-      guestsLabel: 'JUMLAH TAMU',
-      roomsLabel: 'JUMLAH KAMAR',
+      checkInLabel: 'Tanggal Check-in',
+      checkOutLabel: 'Tanggal Check-out',
+      guestsLabel: 'Jumlah Tamu',
+      roomsLabel: 'Jumlah Kamar',
       adultGuestsSuffix: 'Tamu Dewasa',
       roomsSuffix: 'Kamar',
       btnCheckAvailability: 'Cek Ketersediaan',
@@ -786,11 +765,17 @@ export const translations: Record<Language, TranslationDictionary> = {
         checkinDesc: 'Check-in: 14:00 · Check-out: 12:00'
       }
     },
+    about: {
+      title: 'About IPB Convention Hotel',
+      intro: 'IPB Convention Hotel is a convention hotel in Bogor City, directly connected to Botani Square Mall and IPB International Convention Center (IICC).',
+      detail: 'With 83 rooms blending modern and natural touches, the hotel suits business trips, family holidays, and MICE events alike. Bogor Botanical Garden and Baranangsiang Terminal are both less than a kilometer away.',
+      imageAlt: 'Reception desk in the lobby of IPB Convention Hotel'
+    },
     rooms: {
       badge: 'ACCOMMODATIONS & ROOM TYPES',
-      title: 'Exclusive Rooms & Suites',
+      title: 'Room Options',
       subtitle: 'Every room is crafted with refined contemporary aesthetics to ensure a relaxing and restorative stay in the Rain City.',
-      startingFrom: 'STARTING FROM',
+      startingFrom: 'Starting from',
       perNight: '/ night',
       viewDetails: 'Room Details',
       bookViaWa: 'BOOK THIS ROOM',
@@ -830,20 +815,20 @@ export const translations: Record<Language, TranslationDictionary> = {
         'WiFi': 'High-Speed Wi-Fi'
       },
       descriptions: {
-        'suite': 'Our most luxurious suite featuring a separate living room, grand King bed, plush lounge area, and an ensuite bathroom with bathtub.',
-        'grand-executive': 'Spacious executive room featuring an exclusive lounge area, premium King bed, and comprehensive modern business amenities.',
-        'executive': 'Specifically curated for professionals and corporate guests, complete with an ergonomic work desk and panoramic city vistas.',
-        'deluxe': 'A favorite choice for leisure travelers, showcasing dynamic urban views and tasteful contemporary design.',
-        'superior': 'Optimal comfort enriched by warm contemporary decor, Queen or Twin bed options, and a tranquil ambiance.',
-        'standard': 'A functional and cost-effective modern room with high-speed Wi-Fi, perfect for a cozy and restful stay.'
+        'suite': 'A luxurious 36 M² suite featuring a separate living room, grand King bed, plush lounge area, and an ensuite bathroom with bathtub.',
+        'grand-executive': 'Spacious 28 M² executive room featuring an exclusive lounge area, premium King bed, and comprehensive modern business amenities.',
+        'executive': 'A 24 M² room specifically curated for professionals and corporate guests, complete with an ergonomic work desk and panoramic city vistas.',
+        'deluxe': 'A 22 M² room and favorite choice for leisure travelers, showcasing dynamic urban views and tasteful contemporary design.',
+        'superior': 'A 20 M² room offering optimal comfort enriched by warm contemporary decor, Queen or Twin bed options, and a tranquil ambiance.',
+        'standard': 'A functional and cost-effective 19 M² modern room with high-speed Wi-Fi, perfect for a cozy and restful stay.'
       },
       badges: {
-        'suite': 'SUITE',
-        'grand-executive': 'GRAND EXECUTIVE',
-        'executive': 'EXECUTIVE',
-        'deluxe': 'DELUXE',
-        'superior': 'SUPERIOR',
-        'standard': 'STANDARD'
+        'suite': 'Suite',
+        'grand-executive': 'Grand Executive',
+        'executive': 'Executive',
+        'deluxe': 'Deluxe',
+        'superior': 'Superior',
+        'standard': 'Standard'
       },
       capacities: {
         'suite': '2 Adults + 1 Child',
@@ -920,26 +905,14 @@ export const translations: Record<Language, TranslationDictionary> = {
       mapComplexTitle: 'Botani Square Mall & IICC Complex',
       mapBotanicalTag: '🌿 5 Mins to Bogor Botanical Gardens',
       directionsHint: 'Get instant turn-by-turn navigation directions via Google Maps or Waze.',
-      mapBadge: '1 Min to Mall & DAMRI Terminal',
       directionsBtn: 'Get Directions',
-      whatsAroundTag: "What's Around",
-      areaTag: 'Central Bogor, West Java',
       listTitle: 'Key Locations Around Hotel',
       listSubtitle: 'Distances calculated from IPB Convention Hotel Bogor.',
-      searchPlaceholder: 'Search place or distance...',
-      clearSearch: 'Clear',
-      noResultsText: 'No places found matching',
-      resetSearch: 'Reset search',
       nearbyPlaces: 'Nearby Places',
+      nearestAirport: 'Nearest airport',
       transportHub: 'Transportation Hub',
-      entertainment: 'Entertainment & Attractions',
-      publicFacilities: 'Public Facilities & Others',
-      placesCount: 'places',
-      routesCount: 'routes',
-      attractionsCount: 'attractions',
-      facilitiesCount: 'facilities',
-      mobilityTitle: 'Bogor Prime Mobility & Business Hub',
-      mobilityDesc: 'Directly connected to Botani Square Mall, Airport DAMRI Bus Terminal, and Jagorawi Toll Gate for optimal travel convenience.',
+      entertainment: 'Entertainment/Attraction',
+      others: 'Others',
       landmarks: {
         'Mall Botani Square': {
           name: 'Botani Square Mall',
@@ -969,14 +942,14 @@ export const translations: Record<Language, TranslationDictionary> = {
       }
     },
     reviews: {
-      badge: 'GENUINE FEEDBACK',
-      title: 'What Our Guests Say',
+      title: 'Stories & Impressions',
       subtitle: 'Your comfort and satisfaction remain the heart of our hospitality philosophy.',
       overallRating: 'Overall Rating Score',
       verifiedGuests: 'Verified reviews from staying guests',
       filterAll: 'All Reviews',
       scoreText: 'Guest Satisfaction Score: 4.8 / 5.0 from 1,200+ verified reviews',
-      recommendationText: 'Voted among the most recommended business hotels in Bogor',
+      prevAria: 'Previous Review',
+      nextAria: 'Next Review',
       items: {
         'review-1': {
           quote: 'The room was spotless and very comfortable. Super strategic location directly connected to the mall. Friendly and helpful staff. Will definitely stay again!',
@@ -989,6 +962,18 @@ export const translations: Record<Language, TranslationDictionary> = {
         'review-3': {
           quote: 'Great hotel with affordable rates. The Suite Room was expansive and pleasant for my family. Highly recommended to friends and colleagues!',
           datePlatform: 'January 2026 · TripAdvisor'
+        },
+        'review-4': {
+          quote: "I've stayed here several times, everything is okay, especially the breakfast menu is really good.",
+          datePlatform: 'September 2026 · Traveloka'
+        },
+        'review-5': {
+          quote: 'Friendly staff, delicious food, comfortable room, powerful shower, fragrant towels.',
+          datePlatform: 'September 2026 · Traveloka'
+        },
+        'review-6': {
+          quote: 'Comfortable, clean, lots of breakfast choices, good Wi-Fi on the 4th floor.',
+          datePlatform: 'September 2026 · Traveloka'
         }
       }
     },
@@ -1005,44 +990,56 @@ export const translations: Record<Language, TranslationDictionary> = {
       bookNow: 'BOOK NOW',
       contactUs: 'CONTACT US'
     },
-    contact: {
-      badge: '24/7 HOSPITALITY DESK',
-      title: 'We Are Here to Assist You',
-      subtitle: 'Have questions regarding meeting hall rentals, room bookings, or corporate event packages? Our team is always ready.',
-      officeTitle: 'Reservations & Concierge',
-      quickWaTitle: 'Quick Response',
-      quickWaDesc: 'Instant consultation via WhatsApp Hotel Officer',
-      chatWaButton: 'Chat WA',
-      formBadge: 'OFFICIAL INQUIRY FORM',
-      formTitle: 'Send a Message',
-      formSubtitle: 'Submit your requirements and our reservation team will follow up promptly.',
-      formName: 'Full Name',
-      formNamePlaceholder: 'Enter your full name',
-      formEmail: 'Email Address',
-      formPhone: 'WhatsApp / Phone Number',
-      formSubject: 'Subject / Inquiry Type',
-      formRoomType: 'Room Type Selection',
-      formDate: 'Stay / Event Date',
-      formRoom: 'Room Type / Requirement',
-      formMessage: 'Additional Notes or Inquiries',
-      formMessagePlaceholder: 'Write your message or specific requirements here...',
-      formSubmit: 'SEND MESSAGE',
-      sendingMessage: 'SENDING MESSAGE...',
-      contactInfoTitle: 'Direct Contacts',
-      privacyNote: 'Your data is confidential and strictly used for official IPB Convention Hotel reservations.',
-      subjects: {
-        room: 'Room Reservation',
-        meeting: 'Meeting Room',
-        event: 'Event / Convention',
-        general: 'General Inquiry'
-      },
-      successTitle: 'Your Message Has Been Received!',
-      successDescPrefix: 'Thank you',
-      successDescMid: '. Our guest services team is reviewing your',
-      successDescSuffix: 'inquiry.',
-      sendViaWa: 'FORWARD VIA WHATSAPP',
-      sendAnother: 'Send Another Message',
-      errorRequired: 'Please complete all required fields before submitting.'
+    faq: {
+      title: 'FAQ',
+      subtitle: 'Frequently asked questions about staying at IPB Convention Hotel.',
+      seeAll: 'See All',
+      items: [
+        {
+          question: 'What are the check-in and check-out times?',
+          answer: 'Check-in starts at 14:00 WIB and check-out is by 12:00 WIB.'
+        },
+        {
+          question: 'Do room rates include breakfast?',
+          answer: 'Room rates include breakfast (depending on the package), WiFi access, and government tax.'
+        },
+        {
+          question: 'How do I book a room?',
+          answer: 'You can book through the form on our Reservation page, or contact our hotel officer via official WhatsApp or phone.'
+        },
+        {
+          question: 'What room types are available?',
+          answer: 'We have 83 rooms across Standard, Superior, Deluxe, Executive, Grand Executive, and Suite types, ranging from 19 to 36 m².'
+        },
+        {
+          question: 'How many guests can stay in a room?',
+          answer: 'Suite fits 2 adults + 1 child, Standard fits 1 - 2 adults, and all other types fit 2 adults.'
+        },
+        {
+          question: 'Where is the hotel located?',
+          answer: 'Jl. Padjajaran Raya, next to Botani Square Mall, Bogor City, West Java 16128. The hotel is directly connected to Botani Square Mall and IPB International Convention Center (IICC).'
+        },
+        {
+          question: 'How do I reach the hotel from the airport or toll road?',
+          answer: 'The DAMRI Soekarno-Hatta Airport terminal is about 2 minutes from the hotel, and the Baranangsiang (Jagorawi) toll gate is about 3 minutes away.'
+        },
+        {
+          question: 'Is parking available?',
+          answer: 'Yes, parking and valet service are available for hotel guests.'
+        },
+        {
+          question: 'Does the hotel offer a ballroom and meeting rooms?',
+          answer: 'Yes, a ballroom and meeting rooms for up to 1,000 delegates are available in the IICC area. Contact our officer via WhatsApp for an event quote.'
+        },
+        {
+          question: 'Is the front desk open 24 hours?',
+          answer: 'Yes, the front desk, concierge, and security are on standby 24 hours a day.'
+        },
+        {
+          question: 'How can I contact the hotel?',
+          answer: 'WhatsApp: +62 811-1330-659. Phone: (0251) 834 5698 or (0251) 834 5699. Email: info@ipbconventionhotel.com. Instagram: @ipbhotelbotanisquare.'
+        }
+      ]
     },
     footer: {
       aboutTitle: 'IPB Hotel & Convention',
@@ -1075,8 +1072,8 @@ export const translations: Record<Language, TranslationDictionary> = {
       bookingGuaranteeDesc: 'Fast confirmation via official Hotel WhatsApp Officer. Check-in from 14:00, check-out by 12:00.',
       fullAmenities: 'Ensuite Bathroom & Full Amenities',
       freeWifi: 'Free High-Speed WiFi & Bottled Water',
-      bookPrefix: 'BOOK',
-      bookSuffix: 'NOW',
+      bookPrefix: 'Book',
+      bookSuffix: 'Now',
       keyboardHint: 'Use keyboard arrow keys or swipe screen to navigate',
       roomSizeLabel: 'Room Size:',
       quickBook: 'Book',
@@ -1086,11 +1083,11 @@ export const translations: Record<Language, TranslationDictionary> = {
       badge: 'OFFICIAL ONLINE RESERVATION',
       title: 'Room Reservation Form',
       subtitle: 'Book your preferred room easily, securely, and enjoy the guaranteed best direct rates at IPB Convention Hotel Bogor.',
-      step1Title: '1. Stay Dates & Guests',
+      step1Title: 'Stay Dates & Guests',
       step1Desc: 'Select your Check-in and Check-out dates',
-      step2Title: '2. Select Room Type',
+      step2Title: 'Select Room Type',
       step2Desc: 'Choose the room category that best fits your stay',
-      step3Title: '3. Guest Contact Details',
+      step3Title: 'Guest Contact Details',
       step3Desc: 'Information for reservation confirmation and voucher',
       checkInLabel: 'Check-in Date',
       checkOutLabel: 'Check-out Date',
@@ -1155,16 +1152,16 @@ export const translations: Record<Language, TranslationDictionary> = {
       breakfastPerPaxRate: '+Rp 75,000 / guest / night'
     },
     quickBar: {
-      title: 'CHECK ROOM AVAILABILITY & BEST RATES',
+      title: 'Check Room Availability & Best Rates',
       durationPrefix: 'Stay Duration:',
       nightSingular: 'Night',
       nightPlural: 'Nights',
       promoCodeLabel: '10% Promo Code:',
       promoDiscount: 'IPB2026',
-      checkInLabel: 'CHECK-IN DATE',
-      checkOutLabel: 'CHECK-OUT DATE',
-      guestsLabel: 'GUESTS',
-      roomsLabel: 'ROOMS',
+      checkInLabel: 'Check-in Date',
+      checkOutLabel: 'Check-out Date',
+      guestsLabel: 'Guests',
+      roomsLabel: 'Rooms',
       adultGuestsSuffix: 'Adult Guests',
       roomsSuffix: 'Rooms',
       btnCheckAvailability: 'Check Availability',

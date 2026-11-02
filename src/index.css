@@ -30,3 +30,57 @@
   }
 }
 
+@keyframes modalBackdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSoftOpen {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes langSoftLightPulse {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-fade-in {
+  animation: modalBackdropFadeIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-scale-up {
+  animation: modalSoftOpen 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-lang-light {
+  animation: langSoftLightPulse 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Tombol WhatsApp melayang muncul setelah jeda saat berpindah halaman */
+.animate-floating-enter {
+  animation: modalBackdropFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.7s backwards;
+}
+
+/* Tombol WhatsApp melayang disembunyikan selama pop up terbuka */
+body:has([data-popup]) #floating-whatsapp-trigger {
+  opacity: 0;
+  visibility: hidden;
+}

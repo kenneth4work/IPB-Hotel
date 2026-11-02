@@ -1,5 +1,5 @@
 import React from 'react';
-import { Footprints, Navigation } from 'lucide-react';
+import { Navigation } from 'lucide-react';
 import SimpleLocationList, { locationData } from './SimpleLocationList';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -14,7 +14,7 @@ export const WhatsAroundLocation: React.FC = () => {
     lng: 106.8065591,
   };
 
-  const sectionTitle = language === 'en' ? 'In the Heart of Bogor, Close to Everything' : 'Di Jantung Kota Bogor, Dekat Segalanya';
+  const sectionTitle = language === 'en' ? 'In the Heart of Bogor' : 'Di Jantung Kota Bogor';
   const sectionSubtitle = language === 'en'
     ? 'Directly connected to Botani Square Mall and Jagorawi Toll Gate. Explore effortless access to iconic landmarks, transit hubs, and popular destinations in Bogor.'
     : 'Terhubung langsung dengan Mall Botani Square dan pintu Tol Jagorawi. Jelajahi kemudahan akses ke berbagai ikon wisata, pusat transportasi, dan destinasi menarik Kota Bogor.';
@@ -46,20 +46,6 @@ export const WhatsAroundLocation: React.FC = () => {
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
             />
-
-            {/* Floating Info Badge on Map Top Left */}
-            <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md flex items-center gap-2 pointer-events-none">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="text-[11px] font-bold text-slate-800">
-                IPB Convention Hotel Botani Square
-              </span>
-            </div>
-
-            {/* Floating Info Badge on Map Top Right */}
-            <div className="absolute top-3 right-3 hidden sm:flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-md pointer-events-none text-[11px] font-semibold text-slate-700">
-              <Footprints className="w-3.5 h-3.5 text-emerald-600" />
-              <span>{t.location.mapBadge}</span>
-            </div>
 
             {/* Bottom Floating Direction Button */}
             <div className="absolute bottom-3 right-3">

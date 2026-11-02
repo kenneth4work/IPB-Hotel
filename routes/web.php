@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', fn () => Inertia::render('Home'))->name('home');
+Route::get('/reservasi', fn () => Inertia::render('Home'))->name('reservasi');
 
 Route::get('/booking/room-types', [BookingController::class, 'rooms'])->middleware('throttle:120,1');
 Route::post('/booking/quote', [BookingController::class, 'quote'])->middleware('throttle:120,1');

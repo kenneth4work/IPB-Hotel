@@ -84,18 +84,19 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
     touchEndXRef.current = null;
   };
 
-  const activePhoto = imagesList[currentIdx] || '';
-  const currentImgSrc = getRoomImageUrl(activePhoto) || activePhoto;
-
-  const translatedBadge = t.rooms.badges[room.id] || room.badge;
-  const translatedDesc = t.rooms.descriptions[room.id] || room.description;
+  const rawDesc = t.rooms.descriptions[room.id] || room.description;
+  const translatedDesc = rawDesc.includes(room.size)
+    ? rawDesc
+    : language === 'en'
+      ? `Spacious ${room.size} room. ${rawDesc}`
+      : `Kamar seluas ${room.size}. ${rawDesc}`;
 
   return (
     <div 
       id={`room-card-${room.id}`}
       className="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm flex flex-col h-full hover:shadow-md transition-shadow group/card"
     >
-      {/* Container Foto Carousel */}
+      {/* Container Foto Carousel dengan Soft Slide Animation */}
       <div 
         className="relative aspect-[4/3] w-full overflow-hidden group cursor-pointer bg-slate-900 select-none"
         onClick={() => onOpenGallery?.(room, currentIdx)}
@@ -103,33 +104,24 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <img
-          key={currentImgSrc}
-          src={currentImgSrc}
-          alt={language === 'en' ? `${room.name} - Photo ${currentIdx + 1}` : `${room.name} - Foto ${currentIdx + 1}`}
-          loading="lazy"
-          className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
-        />
-
-        {/* Badge Kategori Kiri Atas */}
-        <div className="absolute top-3 left-3 flex items-center gap-1.5 z-10 pointer-events-none">
-          <span className="bg-white/95 backdrop-blur-sm text-slate-900 text-[11px] font-bold px-3 py-1 rounded-md uppercase tracking-wider shadow-sm border border-white/40">
-            {translatedBadge}
-          </span>
-        </div>
-
-        {/* Ukuran Kamar di Kanan Atas */}
-        <span 
-          className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer border border-white/20 shadow-sm hover:bg-black/80 transition-colors z-10"
-          onClick={(e) => {
-            if (onOpenGallery) {
-              e.stopPropagation();
-              onOpenGallery(room, currentIdx);
-            }
-          }}
+        <div
+          className="flex w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+          style={{ transform: `translateX(-${currentIdx * 100}%)` }}
         >
-          {room.size}
-        </span>
+          {imagesList.map((imgUrl, idx) => {
+            const imgSrc = getRoomImageUrl(imgUrl) || imgUrl;
+            return (
+              <div key={idx} className="w-full h-full shrink-0 overflow-hidden">
+                <img
+                  src={imgSrc}
+                  alt={language === 'en' ? `${room.name} - Photo ${idx + 1}` : `${room.name} - Foto ${idx + 1}`}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                />
+              </div>
+            );
+          })}
+        </div>
 
         {/* Tombol Navigasi Panah Kiri & Kanan (Muncul jika foto > 1) */}
         {imagesList.length > 1 && (
@@ -173,7 +165,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
                     e.stopPropagation();
                     setCurrentIdx(idx);
                   }}
-                  className={`transition-all rounded-full cursor-pointer h-1.5 ${
+                  className={`transition-all duration-300 rounded-full cursor-pointer h-1.5 ${
                     idx === currentIdx 
                       ? "w-4 bg-[#C5A880] shadow-sm" 
                       : "w-1.5 bg-white/60 hover:bg-white"
@@ -192,7 +184,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         )}
       </div>
 
-      {/* Detail Konten & Tombol Pesan */}
+      {/* Detail Konten Kamar */}
       <div className="p-5 flex flex-col flex-1 justify-between">
         <div>
           <h3 
@@ -216,44 +208,20 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
           </div>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-slate-100">
-          <span className="text-[10px] text-slate-400 font-semibold block uppercase">{t.rooms.startingFrom}</span>
-          <div className="flex items-baseline gap-1">
-            <span className="text-lg font-bold text-slate-900">
-              {room.priceFormatted || (typeof room.price === 'number' ? `Rp ${room.price.toLocaleString('id-ID')}` : room.price)}
-            </span>
-            <span className="text-xs text-slate-500">
-              {t.rooms.perNight}
-            </span>
-          </div>
-
-          <div className="mt-3 flex items-center gap-2">
-            {onOpenDetail && (
-              <button
-                type="button"
-                onClick={() => onOpenDetail(room)}
-                className="p-2.5 border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl flex items-center justify-center transition-colors shrink-0 cursor-pointer"
-                title={t.rooms.viewDetails}
-                aria-label={`${t.rooms.viewDetails} ${room.name}`}
-              >
-                <Info className="w-4 h-4" />
-              </button>
-            )}
-            <a
-              id={`btn-book-${room.id}`}
-              href={`https://wa.me/628111330659?text=${encodeURIComponent(
-                language === 'en'
-                  ? `Hello IPB Convention Hotel, I would like to book the ${room.name}`
-                  : `Halo IPB Convention Hotel, saya ingin memesan ${room.name}`
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full bg-[#1B3D2F] hover:bg-[#142e23] text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm"
+        {onOpenDetail && (
+          <div className="mt-5 pt-4 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => onOpenDetail(room)}
+              className="w-full py-2.5 px-4 border border-slate-200 text-slate-700 hover:text-[#1B3D2F] hover:border-[#1B3D2F]/30 hover:bg-slate-50 rounded-xl flex items-center justify-center gap-2 text-xs font-semibold transition-colors cursor-pointer"
+              title={t.rooms.viewDetails}
+              aria-label={`${t.rooms.viewDetails} ${room.name}`}
             >
-              {t.rooms.bookViaWa}
-            </a>
+              <Info className="w-4 h-4 text-[#C5A880]" />
+              <span>{t.rooms.viewDetails}</span>
+            </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
