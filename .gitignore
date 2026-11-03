@@ -14,3 +14,4 @@ coverage/
 /.phpunit.cache/
 .phpunit.result.cache
 /auth.json
+/dist-singlefile/

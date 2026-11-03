@@ -3,6 +3,81 @@ import { GALLERY_ITEMS } from '../data/hotelData';
 import { GalleryItem } from '../types';
 import { Maximize2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useModalFocus } from '../hooks/useModalFocus';
+
+interface GalleryLightboxProps {
+  title: string;
+  category: string;
+  image: string;
+  onClose: () => void;
+  onNavigate: (direction: 'next' | 'prev') => void;
+}
+
+const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ title, category, image, onClose, onNavigate }) => {
+  const { t } = useLanguage();
+  const dialogRef = useModalFocus<HTMLDivElement>(onClose);
+
+  return (
+    <div
+      data-popup
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in"
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        tabIndex={-1}
+        className="relative max-w-4xl w-full max-h-[85vh] flex flex-col items-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Controls */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10"
+          aria-label={t.gallery.closeAria}
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('prev')}
+          className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+          aria-label={t.gallery.prevAria}
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('next')}
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
+          aria-label={t.gallery.nextAria}
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+
+        <img
+          src={image}
+          alt={title}
+          className="w-full max-h-[70vh] object-contain rounded-xl shadow-2xl"
+        />
+
+        <div className="mt-4 text-center text-white">
+          <span className="text-xs uppercase tracking-widest text-[#C5A880] font-semibold block mb-1">
+            {category}
+          </span>
+          <h3 className="font-serif text-xl sm:text-2xl font-bold">
+            {title}
+          </h3>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const HotelGallery: React.FC = () => {
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
@@ -60,10 +135,11 @@ export const HotelGallery: React.FC = () => {
           {GALLERY_ITEMS.map((rawItem) => {
             const item = getItemData(rawItem);
             return (
-              <div 
+              <button
+                type="button"
                 key={rawItem.id}
                 onClick={() => openLightbox(rawItem)}
-                className="group relative h-64 sm:h-72 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900 border border-slate-100"
+                className="group relative block w-full text-left h-64 sm:h-72 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 bg-slate-900 border border-slate-100"
               >
                 <img 
                   src={item.image}
@@ -71,18 +147,16 @@ export const HotelGallery: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-90 group-hover:opacity-100"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between gap-3">
-                  <div className="flex-1">
-                    <h3 className="font-serif text-lg font-bold text-white leading-snug group-hover:text-[#EFE4D2] transition-colors">
-                      {item.title}
-                    </h3>
-                  </div>
-                  <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                <span className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
+                <span className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between gap-3">
+                  <span className="flex-1 font-serif text-lg font-bold text-white leading-snug group-hover:text-[#EFE4D2] transition-colors">
+                    {item.title}
+                  </span>
+                  <span className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity shrink-0">
                     <Maximize2 className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
+                  </span>
+                </span>
+              </button>
             );
           })}
         </div>
@@ -90,56 +164,13 @@ export const HotelGallery: React.FC = () => {
 
       {/* Lightbox Modal */}
       {activeItem && activeTrans && (
-        <div
-          data-popup
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-fade-in"
-          onClick={closeLightbox}
-        >
-          <div 
-            className="relative max-w-4xl w-full max-h-[85vh] flex flex-col items-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Controls */}
-            <button
-              onClick={closeLightbox}
-              className="absolute -top-12 right-0 text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10"
-              aria-label={t.gallery.closeAria}
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            <button
-              onClick={() => navigateLightbox('prev')}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-              aria-label={t.gallery.prevAria}
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-
-            <button
-              onClick={() => navigateLightbox('next')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 text-white flex items-center justify-center hover:bg-black/80 transition-colors border border-white/20"
-              aria-label={t.gallery.nextAria}
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-
-            <img 
-              src={activeTrans.image}
-              alt={activeTrans.title}
-              className="w-full max-h-[70vh] object-contain rounded-xl shadow-2xl"
-            />
-            
-            <div className="mt-4 text-center text-white">
-              <span className="text-xs uppercase tracking-widest text-[#C5A880] font-semibold block mb-1">
-                {activeTrans.category}
-              </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold">
-                {activeTrans.title}
-              </h3>
-            </div>
-          </div>
-        </div>
+        <GalleryLightbox
+          title={activeTrans.title}
+          category={activeTrans.category}
+          image={activeTrans.image}
+          onClose={closeLightbox}
+          onNavigate={navigateLightbox}
+        />
       )}
     </section>
   );

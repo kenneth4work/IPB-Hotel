@@ -9,7 +9,7 @@ const StarRating: React.FC<{ rating: number }> = ({ rating }) => (
       <Star
         key={star}
         className={`w-3.5 h-3.5 ${
-          star <= Math.floor(rating) ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-slate-300'
+          star <= Math.floor(rating) ? 'text-[#7A5C33] fill-[#7A5C33]' : 'text-slate-500'
         }`}
       />
     ))}
@@ -68,7 +68,7 @@ export const GuestReviews: React.FC = () => {
               offset === 0
                 ? 'opacity-100 z-10 shadow-md'
                 : Math.abs(offset) === 1
-                  ? 'opacity-60 shadow-sm'
+                  ? 'opacity-100 shadow-sm'
                   : 'opacity-0 pointer-events-none';
 
             const initials = rev.author
@@ -111,7 +111,7 @@ export const GuestReviews: React.FC = () => {
             type="button"
             onClick={prevSlide}
             aria-label={t.reviews.prevAria}
-            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-[#FDFBF7] text-slate-700 hover:text-[#C5A880] border border-slate-200 flex items-center justify-center transition-colors shadow-lg z-20 cursor-pointer"
+            className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-[#FDFBF7] text-slate-700 hover:text-[#1E3A2B] border border-slate-200 flex items-center justify-center transition-colors shadow-lg z-20 cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -121,7 +121,7 @@ export const GuestReviews: React.FC = () => {
             type="button"
             onClick={nextSlide}
             aria-label={t.reviews.nextAria}
-            className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-[#FDFBF7] text-slate-700 hover:text-[#C5A880] border border-slate-200 flex items-center justify-center transition-colors shadow-lg z-20 cursor-pointer"
+            className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-[#FDFBF7] text-slate-700 hover:text-[#1E3A2B] border border-slate-200 flex items-center justify-center transition-colors shadow-lg z-20 cursor-pointer"
           >
             <ArrowRight className="w-5 h-5" />
           </button>

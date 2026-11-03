@@ -77,6 +77,17 @@ export const Navbar: React.FC<NavbarProps> = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (!mobileMenuOpen) return;
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setMobileMenuOpen(false);
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, [mobileMenuOpen]);
+
+    const menuLabel = language === "en" ? "Navigation menu" : "Menu navigasi";
+
     const navLinks = [
         {
             label: language === "en" ? "Reservation" : "Reservasi",
@@ -97,7 +108,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
             <div className="max-w-6xl mx-auto pointer-events-auto">
                 {/* Floating Pill Container */}
                 <nav
-                    aria-label="Primary Navigation"
+                    aria-label={language === "en" ? "Primary navigation" : "Navigasi utama"}
                     className={`rounded-full transition-all duration-300 px-4 sm:px-6 lg:px-7 py-2 sm:py-2.5 border ${
                         isScrolled
                             ? "bg-white/92 backdrop-blur-xl border-slate-200/90 shadow-[0_10px_35px_-5px_rgba(15,23,42,0.12)]"
@@ -110,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                             <Link
                                 to="/"
                                 id="brand-logo-link"
-                                className="group inline-flex items-center gap-3 shrink-0 focus:outline-none"
+                                className="group inline-flex items-center gap-3 shrink-0"
                                 title="IPB Convention Hotel"
                             >
                                 <div
@@ -228,7 +239,11 @@ export const Navbar: React.FC<NavbarProps> = () => {
                                         ? "border-[#C5A880] bg-[#FDFBF7] shadow-[0_0_16px_rgba(197,168,128,0.5)]"
                                         : "border-slate-200/80 bg-slate-50/80 text-slate-700"
                                 }`}
-                                aria-label="Switch Language"
+                                aria-label={
+                                    language === "en"
+                                        ? "Switch Language (ID / EN)"
+                                        : "Ganti Bahasa (ID / EN)"
+                                }
                             >
                                 {language === "id" ? (
                                     <FlagID className="w-5 h-5" />
@@ -239,15 +254,14 @@ export const Navbar: React.FC<NavbarProps> = () => {
 
                             <button
                                 id="mobile-menu-trigger"
+                                type="button"
                                 onClick={() =>
                                     setMobileMenuOpen(!mobileMenuOpen)
                                 }
-                                className="p-2.5 rounded-full text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors focus:outline-none"
-                                aria-label={
-                                    language === "en"
-                                        ? "Toggle Navigation Menu"
-                                        : "Buka Menu Navigasi"
-                                }
+                                className="p-2.5 rounded-full text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors"
+                                aria-label={menuLabel}
+                                aria-expanded={mobileMenuOpen}
+                                aria-controls="mobile-navigation-menu"
                             >
                                 {mobileMenuOpen ? (
                                     <X className="w-5 h-5" />
@@ -259,9 +273,12 @@ export const Navbar: React.FC<NavbarProps> = () => {
 
                         {/* Tablet Menu Trigger (sm to lg) */}
                         <button
+                            type="button"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="hidden sm:inline-flex lg:hidden p-2.5 rounded-full text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors focus:outline-none ml-1"
-                            aria-label="Toggle Navigation Menu"
+                            className="hidden sm:inline-flex lg:hidden p-2.5 rounded-full text-slate-700 hover:bg-slate-100 hover:text-slate-950 transition-colors ml-1"
+                            aria-label={menuLabel}
+                            aria-expanded={mobileMenuOpen}
+                            aria-controls="mobile-navigation-menu"
                         >
                             {mobileMenuOpen ? (
                                 <X className="w-5 h-5" />
@@ -274,7 +291,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
 
                 {/* Mobile / Tablet Floating Dropdown Menu */}
                 {mobileMenuOpen && (
-                    <div className="lg:hidden mt-2.5 rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_16px_40px_-8px_rgba(15,23,42,0.15)] p-4 sm:p-5 space-y-3 animate-scale-up">
+                    <div id="mobile-navigation-menu" className="lg:hidden mt-2.5 rounded-3xl bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_16px_40px_-8px_rgba(15,23,42,0.15)] p-4 sm:p-5 space-y-3 animate-scale-up">
                         <div className="flex flex-col space-y-1">
                             {navLinks.map((link) => {
                                 const isActive =

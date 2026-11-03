@@ -28,7 +28,10 @@ class ReservationService
                 }
             }],
             'special_request' => ['nullable', 'string', 'max:2000'],
+            'terms_accepted' => ['sometimes', 'accepted'],
         ])->validate();
+        $termsAccepted = ! empty($data['terms_accepted']);
+        unset($data['terms_accepted']);
         $data = array_replace($data, [
             'room_type_id' => (int) $data['room_type_id'],
             'room_count' => (int) $data['room_count'],
@@ -42,7 +45,7 @@ class ReservationService
         ksort($fingerprintData);
         $fingerprint = hash('sha256', json_encode($fingerprintData, JSON_THROW_ON_ERROR));
 
-        return DB::transaction(function () use ($data, $fingerprint) {
+        return DB::transaction(function () use ($data, $fingerprint, $termsAccepted) {
             RoomType::query()->lockForUpdate()->findOrFail($data['room_type_id']);
             if (! empty($data['request_id'])) {
                 $existing = Reservation::where('request_id', $data['request_id'])->lockForUpdate()->first();
@@ -77,6 +80,8 @@ class ReservationService
                 'discount_amount' => $quote['discount_amount'],
                 'total_amount' => $quote['total_amount'],
                 'hold_expires_at' => now()->addMinutes(30),
+                'terms_accepted_at' => $termsAccepted ? now() : null,
+                'policy_version' => $termsAccepted ? config('booking.policy_version') : null,
             ]);
             $reservation->nights()->createMany(array_map(fn ($night) => [
                 'room_availability_id' => $night['room_availability_id'],

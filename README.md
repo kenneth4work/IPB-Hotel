@@ -90,4 +90,13 @@ npm run build
 ```
 
 Document root hosting harus mengarah ke `public/`. Pada deployment, gunakan
-`APP_DEBUG=false`, isi environment server, dan jalankan build frontend.
+`APP_DEBUG=false`, `SESSION_SECURE_COOKIE=true`, isi environment server, dan
+jalankan migrasi serta build frontend.
+
+## Dokumen legal
+
+Isi halaman privasi, syarat, refund, dan cookie ada di `src/data/legalContent.ts`.
+Teks `{{...}}` adalah data yang belum dikonfirmasi hotel. Setelah semuanya terisi
+dan ditinjau penasihat hukum, ubah `LEGAL_DRAFT` menjadi `false` dan perbarui
+`policy_version` di `config/booking.php`. Versi ini tersimpan bersama waktu
+persetujuan di setiap reservasi.

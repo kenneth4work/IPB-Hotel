@@ -98,8 +98,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
     >
       {/* Container Foto Carousel dengan Soft Slide Animation */}
       <div 
-        className="relative aspect-[4/3] w-full overflow-hidden group cursor-pointer bg-slate-900 select-none"
-        onClick={() => onOpenGallery?.(room, currentIdx)}
+        className="relative aspect-[4/3] w-full overflow-hidden group bg-slate-900 select-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -123,6 +122,16 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
           })}
         </div>
 
+        {/* Area foto sebagai tombol pembuka galeri, dapat dipakai dengan keyboard */}
+        {onOpenGallery && (
+          <button
+            type="button"
+            onClick={() => onOpenGallery(room, currentIdx)}
+            aria-label={language === 'en' ? `Open ${room.name} photo gallery` : `Buka galeri foto ${room.name}`}
+            className="focus-inset absolute inset-0 z-[5] cursor-pointer"
+          />
+        )}
+
         {/* Tombol Navigasi Panah Kiri & Kanan (Muncul jika foto > 1) */}
         {imagesList.length > 1 && (
           <>
@@ -131,7 +140,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
               type="button"
               onClick={prevSlide}
               aria-label={t.gallery.prevAria}
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-85 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 shadow-lg z-20 cursor-pointer border border-white/25 active:scale-95"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-85 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100 hover:scale-110 shadow-lg z-20 cursor-pointer border border-white/25 active:scale-95"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -141,7 +150,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
               type="button"
               onClick={nextSlide}
               aria-label={t.gallery.nextAria}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-85 sm:opacity-0 sm:group-hover:opacity-100 hover:scale-110 shadow-lg z-20 cursor-pointer border border-white/25 active:scale-95"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center transition-all opacity-85 sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100 hover:scale-110 shadow-lg z-20 cursor-pointer border border-white/25 active:scale-95"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -153,7 +162,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
 
             {/* Titik Indikator Dots di Bawah Tengah */}
             <div 
-              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-black/45 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/20 shadow-sm"
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center z-20 bg-black/45 backdrop-blur-md px-1 rounded-full border border-white/20 shadow-sm"
               onClick={(e) => e.stopPropagation()}
             >
               {imagesList.map((_, idx) => (
@@ -165,12 +174,17 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
                     e.stopPropagation();
                     setCurrentIdx(idx);
                   }}
-                  className={`transition-all duration-300 rounded-full cursor-pointer h-1.5 ${
-                    idx === currentIdx 
-                      ? "w-4 bg-[#C5A880] shadow-sm" 
-                      : "w-1.5 bg-white/60 hover:bg-white"
-                  }`}
-                />
+                  aria-current={idx === currentIdx}
+                  className="h-6 min-w-6 px-1 flex items-center justify-center cursor-pointer group/dot"
+                >
+                  <span
+                    className={`block transition-all duration-300 rounded-full h-1.5 ${
+                      idx === currentIdx
+                        ? "w-4 bg-[#C5A880] shadow-sm"
+                        : "w-1.5 bg-white/60 group-hover/dot:bg-white"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           </>

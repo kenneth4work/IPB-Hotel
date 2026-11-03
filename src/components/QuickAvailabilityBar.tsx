@@ -38,9 +38,9 @@ export const QuickAvailabilityBar: React.FC = () => {
         {/* Top Header Row: dot + title */}
         <div className="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100">
           <span className="w-2.5 h-2.5 rounded-full bg-[#C86400] shrink-0 animate-pulse" />
-          <h3 className="font-bold text-sm sm:text-base tracking-tight text-slate-900 font-sans">
+          <h2 className="font-bold text-sm sm:text-base tracking-tight text-slate-900 font-sans">
             {t.quickBar.title}
-          </h3>
+          </h2>
         </div>
 
         {/* 5-Column Interactive Search & Availability Form */}

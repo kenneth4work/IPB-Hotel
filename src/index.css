@@ -15,6 +15,11 @@
 }
 
 @layer base {
+  /* Elemen yang difokus tidak tertutup navbar melayang */
+  html {
+    scroll-padding-top: 6.5rem;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: var(--color-alabaster);
@@ -27,6 +32,39 @@
     font-family: var(--font-sans);
     font-weight: 700;
     letter-spacing: -0.025em;
+  }
+
+  ::placeholder {
+    color: #64748b;
+    opacity: 1;
+  }
+}
+
+/* Sengaja di luar @layer agar menang atas outline-hidden; dua warna agar terlihat di latar terang maupun gelap */
+:focus-visible:not([tabindex="-1"]),
+label:has(> input.sr-only:focus-visible) {
+  outline: 3px solid #1E3A2B;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #FFFFFF;
+}
+
+.focus-inset:focus-visible {
+  outline-offset: -5px;
+  outline-color: #FFFFFF;
+  box-shadow: inset 0 0 0 2px #1E3A2B;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -80,7 +118,8 @@
 }
 
 /* Tombol WhatsApp melayang disembunyikan selama pop up terbuka */
-body:has([data-popup]) #floating-whatsapp-trigger {
+body:has([data-popup]) #floating-whatsapp-trigger,
+body:has([data-popup]) #cookie-consent {
   opacity: 0;
   visibility: hidden;
 }

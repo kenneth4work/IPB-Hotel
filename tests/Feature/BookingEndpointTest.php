@@ -39,7 +39,7 @@ class BookingEndpointTest extends TestCase
     {
         return [...$this->selection(), 'request_id' => (string) Str::uuid(),
             'guest_name' => 'Test Guest', 'guest_email' => 'guest@example.test',
-            'guest_phone' => '081234567890', 'expected_total' => 1830000];
+            'guest_phone' => '081234567890', 'expected_total' => 1830000, 'terms_accepted' => true];
     }
 
     public function test_catalog_uses_database_prices_and_hides_inactive_types(): void
@@ -133,6 +133,17 @@ class BookingEndpointTest extends TestCase
 
     public function test_guest_details_and_request_id_are_required_for_submission(): void
     {
-        $this->postJson('/reservations', $this->selection())->assertUnprocessable()->assertJsonValidationErrors(['request_id', 'expected_total']);
+        $this->postJson('/reservations', $this->selection())->assertUnprocessable()->assertJsonValidationErrors(['request_id', 'expected_total', 'terms_accepted']);
+    }
+
+    public function test_terms_must_be_accepted_and_the_acceptance_is_recorded(): void
+    {
+        $this->stock();
+        $this->postJson('/reservations', [...$this->payload(), 'terms_accepted' => false])
+            ->assertUnprocessable()->assertJsonValidationErrors('terms_accepted');
+        $this->assertDatabaseCount('reservations', 0);
+
+        $this->postJson('/reservations', [...$this->payload(), 'terms_accepted_at' => '2000-01-01 00:00:00', 'policy_version' => 'FAKE'])->assertCreated();
+        $this->assertDatabaseHas('reservations', ['terms_accepted_at' => now()->toDateTimeString(), 'policy_version' => config('booking.policy_version')]);
     }
 }

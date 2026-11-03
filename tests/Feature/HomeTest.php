@@ -22,6 +22,22 @@ class HomeTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->component('Home'));
     }
 
+    public function test_legal_pages_render_the_react_page(): void
+    {
+        foreach (['/kebijakan-privasi', '/syarat-ketentuan', '/kebijakan-refund', '/kebijakan-cookie'] as $path) {
+            $this->get($path)->assertOk()->assertInertia(fn (Assert $page) => $page->component('Home'));
+        }
+    }
+
+    public function test_pages_send_security_headers_and_no_external_fonts(): void
+    {
+        $this->get('/')
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+            ->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+            ->assertDontSee('fonts.googleapis.com');
+    }
+
     public function test_inertia_visits_receive_the_page_as_json(): void
     {
         $version = $this->get('/')->viewData('page')['version'];

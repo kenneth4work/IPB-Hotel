@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useId } from 'react';
 import { RoomData, Room } from '../types';
 import { getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
+import { useModalFocus } from '../hooks/useModalFocus';
 import { 
   X, 
   Check, 
@@ -52,13 +53,8 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
     }, 240);
   }, [onClose]);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [handleClose]);
+  const titleId = useId();
+  const dialogRef = useModalFocus<HTMLDivElement>(handleClose);
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -102,7 +98,12 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
       }`}
       onClick={handleClose}
     >
-      <div 
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className={`bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 relative max-h-[92vh] flex flex-col transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
           isVisible
             ? 'opacity-100 translate-y-0 scale-100'
@@ -112,6 +113,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
       >
         {/* Close Button */}
         <button
+          type="button"
           onClick={handleClose}
           className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/50 hover:bg-black/80 text-white backdrop-blur-md flex items-center justify-center shadow-md border border-white/20 transition-transform hover:scale-105 cursor-pointer"
           aria-label={t.modal.close}
@@ -131,7 +133,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
                 <div key={idx} className="w-full h-full shrink-0 overflow-hidden">
                   <img
                     src={resolvedUrl}
-                    alt={`${roomName} - ${idx + 1}`}
+                    alt={`${roomName} - ${t.modal.photoCounterText} ${idx + 1} ${t.modal.ofText} ${images.length}`}
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
@@ -167,19 +169,25 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
               {translatedBadge}
             </span>
             {images.length > 1 && (
-              <div className="flex items-center gap-1 bg-black/50 backdrop-blur-md px-2 py-1 rounded-full border border-white/20">
+              <div className="flex items-center bg-black/50 backdrop-blur-md px-1 rounded-full border border-white/20">
                 {images.map((_, idx) => (
                   <button
                     key={idx}
                     type="button"
+                    aria-label={`${t.modal.photoCounterText} ${idx + 1} ${t.modal.ofText} ${images.length}`}
+                    aria-current={idx === activePhotoIdx}
                     onClick={(e) => {
                       e.stopPropagation();
                       setActivePhotoIdx(idx);
                     }}
-                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                      idx === activePhotoIdx ? 'w-3.5 bg-[#C5A880]' : 'w-1.5 bg-white/60 hover:bg-white'
-                    }`}
-                  />
+                    className="h-6 min-w-6 px-1 flex items-center justify-center cursor-pointer group/dot"
+                  >
+                    <span
+                      className={`block h-1.5 rounded-full transition-all duration-300 ${
+                        idx === activePhotoIdx ? 'w-3.5 bg-[#C5A880]' : 'w-1.5 bg-white/60 group-hover/dot:bg-white'
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
             )}
@@ -187,7 +195,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
           <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between z-10">
             <div>
-              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
+              <h3 id={titleId} className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight">
                 {roomName}
               </h3>
               <span className="text-xs text-slate-300">
@@ -236,7 +244,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
           {/* Description */}
           <div>
-            <h4 className="text-xs font-bold text-slate-400 mb-2">
+            <h4 className="text-xs font-bold text-slate-600 mb-2">
               {t.modal.description}
             </h4>
             <p className="text-slate-600 text-sm leading-relaxed">
@@ -246,7 +254,7 @@ export const RoomDetailModal: React.FC<RoomDetailModalProps> = ({
 
           {/* Facilities & Amenities */}
           <div>
-            <h4 className="text-xs font-bold text-slate-400 mb-3">
+            <h4 className="text-xs font-bold text-slate-600 mb-3">
               {t.modal.facilities}
             </h4>
             <div className="grid grid-cols-2 gap-2.5">

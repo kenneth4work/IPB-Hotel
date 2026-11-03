@@ -3,6 +3,7 @@ import { RoomData } from '../types';
 import { getRoomImageUrl } from '../data/hotelData';
 import { X, ChevronLeft, ChevronRight, Maximize2, Calendar } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useModalFocus } from '../hooks/useModalFocus';
 
 interface RoomGalleryModalProps {
   room: RoomData;
@@ -34,14 +35,15 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
       if (e.key === 'ArrowRight') handleNext();
       if (e.key === 'ArrowLeft') handlePrev();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev, onClose]);
+  }, [handleNext, handlePrev]);
+
+  const dialogRef = useModalFocus<HTMLDivElement>(onClose);
 
   // Touch Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -74,8 +76,13 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
 
   return (
     <div 
+      ref={dialogRef}
       id="room-gallery-modal"
       data-popup
+      role="dialog"
+      aria-modal="true"
+      aria-label={room.name}
+      tabIndex={-1}
       className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between text-white select-none animate-fade-in"
       onClick={onClose}
     >
@@ -150,7 +157,7 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
                 <div key={idx} className="w-full shrink-0 flex items-center justify-center">
                   <img
                     src={resolvedUrl}
-                    alt={`${room.name} - ${idx + 1}`}
+                    alt={`${room.name} - ${t.modal.photoCounterText} ${idx + 1} ${t.modal.ofText} ${total}`}
                     className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl"
                   />
                 </div>
@@ -187,18 +194,23 @@ export const RoomGalleryModal: React.FC<RoomGalleryModalProps> = ({
         </div>
 
         {/* Center: Dot Indicators */}
-        <div className="flex items-center gap-2 order-1 sm:order-2">
+        <div className="flex items-center order-1 sm:order-2">
           {room.images.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
               aria-label={`${t.modal.photoCounterText} ${idx + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentIndex
-                  ? 'w-7 bg-[#C5A880] shadow-sm shadow-[#C5A880]/50'
-                  : 'w-2 bg-white/30 hover:bg-white/60'
-              }`}
-            />
+              aria-current={idx === currentIndex}
+              className="h-6 min-w-6 px-1 flex items-center justify-center cursor-pointer group/dot"
+            >
+              <span
+                className={`block h-2 rounded-full transition-all duration-300 ${
+                  idx === currentIndex
+                    ? 'w-7 bg-[#C5A880] shadow-sm shadow-[#C5A880]/50'
+                    : 'w-2 bg-white/30 group-hover/dot:bg-white/60'
+                }`}
+              />
+            </button>
           ))}
         </div>
 

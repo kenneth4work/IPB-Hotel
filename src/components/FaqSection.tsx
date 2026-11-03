@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ChevronDown, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useModalFocus } from '../hooks/useModalFocus';
 
 const VISIBLE_FAQ_COUNT = 3;
 
@@ -32,7 +33,7 @@ const FaqAccordion: React.FC<FaqAccordionProps> = ({ items }) => {
               >
                 <span>{item.question}</span>
                 <ChevronDown
-                  className={`w-5 h-5 shrink-0 text-[#C5A880] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 shrink-0 text-[#7A5C33] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
                 />
               </button>
             </h3>
@@ -79,13 +80,7 @@ const FaqModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }, 240);
   }, [onClose]);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [handleClose]);
+  const dialogRef = useModalFocus<HTMLDivElement>(handleClose);
 
   return (
     // z-[60] agar berada di atas tombol WhatsApp melayang (z-50) di Footer
@@ -97,8 +92,10 @@ const FaqModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       onClick={handleClose}
     >
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
+        tabIndex={-1}
         aria-labelledby={titleId}
         className={`bg-[#FDFBF7] w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl border border-slate-100 max-h-[85vh] flex flex-col transition-all duration-350 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
           isVisible

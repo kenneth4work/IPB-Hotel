@@ -31,7 +31,11 @@ class BookingController extends Controller
 
     public function store(Request $request, ReservationService $reservations): JsonResponse
     {
-        $request->validate(['request_id' => ['required', 'uuid'], 'expected_total' => ['required', 'integer', 'min:0']]);
+        $request->validate([
+            'request_id' => ['required', 'uuid'],
+            'expected_total' => ['required', 'integer', 'min:0'],
+            'terms_accepted' => ['required', 'accepted'],
+        ], ['terms_accepted.*' => 'Syarat & Ketentuan dan Kebijakan Refund harus disetujui.']);
         $reservation = $reservations->hold($request->all());
 
         return response()->json(['reservation' => [

@@ -124,19 +124,6 @@ export interface TranslationDictionary {
     nextAria: string;
     items: Record<string, { quote: string; datePlatform: string }>;
   };
-  specialOffer: {
-    badge: string;
-    title: string;
-    subtitle: string;
-    codeLabel: string;
-    claimOffer: string;
-    tag: string;
-    feature1: string;
-    feature2: string;
-    feature3: string;
-    bookNow: string;
-    contactUs: string;
-  };
   faq: {
     title: string;
     subtitle: string;
@@ -528,19 +515,6 @@ export const translations: Record<Language, TranslationDictionary> = {
           datePlatform: 'September 2026 · Traveloka'
         }
       }
-    },
-    specialOffer: {
-      badge: 'PENAWARAN SPESIAL',
-      tag: 'PENAWARAN SPESIAL',
-      title: 'Pesan Sekarang & Dapatkan Penawaran Terbaik',
-      subtitle: 'Nikmati potongan harga eksklusif untuk pemesanan langsung melalui website kami. Termasuk sarapan gratis untuk 2 orang.',
-      codeLabel: 'Gunakan Kode Promo:',
-      claimOffer: 'Klaim Promo via WhatsApp',
-      feature1: 'Gratis Sarapan Buffet 2 Orang',
-      feature2: 'Garansi Tarif Terbaik Langsung',
-      feature3: 'Bebas Biaya Reservasi Tersembunyi',
-      bookNow: 'PESAN SEKARANG',
-      contactUs: 'HUBUNGI KAMI'
     },
     faq: {
       title: 'FAQ',
@@ -976,19 +950,6 @@ export const translations: Record<Language, TranslationDictionary> = {
           datePlatform: 'September 2026 · Traveloka'
         }
       }
-    },
-    specialOffer: {
-      badge: 'SPECIAL LIMITED OFFER',
-      tag: 'SPECIAL LIMITED OFFER',
-      title: 'Book Direct & Secure Exclusive Benefits',
-      subtitle: 'Enjoy exclusive rates and seasonal privileges when booking directly with our team. Includes complimentary buffet breakfast for 2 guests.',
-      codeLabel: 'Use Promo Code:',
-      claimOffer: 'Claim Offer via WhatsApp',
-      feature1: 'Complimentary Buffet Breakfast for 2',
-      feature2: 'Guaranteed Best Direct Rates',
-      feature3: 'No Hidden Booking Fees',
-      bookNow: 'BOOK NOW',
-      contactUs: 'CONTACT US'
     },
     faq: {
       title: 'FAQ',

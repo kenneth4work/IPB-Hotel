@@ -1,12 +1,18 @@
 import React from 'react';
-import { Navigation } from 'lucide-react';
+import { MapPin, Navigation } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import SimpleLocationList, { locationData } from './SimpleLocationList';
 import { useLanguage } from '../context/LanguageContext';
+import { useConsent } from '../context/ConsentContext';
+import { HOTEL_CONFIG } from '../data/hotelData';
+import { LEGAL_ROUTES, LEGAL_UI } from '../data/legalContent';
 
 export { locationData, SimpleLocationList };
 
 export const WhatsAroundLocation: React.FC = () => {
   const { language, t } = useLanguage();
+  const { choice, setChoice } = useConsent();
+  const ui = LEGAL_UI[language];
 
   // Exact Coordinates for IPB Convention Hotel Botani Square Bogor from official Google Maps pin
   const coordinates = {
@@ -37,15 +43,36 @@ export const WhatsAroundLocation: React.FC = () => {
         {/* 1. WADAH PETA INTERAKTIF GOOGLE MAPS DENGAN TITIK KOORDINAT TERPUSAT */}
         <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm p-3 sm:p-4 mb-8 sm:mb-10 overflow-hidden">
           <div className="relative w-full h-80 sm:h-96 lg:h-[440px] rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner group">
-            {/* Interactive Centered Google Maps Iframe */}
-            <iframe
-              title={language === 'en' ? 'Google Maps Location of IPB Convention Hotel Botani Square' : 'Google Maps Lokasi IPB Convention Hotel Botani Square'}
-              src={`https://maps.google.com/maps?q=${coordinates.lat},${coordinates.lng}+(IPB+Convention+Hotel+Botani+Square)&t=&z=17&ie=UTF8&iwloc=B&output=embed`}
-              className="w-full h-full border-0"
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+            {/* Iframe Google Maps hanya dimuat setelah tamu mengizinkan */}
+            {choice === 'accepted' ? (
+              <iframe
+                title={language === 'en' ? 'Google Maps Location of IPB Convention Hotel Botani Square' : 'Google Maps Lokasi IPB Convention Hotel Botani Square'}
+                src={`https://maps.google.com/maps?q=${coordinates.lat},${coordinates.lng}+(IPB+Convention+Hotel+Botani+Square)&t=&z=17&ie=UTF8&iwloc=B&output=embed`}
+                className="w-full h-full border-0"
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center text-center gap-3 p-6 pb-16">
+                <MapPin className="w-8 h-8 text-[#1E3A2B]" />
+                <h3 className="text-lg font-bold text-slate-900">{ui.mapTitle}</h3>
+                <p className="max-w-md text-sm text-slate-700">{ui.mapText}</p>
+                <p className="max-w-md text-sm font-semibold text-slate-900">{HOTEL_CONFIG.address}</p>
+                <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setChoice('accepted')}
+                    className="px-4 py-2.5 bg-[#1E3A2B] hover:bg-[#13261C] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                  >
+                    {ui.mapLoad}
+                  </button>
+                  <Link to={LEGAL_ROUTES.cookies} className="text-xs font-semibold text-[#1E3A2B] underline">
+                    {ui.cookies}
+                  </Link>
+                </div>
+              </div>
+            )}
 
             {/* Bottom Floating Direction Button */}
             <div className="absolute bottom-3 right-3">
