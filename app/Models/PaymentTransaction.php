@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class PaymentTransaction extends Model
 {
-    protected $fillable = ['reference', 'reservation_id', 'provider', 'provider_transaction_id', 'payment_method', 'status', 'amount', 'currency', 'expires_at', 'paid_at', 'failed_at', 'refunded_at'];
+    protected $fillable = ['reference', 'reservation_id', 'provider', 'provider_transaction_id', 'payment_method', 'checkout_url', 'status', 'amount', 'currency', 'expires_at', 'paid_at', 'failed_at', 'refunded_at'];
 
     protected function casts(): array
     {

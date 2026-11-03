@@ -3,20 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\RoomType;
+use App\Services\PaymentService;
 use App\Services\ReservationQuoteService;
 use App\Services\ReservationService;
+use App\Services\RoomAvailabilityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function rooms(): JsonResponse
+    public function rooms(PaymentService $payments): JsonResponse
     {
         return response()->json([
             'room_types' => RoomType::where('is_active', true)->orderBy('base_price')->get([
                 'id', 'slug', 'name', 'size_sqm', 'max_guests', 'base_price', 'breakfast_price', 'bed_types',
             ]),
             'promo' => ['code' => config('booking.promo_code'), 'discount_percent' => config('booking.promo_discount_percent')],
+            'payment' => ['enabled' => $payments->enabled()],
+        ])->header('Cache-Control', 'no-store');
+    }
+
+    /** Sisa kamar semua tipe untuk rentang tanggal, misalnya ?check_in=2026-11-10&check_out=2026-11-12. */
+    public function availability(Request $request, RoomAvailabilityService $availability): JsonResponse
+    {
+        $request->validate([
+            'check_in' => ['required', 'string'],
+            'check_out' => ['required', 'string'],
+        ]);
+
+        return response()->json([
+            'check_in' => $request->string('check_in')->value(),
+            'check_out' => $request->string('check_out')->value(),
+            'room_types' => $availability->summary($request->string('check_in')->value(), $request->string('check_out')->value()),
         ])->header('Cache-Control', 'no-store');
     }
 

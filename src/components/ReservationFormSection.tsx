@@ -18,7 +18,7 @@ import {
   ArrowRight,
   Utensils,
   Coffee,
-  Crown, ChevronLeft, ChevronRight
+  Crown, ChevronLeft, ChevronRight, CreditCard
 } from 'lucide-react';
 import { HOTEL_CONFIG, roomCategories, getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
@@ -184,19 +184,20 @@ const RoomCarouselThumb: React.FC<{ room: ReservationRoom }> = ({ room }) => {
 export const ReservationFormSection: React.FC = () => {
   const {language} = useLanguage();
   const [rooms, setRooms] = useState<ReservationRoom[] | null>(null);
+  const [paymentEnabled, setPaymentEnabled] = useState(false);
   const [error, setError] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
     setError(false);
-    bookingRequest<{room_types: RoomCatalogItem[]}>('/booking/room-types', undefined, controller.signal)
-      .then(({room_types}) => setRooms(room_types.map(room => {
+    bookingRequest<{room_types: RoomCatalogItem[]; payment?: {enabled: boolean}}>('/booking/room-types', undefined, controller.signal)
+      .then(({room_types, payment}) => { setPaymentEnabled(Boolean(payment?.enabled)); setRooms(room_types.map(room => {
         const visual = ROOM_VISUALS.find(item => item.id === room.slug) ?? ROOM_VISUALS[0];
         return {...visual, id: room.slug, databaseId: room.id, name: room.name,
           pricePerNight: room.base_price, breakfastPrice: room.breakfast_price,
           allowedBeds: room.bed_types, size: `${room.size_sqm} M²`,
           capacity: {id: `${room.max_guests} Tamu / kamar`, en: `${room.max_guests} guests / room`}};
-      })))
+      })); })
       .catch(() => { if (!controller.signal.aborted) setError(true); });
     return () => controller.abort();
   }, [attempt]);
@@ -206,10 +207,10 @@ export const ReservationFormSection: React.FC = () => {
       {(error || rooms) && <button type="button" className="mt-4 underline" onClick={() => setAttempt(value => value + 1)}>{language === 'en' ? 'Try again' : 'Coba lagi'}</button>}
     </section>
   );
-  return <ReservationFormContent rooms={rooms} />;
+  return <ReservationFormContent rooms={rooms} paymentEnabled={paymentEnabled} />;
 };
 
-const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) => {
+const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled: boolean}> = ({rooms, paymentEnabled}) => {
   const { language, t } = useLanguage();
   const legalUi = LEGAL_UI[language];
   const isEn = language === 'en';
@@ -248,6 +249,8 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<unknown>(null);
   const [holdExpiresAt, setHoldExpiresAt] = useState('');
+  const [isPaying, setIsPaying] = useState(false);
+  const [paymentError, setPaymentError] = useState('');
   const pendingRequest = useRef<{payload: string; id: string; expectedTotal: number} | null>(null);
   const submitting = useRef(false);
   const [submittedData, setSubmittedData] = useState<{
@@ -401,9 +404,25 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
     }
   };
 
+  // Buat tagihan di backend lalu arahkan tamu ke halaman bayar (Xendit, atau simulator saat lokal)
+  const handlePayNow = async () => {
+    if (!submittedData || isPaying) return;
+    setIsPaying(true);
+    setPaymentError('');
+    try {
+      const {payment} = await bookingRequest<{payment: {checkout_url: string}}>(`/reservations/${encodeURIComponent(submittedData.code)}/payment`, {});
+      window.location.assign(payment.checkout_url);
+    } catch (error) {
+      const fallback = isEn ? 'Payment could not be started. Please try again or contact us on WhatsApp.' : 'Pembayaran belum dapat dimulai. Coba lagi atau hubungi kami via WhatsApp.';
+      setPaymentError(error instanceof BookingApiError ? Object.values(error.errors).flat()[0] ?? fallback : fallback);
+      setIsPaying(false);
+    }
+  };
+
   // Reset form to book again
   const handleReset = () => {
     setIsSuccess(false);
+    setPaymentError('');
     setSubmittedData(null);
     setFullName('');
     setEmail('');
@@ -505,7 +524,9 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
             </div>
 
             <p className="mt-4 text-center text-sm text-amber-800" role="status">
-              {language === 'en' ? 'Awaiting confirmation. Rooms are held until ' : 'Menunggu konfirmasi. Kamar ditahan hingga '}
+              {paymentEnabled
+                ? (isEn ? 'Awaiting payment. Rooms are held until ' : 'Menunggu pembayaran. Kamar ditahan hingga ')
+                : (language === 'en' ? 'Awaiting confirmation. Rooms are held until ' : 'Menunggu konfirmasi. Kamar ditahan hingga ')}
               {new Intl.DateTimeFormat(language === 'en' ? 'en-GB' : 'id-ID', {dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jakarta'}).format(new Date(holdExpiresAt))} WIB.
             </p>
 
@@ -570,8 +591,24 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]}> = ({rooms}) =
               </div>
             </div>
 
+            {paymentError && (
+              <p className="mb-3 text-center text-sm font-semibold text-rose-700" role="alert">{paymentError}</p>
+            )}
+
             {/* Action Buttons */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5">
+              {paymentEnabled && (
+                <button
+                  id="btn-pay-now"
+                  type="button"
+                  onClick={handlePayNow}
+                  disabled={isPaying}
+                  className="w-full sm:w-auto px-7 py-3.5 bg-[#1E3A2B] hover:bg-[#2D543F] disabled:opacity-70 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {isPaying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+                  <span>{isPaying ? (isEn ? 'Opening payment…' : 'Membuka pembayaran…') : (isEn ? 'Pay Now' : 'Bayar Sekarang')}</span>
+                </button>
+              )}
               <a
                 id="btn-confirm-booking-whatsapp"
                 href={getWhatsAppBookingUrl()}

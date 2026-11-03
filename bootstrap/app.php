@@ -15,6 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [HandleInertiaRequests::class, SecurityHeaders::class]);
+        // Provider pembayaran tidak punya token CSRF; webhook diverifikasi lewat callback token.
+        $middleware->validateCsrfTokens(except: ['payments/webhook']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -69,17 +69,40 @@ Session dan cache tetap berbasis file; queue memakai `sync`.
 Form reservasi memuat tipe kamar dari database dan meminta quote ke backend.
 Harga, promo, biaya sarapan, kode booking, serta hold stok diproses server.
 Submit menyimpan reservasi pending beserta rincian malam. WhatsApp dipakai untuk
-menghubungi hotel; inquiry kontak masih memakai alur WhatsApp. Gateway pembayaran
-belum diintegrasikan. Panduan Windows tersedia di `output/pdf/panduan-setup-ipb-hotel.pdf`.
+menghubungi hotel; inquiry kontak masih memakai alur WhatsApp. Pembayaran online
+dijelaskan di bagian berikut. Panduan Windows tersedia di `output/pdf/panduan-setup-ipb-hotel.pdf`.
 
 Endpoint web dengan session/CSRF:
 - `GET /booking/room-types`: katalog tipe kamar aktif.
 - `POST /booking/quote`: harga dan ketersediaan; tidak menahan stok.
+- `GET /booking/availability?check_in=&check_out=`: sisa kamar semua tipe untuk rentang tanggal.
 - `POST /reservations`: simpan hold; wajib `request_id` UUID dan `expected_total`.
+- `POST /reservations/{booking_code}/payment`: buat tagihan dan kembalikan `checkout_url`.
 
 Permintaan ulang dengan UUID dan data yang sama mengembalikan booking yang sudah
 tersimpan. UUID yang sama untuk data berbeda ditolak. Harga dan stok dicek ulang
 saat submit; jika harga berubah, tamu harus memeriksa harga terbaru.
+
+## Pembayaran
+
+Alur: reservasi `pending` (kamar ditahan 30 menit) → tamu menekan **Bayar Sekarang**
+→ halaman bayar provider → webhook provider → pembayaran `paid` dan reservasi `confirmed`.
+Hanya webhook yang menandai lunas; redirect tamu setelah membayar tidak dipercaya.
+Hold yang lewat waktu tanpa pembayaran otomatis tidak lagi memakai stok. Pembayaran yang
+masuk setelah hold berakhir tetap tercatat, tetapi reservasi dibiarkan `pending` dan dicatat
+di log untuk ditinjau staf (konfirmasi manual atau refund).
+
+Driver dipilih lewat `PAYMENT_GATEWAY`:
+- `fake` (default lokal): tombol bayar membuka simulator `/payments/{reference}/simulate`
+  untuk mencoba status lunas atau kedaluwarsa. Tidak pernah aktif di production.
+- `xendit`: isi `XENDIT_SECRET_KEY` dan `XENDIT_CALLBACK_TOKEN`, lalu daftarkan
+  `https://domain-anda/payments/webhook` sebagai URL webhook **Invoice paid/expired** di
+  dashboard Xendit. Halaman invoice Xendit menampilkan VA, QRIS, e-wallet, dan kartu yang aktif.
+- `none` (default production): tombol bayar disembunyikan; alur WhatsApp tetap berjalan.
+
+Kode ada di `app/Payments` (kontrak dan driver) dan `app/Services/PaymentService.php`.
+Provider lain cukup mengimplementasikan `PaymentGateway` lalu didaftarkan di
+`AppServiceProvider`.
 
 ## Verifikasi
 
