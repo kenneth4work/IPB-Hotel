@@ -10,7 +10,7 @@ export const HeroSection: React.FC = () => {
   const suiteFirstPhoto = getRoomImageUrl(roomCategories["Suite"][0]);
 
   return (
-    <section className="relative overflow-hidden bg-[#0F172A] text-white pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24">
+    <section className="relative overflow-hidden bg-[#0F172A] text-white min-h-[100svh] lg:min-h-[820px] flex items-center pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24">
       {/* Background Hero Banner - Foto Kamar Suite Room Slide Pertama */}
       <div 
         className="absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000"
@@ -18,10 +18,12 @@ export const HeroSection: React.FC = () => {
           backgroundImage: `url('${suiteFirstPhoto}')`
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/80 via-[#0F172A]/65 to-[#0F172A]/95" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/70 via-[#0F172A]/50 to-[#0F172A]/90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/65 via-[#0F172A]/25 to-transparent" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto">
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_400px] gap-10 lg:gap-14 items-center text-left">
+        <div className="max-w-2xl">
 
           {/* Main Title */}
           <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
@@ -29,17 +31,12 @@ export const HeroSection: React.FC = () => {
           </h1>
 
           {/* Tagline */}
-          <p className="font-serif italic text-lg sm:text-2xl text-[#EFE4D2] mb-6 font-normal">
+          <p className="font-serif italic text-lg sm:text-2xl text-[#EFE4D2] mb-9 font-normal">
             "{t.hero.tagline}"
           </p>
 
-          {/* Subtitle from user specs */}
-          <p className="text-slate-300 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto mb-9 leading-relaxed font-light">
-            {t.hero.subtitle}
-          </p>
-
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10 sm:mb-12">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4">
             {/* Tombol Lihat Pilihan Kamar - Liquid Glass Aesthetic */}
             <a
               id="hero-explore-rooms-button"
@@ -61,8 +58,9 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Cek Ketersediaan Kamar & Tarif Terbaik - Di posisi highlight hero */}
+        {/* Cek Ketersediaan Kamar & Tarif Terbaik - di samping kanan judul hero */}
         <QuickAvailabilityBar />
+        </div>
       </div>
     </section>
   );

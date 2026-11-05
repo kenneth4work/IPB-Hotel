@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
     <title>@yield('title') · IPB Convention Hotel</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32.png?v=2">
     <style>
         * { box-sizing: border-box; }
         body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: #FDFBF7; color: #1e293b; font: 500 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
