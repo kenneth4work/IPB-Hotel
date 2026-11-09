@@ -1,5 +1,5 @@
 // Standalone demo: answers the Laravel booking endpoints in the browser.
-// Rates mirror database/seeders/RoomTypeSeeder.php and config/booking.php.
+// Rates mirror database/seeders/RoomTypeSeeder.php.
 const ROOM_TYPES = [
   {id: 1, slug: 'standard', name: 'Standard Room', size_sqm: 19, max_guests: 2, base_price: 600000, breakfast_price: 75000, bed_types: ['queen', 'twin']},
   {id: 2, slug: 'superior', name: 'Superior Room', size_sqm: 20, max_guests: 2, base_price: 700000, breakfast_price: 75000, bed_types: ['queen', 'twin']},
@@ -8,8 +8,6 @@ const ROOM_TYPES = [
   {id: 5, slug: 'grand-executive', name: 'Grand Executive Room', size_sqm: 28, max_guests: 2, base_price: 1050000, breakfast_price: 75000, bed_types: ['king']},
   {id: 6, slug: 'suite', name: 'Executive Suite Room', size_sqm: 36, max_guests: 3, base_price: 1500000, breakfast_price: 75000, bed_types: ['king']},
 ];
-const PROMO_CODE = 'IPB2026';
-const PROMO_PERCENT = 10;
 const ROOMS_PER_TYPE = 10;
 
 const json = (body: unknown, status = 200) =>
@@ -24,15 +22,13 @@ function quote(d: any) {
   if (!d.check_out || d.check_out <= d.check_in) return {error: invalid('check_out', 'Tanggal check-out harus setelah check-in.')};
   if (!room.bed_types.includes(d.bed_type)) return {error: invalid('bed_type', 'Pilihan kasur tidak tersedia untuk tipe kamar ini.')};
   if (d.guest_count > d.room_count * room.max_guests) return {error: invalid('guest_count', 'Jumlah tamu melebihi kapasitas kamar.')};
-  if (d.promo_code && d.promo_code !== PROMO_CODE) return {error: invalid('promo_code', 'Kode promo tidak valid.')};
   const nights = Math.round((Date.parse(d.check_out) - Date.parse(d.check_in)) / 86400000);
   const roomTotal = room.base_price * d.room_count * nights;
   const breakfastTotal = d.with_breakfast ? room.breakfast_price * d.guest_count * nights : 0;
-  const discount = d.promo_code ? Math.floor((roomTotal * PROMO_PERCENT + 50) / 100) : 0;
   return {room, q: {
     can_book: ROOMS_PER_TYPE >= d.room_count, available_rooms: ROOMS_PER_TYPE, night_count: nights,
-    room_total: roomTotal, breakfast_total: breakfastTotal, discount_amount: discount,
-    total_amount: roomTotal - discount + breakfastTotal, promo_code: d.promo_code || null, currency: 'IDR',
+    room_total: roomTotal, breakfast_total: breakfastTotal, discount_amount: 0,
+    total_amount: roomTotal + breakfastTotal, promo_code: null, currency: 'IDR',
   }};
 }
 
@@ -43,7 +39,7 @@ window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   const body = init?.body ? JSON.parse(String(init.body)) : undefined;
   await new Promise(r => setTimeout(r, 250));
 
-  if (path === '/booking/room-types') return json({room_types: ROOM_TYPES, promo: {code: PROMO_CODE, discount_percent: PROMO_PERCENT}, payment: {enabled: false}});
+  if (path === '/booking/room-types') return json({room_types: [...ROOM_TYPES].sort((a, b) => b.base_price - a.base_price), payment: {enabled: false}});
   if (path === '/booking/quote') { const r = quote(body); return r.error ?? json({quote: r.q}); }
   if (path === '/reservations') {
     const r = quote(body);

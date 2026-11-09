@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Moon, Sun } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
+import { useIntroAnimation } from "../hooks/useIntroAnimation";
 import brandLogoImg from "../assets/images/regenerated_image_1789095966156.png";
 import { Link, useLocation } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext";
@@ -63,10 +65,46 @@ const FlagUK: React.FC<{ className?: string }> = ({
     </svg>
 );
 
+/** Ikon hamburger 3 garis yang beranimasi menjadi X (dan kembali) sesuai state `open`. */
+const MenuToggleIcon: React.FC<{ open: boolean }> = ({ open }) => {
+    const line =
+        "absolute left-0 block h-[2px] w-5 rounded-full bg-current transition-all duration-300 ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none";
+    return (
+        <span aria-hidden="true" className="relative block w-5 h-5">
+            <span
+                className={`${line} ${open ? "top-[9px] rotate-45" : "top-[4px] rotate-0"}`}
+            />
+            <span
+                className={`${line} top-[9px] ${open ? "opacity-0 scale-x-0" : "opacity-100 scale-x-100"}`}
+            />
+            <span
+                className={`${line} ${open ? "top-[9px] -rotate-45" : "top-[14px] rotate-0"}`}
+            />
+        </span>
+    );
+};
+
 export const Navbar: React.FC<NavbarProps> = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { language, toggleLanguage, isSwitchingLang, t } = useLanguage();
+    const { theme, toggleTheme } = useTheme();
+    const intro = useIntroAnimation();
+    const isDark = theme === "dark";
+    const themeLabel = isDark
+        ? language === "en" ? "Switch to light mode" : "Ganti ke mode terang"
+        : language === "en" ? "Switch to dark mode" : "Ganti ke mode gelap";
+    const themeButton = (extra: string) => (
+        <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={themeLabel}
+            title={themeLabel}
+            className={`relative inline-flex items-center justify-center rounded-full border border-slate-200/90 bg-slate-100/80 text-slate-700 hover:border-[#C5A880]/60 hover:text-[#7A5C33] hover:shadow-[0_0_18px_rgba(197,168,128,0.3)] transition-all duration-300 cursor-pointer ${extra}`}
+        >
+            {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+        </button>
+    );
     const location = useLocation();
 
     useEffect(() => {
@@ -105,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                 isScrolled ? "top-3 sm:top-4" : "top-4 sm:top-6"
             }`}
         >
-            <div className="max-w-6xl mx-auto pointer-events-auto">
+            <div className={`max-w-6xl mx-auto pointer-events-auto ${intro ? "intro-drop" : ""}`}>
                 {/* Floating Pill Container */}
                 <nav
                     aria-label={language === "en" ? "Primary navigation" : "Navigasi utama"}
@@ -170,6 +208,8 @@ export const Navbar: React.FC<NavbarProps> = () => {
 
                         {/* Right: Flag Language Switcher & Pill CTA Button */}
                         <div className="hidden sm:flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+                            {themeButton("w-10 h-10")}
+
                             {/* Flag Language Switcher Pill with Soft Light Animation */}
                             <button
                                 id="nav-lang-toggle-button"
@@ -231,6 +271,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
 
                         {/* Mobile Menu Trigger */}
                         <div className="flex sm:hidden items-center gap-2">
+                            {themeButton("w-9 h-9")}
                             <button
                                 type="button"
                                 onClick={toggleLanguage}
@@ -263,11 +304,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                                 aria-expanded={mobileMenuOpen}
                                 aria-controls="mobile-navigation-menu"
                             >
-                                {mobileMenuOpen ? (
-                                    <X className="w-5 h-5" />
-                                ) : (
-                                    <Menu className="w-5 h-5" />
-                                )}
+                                <MenuToggleIcon open={mobileMenuOpen} />
                             </button>
                         </div>
 
@@ -280,11 +317,7 @@ export const Navbar: React.FC<NavbarProps> = () => {
                             aria-expanded={mobileMenuOpen}
                             aria-controls="mobile-navigation-menu"
                         >
-                            {mobileMenuOpen ? (
-                                <X className="w-5 h-5" />
-                            ) : (
-                                <Menu className="w-5 h-5" />
-                            )}
+                            <MenuToggleIcon open={mobileMenuOpen} />
                         </button>
                     </div>
                 </nav>

@@ -33,7 +33,6 @@ export interface BookingSelection {
   guest_count: number;
   bed_type: string;
   with_breakfast: boolean;
-  promo_code: string | null;
 }
 
 export interface BookingQuote {

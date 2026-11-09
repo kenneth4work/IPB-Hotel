@@ -70,7 +70,7 @@ class RoomAvailabilityService
             ->get(['room_availabilities.*', 'reserved.reserved_rooms'])
             ->groupBy('room_type_id');
 
-        return RoomType::where('is_active', true)->orderBy('base_price')->get()->map(function (RoomType $roomType) use ($days, $dates) {
+        return RoomType::where('is_active', true)->orderByDesc('base_price')->get()->map(function (RoomType $roomType) use ($days, $dates) {
             $nights = $days->get($roomType->id, collect());
             $free = $nights->map(fn ($day) => max(0, $day->total_rooms - $day->blocked_rooms - (int) $day->reserved_rooms));
 

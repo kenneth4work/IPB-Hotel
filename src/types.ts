@@ -36,6 +36,14 @@ export interface Room {
   capacity?: string;
 }
 
+export type SocialPlatform = 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'x' | 'linkedin';
+
+export interface SocialLink {
+  platform: SocialPlatform;
+  /** Alamat akun resmi. Kosongkan jika belum ada: ikon tidak ditampilkan. */
+  url: string;
+}
+
 export interface HotelConfig {
   name: string;
   tagline: string;
@@ -43,6 +51,7 @@ export interface HotelConfig {
   phones: string[];
   email: string;
   instagram: string;
+  socials: SocialLink[];
   checkIn: string;
   checkOut: string;
   googleMapsUrl: string;

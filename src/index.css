@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Varian dark: untuk kelas dark:... bila nanti dibutuhkan (tema dipasang lewat class "dark" di <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
@@ -68,6 +71,124 @@ label:has(> input.sr-only:focus-visible) {
   }
 }
 
+/* iOS Safari memperbesar halaman jika kolom isian di bawah 16px saat disentuh */
+@media (max-width: 639px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Kolom tanggal dengan ikon kalender sendiri: ikon bawaan browser disembunyikan
+   tapi area kliknya tetap di posisi ikon, jadi tidak tampil dua ikon. */
+.date-custom-icon {
+  position: relative;
+}
+
+.date-custom-icon::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 0;
+  width: 2.5rem;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Galeri berjalan: track berisi dua salinan, jadi geser 50% = satu putaran mulus */
+@keyframes galleryMarqueeLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes galleryMarqueeRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.gallery-marquee-left {
+  animation: galleryMarqueeLeft 40s linear infinite;
+}
+
+.gallery-marquee-right {
+  animation: galleryMarqueeRight 40s linear infinite;
+}
+
+/* Hanya berhenti saat foto difokus lewat keyboard (Tab), supaya mudah dipilih.
+   Setelah popup ditutup dengan mouse, baris langsung berjalan lagi. */
+.gallery-marquee:has(:focus-visible) .gallery-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-marquee {
+    overflow-x: auto;
+  }
+
+  .gallery-marquee-track {
+    animation: none !important;
+  }
+}
+
+/* Animasi pembuka saat website pertama dibuka (lihat useIntroAnimation) */
+@keyframes introRise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Blur hanya untuk teks: filter di elemen induk mematikan efek kaca (backdrop-blur) pada tombol */
+@keyframes introRiseBlur {
+  from { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes introDrop {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes introBg {
+  from { opacity: 0; transform: scale(1.08); }
+  to { opacity: 1; transform: none; }
+}
+
+.intro-rise {
+  animation: introRise 0.95s cubic-bezier(0.22, 1, 0.36, 1) var(--intro-delay, 0ms) backwards;
+}
+
+.intro-rise.intro-blur {
+  animation-name: introRiseBlur;
+}
+
+.intro-drop {
+  animation: introDrop 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s backwards;
+}
+
+.intro-bg {
+  animation: introBg 1.8s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Animasi saat di-scroll (lihat ScrollReveal.tsx): tersembunyi sampai masuk layar,
+   lalu naik & memudar masuk dengan gerak yang sama seperti hero. */
+[data-reveal="pending"] {
+  opacity: 0;
+}
+
+[data-reveal="shown"] {
+  animation: introRise 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms) backwards;
+}
+
+/* Tanpa animasi bila pengunjung meminta gerak dikurangi (jeda juga dihapus agar konten langsung tampil) */
+@media (prefers-reduced-motion: reduce) {
+  .intro-rise,
+  .intro-drop,
+  .intro-bg,
+  [data-reveal] {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
 @keyframes modalBackdropFadeIn {
   from {
     opacity: 0;
@@ -122,4 +243,254 @@ body:has([data-popup]) #floating-whatsapp-trigger,
 body:has([data-popup]) #cookie-consent {
   opacity: 0;
   visibility: hidden;
+}
+
+/* ==========================================================================
+   MODE GELAP
+   Komponen memakai warna Tailwind langsung (bg-white, text-slate-900, ...).
+   Daripada menambah "dark:" di ratusan kelas, palet Tailwind dipetakan ulang
+   di dalam <body> saat <html class="dark">. Area yang memang sudah gelap
+   (footer, hero, tombol hijau/emas) memakai kembali palet aslinya.
+   ========================================================================== */
+
+/* Salinan palet asli, dibaca di <html> sebelum dipetakan ulang di <body> */
+:root {
+  --orig-slate-50: var(--color-slate-50);
+  --orig-slate-100: var(--color-slate-100);
+  --orig-slate-200: var(--color-slate-200);
+  --orig-slate-300: var(--color-slate-300);
+  --orig-slate-400: var(--color-slate-400);
+  --orig-slate-500: var(--color-slate-500);
+  --orig-slate-600: var(--color-slate-600);
+  --orig-slate-700: var(--color-slate-700);
+  --orig-slate-800: var(--color-slate-800);
+  --orig-slate-900: var(--color-slate-900);
+  --orig-slate-950: var(--color-slate-950);
+  --orig-gray-100: var(--color-gray-100);
+  --orig-gray-500: var(--color-gray-500);
+  --orig-gray-800: var(--color-gray-800);
+  --orig-gray-900: var(--color-gray-900);
+  --orig-emerald-50: var(--color-emerald-50);
+  --orig-emerald-100: var(--color-emerald-100);
+  --orig-emerald-200: var(--color-emerald-200);
+  --orig-emerald-300: var(--color-emerald-300);
+  --orig-emerald-600: var(--color-emerald-600);
+  --orig-emerald-700: var(--color-emerald-700);
+  --orig-emerald-900: var(--color-emerald-900);
+  --orig-amber-50: var(--color-amber-50);
+  --orig-amber-100: var(--color-amber-100);
+  --orig-amber-200: var(--color-amber-200);
+  --orig-amber-300: var(--color-amber-300);
+  --orig-amber-700: var(--color-amber-700);
+  --orig-amber-800: var(--color-amber-800);
+  --orig-amber-900: var(--color-amber-900);
+  --orig-rose-50: var(--color-rose-50);
+  --orig-rose-200: var(--color-rose-200);
+  --orig-rose-700: var(--color-rose-700);
+  --orig-red-50: var(--color-red-50);
+  --orig-red-200: var(--color-red-200);
+  --orig-red-800: var(--color-red-800);
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  --dk-page: #0b1120;
+  --dk-surface: #111a2b;
+  --dk-raised: #172236;
+  --dk-pine-text: #8fd3ae;
+  --dk-gold-text: #d9bc8c;
+
+  --color-alabaster: var(--dk-page);
+  background-color: var(--dk-page) !important;
+  color: #e2e8f0;
+}
+
+/* Palet terbalik: terang jadi gelap dan sebaliknya */
+html.dark body,
+html.dark [class~="bg-white"],
+html.dark [class~="bg-white/95"],
+html.dark [class~="bg-white/92"],
+html.dark [class~="bg-white/85"],
+html.dark [class~="bg-white/80"] {
+  --color-slate-50: #172236;
+  --color-slate-100: #1d2a40;
+  --color-slate-200: #283650;
+  --color-slate-300: #374560;
+  --color-slate-400: #74839b;
+  --color-slate-500: #94a3b8;
+  --color-slate-600: #a9b5c7;
+  --color-slate-700: #c5cedb;
+  --color-slate-800: #dde3ec;
+  --color-slate-900: #eef2f7;
+  --color-slate-950: #f8fafc;
+
+  --color-gray-100: #1f2937;
+  --color-gray-500: #9ca3af;
+  --color-gray-800: #e5e7eb;
+  --color-gray-900: #f3f4f6;
+
+  --color-emerald-50: #062b20;
+  --color-emerald-100: #0a3a2b;
+  --color-emerald-200: #0f4d39;
+  --color-emerald-300: #17694f;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-900: #d1fae5;
+
+  --color-amber-50: #2b1f08;
+  --color-amber-100: #3a2a0a;
+  --color-amber-200: #4f390e;
+  --color-amber-300: #7a5714;
+  --color-amber-700: #fbbf24;
+  --color-amber-800: #fcd34d;
+  --color-amber-900: #fde68a;
+
+  --color-rose-50: #2d0f17;
+  --color-rose-200: #5c1d2b;
+  --color-rose-700: #fda4af;
+
+  --color-red-50: #2d0e0e;
+  --color-red-200: #5c1a1a;
+  --color-red-800: #fecaca;
+}
+
+/* Area yang sudah gelap / berwarna di mode terang: pakai palet asli */
+html.dark footer,
+html.dark [class~="bg-[#0F172A]"],
+html.dark [class~="bg-[#1E3A2B]"],
+html.dark [class~="bg-[#1e3a2b]"],
+html.dark [class~="bg-[#1B3D2F]"],
+html.dark [class~="bg-[#13261C]"],
+html.dark [class~="bg-[#15291E]"],
+html.dark [class~="bg-[#25D366]"],
+html.dark [class~="bg-[#C5A880]"] {
+  --color-slate-50: var(--orig-slate-50);
+  --color-slate-100: var(--orig-slate-100);
+  --color-slate-200: var(--orig-slate-200);
+  --color-slate-300: var(--orig-slate-300);
+  --color-slate-400: var(--orig-slate-400);
+  --color-slate-500: var(--orig-slate-500);
+  --color-slate-600: var(--orig-slate-600);
+  --color-slate-700: var(--orig-slate-700);
+  --color-slate-800: var(--orig-slate-800);
+  --color-slate-900: var(--orig-slate-900);
+  --color-slate-950: var(--orig-slate-950);
+  --color-gray-100: var(--orig-gray-100);
+  --color-gray-500: var(--orig-gray-500);
+  --color-gray-800: var(--orig-gray-800);
+  --color-gray-900: var(--orig-gray-900);
+  --color-emerald-50: var(--orig-emerald-50);
+  --color-emerald-100: var(--orig-emerald-100);
+  --color-emerald-200: var(--orig-emerald-200);
+  --color-emerald-300: var(--orig-emerald-300);
+  --color-emerald-600: var(--orig-emerald-600);
+  --color-emerald-700: var(--orig-emerald-700);
+  --color-emerald-900: var(--orig-emerald-900);
+  --color-amber-50: var(--orig-amber-50);
+  --color-amber-100: var(--orig-amber-100);
+  --color-amber-200: var(--orig-amber-200);
+  --color-amber-300: var(--orig-amber-300);
+  --color-amber-700: var(--orig-amber-700);
+  --color-amber-800: var(--orig-amber-800);
+  --color-amber-900: var(--orig-amber-900);
+  --color-rose-50: var(--orig-rose-50);
+  --color-rose-200: var(--orig-rose-200);
+  --color-rose-700: var(--orig-rose-700);
+  --color-red-50: var(--orig-red-50);
+  --color-red-200: var(--orig-red-200);
+  --color-red-800: var(--orig-red-800);
+}
+
+/* Permukaan putih -> kartu gelap */
+html.dark .bg-white,
+html.dark .hover\:bg-white:hover,
+html.dark .focus\:bg-white:focus {
+  background-color: var(--dk-surface);
+}
+html.dark .bg-white\/95 { background-color: color-mix(in srgb, var(--dk-surface) 95%, transparent); }
+html.dark .bg-white\/92 { background-color: color-mix(in srgb, var(--dk-surface) 92%, transparent); }
+html.dark .bg-white\/85 { background-color: color-mix(in srgb, var(--dk-surface) 85%, transparent); }
+html.dark .bg-white\/80 { background-color: color-mix(in srgb, var(--dk-surface) 80%, transparent); }
+html.dark .bg-white\/60 { background-color: color-mix(in srgb, var(--dk-surface) 60%, transparent); }
+html.dark .border-white\/70 { border-color: var(--color-slate-200); }
+html.dark .via-white { --tw-gradient-via: var(--dk-page); }
+
+/* Latar krem -> sedikit lebih terang dari halaman */
+html.dark .bg-\[\#FDFBF7\],
+html.dark .hover\:bg-\[\#FDFBF7\]:hover {
+  background-color: var(--dk-raised);
+}
+html.dark .from-\[\#FDFBF7\] { --tw-gradient-from: var(--dk-page); }
+html.dark .to-\[\#FDFBF7\] { --tw-gradient-to: var(--dk-page); }
+html.dark .border-\[\#E7D6C1\],
+html.dark .border-\[\#E7D6C1\]\/70,
+html.dark .border-\[\#E7D6C1\]\/80 {
+  border-color: #3b3426;
+}
+html.dark .border-\[\#E2E8F0\] { border-color: var(--color-slate-200); }
+
+/* Teks hijau tua & emas tua -> versi terang agar terbaca */
+html.dark .text-\[\#1E3A2B\],
+html.dark .hover\:text-\[\#1E3A2B\]:hover,
+html.dark .focus\:text-\[\#1E3A2B\]:focus,
+html.dark .text-\[\#1B3D2F\],
+html.dark .hover\:text-\[\#1B3D2F\]:hover {
+  color: var(--dk-pine-text);
+}
+html.dark .text-\[\#7A5C33\],
+html.dark .hover\:text-\[\#7A5C33\]:hover,
+html.dark .text-\[\#A8865B\] {
+  color: var(--dk-gold-text);
+}
+html.dark .fill-\[\#7A5C33\] { fill: var(--dk-gold-text); }
+
+/* Pilihan aktif (kartu kamar, kasur, sarapan) */
+html.dark .border-\[\#1E3A2B\],
+html.dark .focus\:border-\[\#1E3A2B\]:focus {
+  border-color: #4fa37a;
+}
+html.dark .bg-\[\#1E3A2B\]\/5 { background-color: rgb(79 163 122 / 0.12); }
+html.dark .bg-\[\#1E3A2B\]\/10 { background-color: rgb(79 163 122 / 0.18); }
+
+/* Latar gelap (placeholder foto, latar pop up, tombol peta) tetap gelap */
+html.dark .bg-slate-900 { background-color: var(--orig-slate-900); }
+html.dark .bg-slate-950 { background-color: var(--orig-slate-950); }
+html.dark .hover\:bg-slate-950:hover { background-color: var(--orig-slate-950); }
+html.dark .bg-slate-900\/90 { background-color: color-mix(in oklab, var(--orig-slate-900) 90%, transparent); }
+html.dark .bg-slate-900\/80 { background-color: color-mix(in oklab, var(--orig-slate-900) 80%, transparent); }
+html.dark .bg-slate-950\/75 { background-color: color-mix(in oklab, var(--orig-slate-950) 75%, transparent); }
+
+/* Fokus & placeholder */
+html.dark ::placeholder { color: #7f8ca3; }
+html.dark :focus-visible:not([tabindex="-1"]),
+html.dark label:has(> input.sr-only:focus-visible) {
+  outline-color: #c5a880;
+  box-shadow: 0 0 0 2px var(--dk-page);
+}
+
+/* Animasi lembut saat ganti tema.
+   Browser modern: crossfade seluruh halaman lewat View Transitions API. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cadangan untuk browser tanpa View Transitions: warna memudar selama pergantian saja,
+   lalu class dilepas agar animasi komponen kembali normal. */
+html.theme-fading,
+html.theme-fading *,
+html.theme-fading *::before,
+html.theme-fading *::after {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease, fill 0.45s ease !important;
+}
+
+/* Logo navbar memakai mix-blend multiply yang hilang di latar gelap: tampilkan putih seperti di footer */
+html.dark #brand-emblem-picture {
+  mix-blend-mode: normal;
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
 }

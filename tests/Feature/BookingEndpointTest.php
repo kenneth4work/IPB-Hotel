@@ -26,7 +26,7 @@ class BookingEndpointTest extends TestCase
             'room_type_id' => RoomType::where('slug', 'deluxe')->value('id'),
             'check_in' => '2026-11-02', 'check_out' => '2026-11-04',
             'room_count' => 1, 'guest_count' => 2, 'bed_type' => 'queen',
-            'with_breakfast' => true, 'promo_code' => 'IPB2026',
+            'with_breakfast' => true,
         ];
     }
 
@@ -39,7 +39,7 @@ class BookingEndpointTest extends TestCase
     {
         return [...$this->selection(), 'request_id' => (string) Str::uuid(),
             'guest_name' => 'Test Guest', 'guest_email' => 'guest@example.test',
-            'guest_phone' => '081234567890', 'expected_total' => 1830000, 'terms_accepted' => true];
+            'guest_phone' => '081234567890', 'expected_total' => 2000000, 'terms_accepted' => true];
     }
 
     public function test_catalog_uses_database_prices_and_hides_inactive_types(): void
@@ -50,15 +50,15 @@ class BookingEndpointTest extends TestCase
             ->assertJsonFragment(['slug' => 'deluxe', 'base_price' => 925000]);
     }
 
-    public function test_quote_calculates_promo_on_rooms_and_breakfast_per_total_guest(): void
+    public function test_quote_calculates_rooms_and_breakfast_per_total_guest_without_discount(): void
     {
         $this->stock(3);
         $selection = [...$this->selection(), 'room_count' => 2, 'guest_count' => 3, 'total_amount' => 1];
         $this->postJson('/booking/quote', $selection)->assertOk()
             ->assertJsonPath('quote.room_total', 3400000)
-            ->assertJsonPath('quote.discount_amount', 340000)
+            ->assertJsonPath('quote.discount_amount', 0)
             ->assertJsonPath('quote.breakfast_total', 450000)
-            ->assertJsonPath('quote.total_amount', 3510000)
+            ->assertJsonPath('quote.total_amount', 3850000)
             ->assertJsonPath('quote.can_book', true);
         $this->assertDatabaseCount('reservations', 0);
     }
@@ -75,12 +75,12 @@ class BookingEndpointTest extends TestCase
     {
         $this->stock();
         $response = $this->postJson('/reservations', [...$this->payload(), 'total_amount' => 1, 'booking_code' => 'FAKE', 'status' => 'confirmed'])
-            ->assertCreated()->assertJsonPath('reservation.total_amount', 1830000)
-            ->assertJsonPath('reservation.discount_amount', 170000)
+            ->assertCreated()->assertJsonPath('reservation.total_amount', 2000000)
+            ->assertJsonPath('reservation.discount_amount', 0)
             ->assertJsonPath('reservation.status', 'pending');
         $code = $response->json('reservation.booking_code');
         $this->assertMatchesRegularExpression('/^IPB-20261101-[0-9A-Z]{26}$/', $code);
-        $this->assertDatabaseHas('reservations', ['booking_code' => $code, 'guest_email' => 'guest@example.test', 'total_amount' => 1830000]);
+        $this->assertDatabaseHas('reservations', ['booking_code' => $code, 'guest_email' => 'guest@example.test', 'total_amount' => 2000000]);
         $this->assertDatabaseCount('reservation_nights', 2);
         $this->assertDatabaseCount('payment_transactions', 0);
         $this->assertArrayNotHasKey('request_fingerprint', $response->json('reservation'));
@@ -122,10 +122,11 @@ class BookingEndpointTest extends TestCase
         $this->assertDatabaseCount('reservations', 1);
     }
 
-    public function test_unknown_promos_and_invalid_guest_details_are_rejected(): void
+    public function test_promo_codes_are_ignored_and_invalid_guest_details_are_rejected(): void
     {
         $this->stock();
-        $this->postJson('/booking/quote', [...$this->selection(), 'promo_code' => 'FAKE'])->assertUnprocessable()->assertJsonValidationErrors('promo_code');
+        $this->postJson('/booking/quote', [...$this->selection(), 'promo_code' => 'IPB2026'])->assertOk()
+            ->assertJsonPath('quote.discount_amount', 0)->assertJsonPath('quote.promo_code', null);
         $this->postJson('/reservations', [...$this->payload(), 'guest_email' => 'invalid', 'guest_phone' => 'abcdefghijk'])
             ->assertUnprocessable()->assertJsonValidationErrors(['guest_email', 'guest_phone']);
         $this->assertDatabaseCount('reservations', 0);

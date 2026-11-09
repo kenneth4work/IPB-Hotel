@@ -6,16 +6,12 @@ interface BookingContextType {
   guestCount: number;
   roomCount: number;
   selectedRoomId: string;
-  promoCode: string;
-  isPromoApplied: boolean;
   totalNights: number;
   setCheckInDate: (date: string) => void;
   setCheckOutDate: (date: string) => void;
   setGuestCount: (count: number) => void;
   setRoomCount: (count: number) => void;
   setSelectedRoomId: (roomId: string) => void;
-  setPromoCode: (code: string) => void;
-  setIsPromoApplied: (applied: boolean) => void;
   scrollToReservation: () => void;
 }
 
@@ -42,9 +38,8 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [checkOutDate, setCheckOutDateState] = useState<string>(tomorrowStr);
   const [guestCount, setGuestCount] = useState<number>(2);
   const [roomCount, setRoomCount] = useState<number>(1);
-  const [selectedRoomId, setSelectedRoomId] = useState<string>('deluxe');
-  const [promoCode, setPromoCode] = useState<string>('IPB2026');
-  const [isPromoApplied, setIsPromoApplied] = useState<boolean>(true);
+  // Kosong sampai tamu memilih kamar sendiri
+  const [selectedRoomId, setSelectedRoomId] = useState<string>('');
 
   // Set Check-in with auto adjust on Check-out if invalid
   const setCheckInDate = (newCheckIn: string) => {
@@ -84,16 +79,12 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         guestCount,
         roomCount,
         selectedRoomId,
-        promoCode,
-        isPromoApplied,
         totalNights,
         setCheckInDate,
         setCheckOutDate,
         setGuestCount,
         setRoomCount,
         setSelectedRoomId,
-        setPromoCode,
-        setIsPromoApplied,
         scrollToReservation,
       }}
     >

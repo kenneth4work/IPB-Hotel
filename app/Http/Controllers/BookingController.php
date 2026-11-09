@@ -15,10 +15,9 @@ class BookingController extends Controller
     public function rooms(PaymentService $payments): JsonResponse
     {
         return response()->json([
-            'room_types' => RoomType::where('is_active', true)->orderBy('base_price')->get([
+            'room_types' => RoomType::where('is_active', true)->orderByDesc('base_price')->get([
                 'id', 'slug', 'name', 'size_sqm', 'max_guests', 'base_price', 'breakfast_price', 'bed_types',
             ]),
-            'promo' => ['code' => config('booking.promo_code'), 'discount_percent' => config('booking.promo_discount_percent')],
             'payment' => ['enabled' => $payments->enabled()],
         ])->header('Cache-Control', 'no-store');
     }

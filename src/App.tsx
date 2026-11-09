@@ -8,6 +8,8 @@ import {
 import { LanguageProvider, useLanguage } from "./context/LanguageContext";
 import { BookingProvider } from "./context/BookingContext";
 import { ConsentProvider } from "./context/ConsentContext";
+import { ThemeProvider } from "./context/ThemeContext";
+import { ScrollReveal } from "./components/ScrollReveal";
 import { CookieConsent } from "./components/CookieConsent";
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
@@ -84,11 +86,13 @@ function SkipLink() {
 
 export default function App() {
     return (
+        <ThemeProvider>
         <LanguageProvider>
             <ConsentProvider>
                 <BookingProvider>
                     <Router>
                         <ScrollToHash />
+                        <ScrollReveal />
                         <div className="min-h-screen flex flex-col bg-[#FDFBF7] text-slate-900 selection:bg-[#C5A880]/30 selection:text-slate-900 font-sans">
                             <SkipLink />
                             <CookieConsent />
@@ -135,5 +139,6 @@ export default function App() {
                 </BookingProvider>
             </ConsentProvider>
         </LanguageProvider>
+        </ThemeProvider>
     );
 }

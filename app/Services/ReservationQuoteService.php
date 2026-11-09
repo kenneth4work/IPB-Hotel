@@ -21,7 +21,6 @@ class ReservationQuoteService
             'guest_count' => ['required', 'integer', 'min:1', 'max:1000'],
             'bed_type' => ['required', Rule::in(['king', 'queen', 'twin'])],
             'with_breakfast' => ['required', 'boolean'],
-            'promo_code' => ['nullable', 'string', 'max:40', Rule::in([config('booking.promo_code')])],
         ];
     }
 
@@ -64,8 +63,6 @@ class ReservationQuoteService
                 'breakfast_total' => $breakfastPerNight,
             ];
         }
-        $promo = $data['promo_code'] ?? null;
-        $discount = $promo ? intdiv($roomTotal * (int) config('booking.promo_discount_percent') + 50, 100) : 0;
         $breakfastTotal = $breakfastPerNight * count($dates);
         $available = min(array_column($nights, 'available_rooms'));
 
@@ -78,9 +75,9 @@ class ReservationQuoteService
             'night_count' => count($dates),
             'room_total' => $roomTotal,
             'breakfast_total' => $breakfastTotal,
-            'promo_code' => $promo,
-            'discount_amount' => $discount,
-            'total_amount' => $roomTotal - $discount + $breakfastTotal,
+            'promo_code' => null,
+            'discount_amount' => 0,
+            'total_amount' => $roomTotal + $breakfastTotal,
             'currency' => 'IDR',
         ];
     }

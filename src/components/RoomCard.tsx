@@ -13,19 +13,60 @@ export interface RoomCardProps {
 
 export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
   const { language, t } = useLanguage();
-  const [currentIdx, setCurrentIdx] = useState(0);
   const imagesList = room.images && room.images.length > 0 ? room.images : [];
-  
+  const slideCount = imagesList.length;
+  const isLooped = slideCount > 1;
+
+  // Infinite loop: track = [clone foto terakhir, ...foto, clone foto pertama].
+  // pos adalah indeks di track; foto asli berada di 1..slideCount.
+  const [pos, setPos] = useState(1);
+  const [animate, setAnimate] = useState(true);
+  const currentIdx = isLooped ? (pos - 1 + slideCount) % slideCount : 0;
+  const trackSlides = isLooped
+    ? [imagesList[slideCount - 1], ...imagesList, imagesList[0]]
+    : imagesList;
+  const trackPos = isLooped ? pos : 0;
+
   // Touch swipe refs
   const touchStartXRef = useRef<number | null>(null);
   const touchEndXRef = useRef<number | null>(null);
 
-  // Pastikan currentIdx tidak melebihi jumlah slide
+  // Pastikan posisi tetap valid jika jumlah foto berubah
   useEffect(() => {
-    if (currentIdx >= imagesList.length && imagesList.length > 0) {
-      setCurrentIdx(imagesList.length - 1);
+    if (pos > slideCount + 1 || pos < 0) {
+      setAnimate(false);
+      setPos(1);
     }
-  }, [imagesList.length, currentIdx]);
+  }, [slideCount, pos]);
+
+  const goNext = () => {
+    if (!isLooped) return;
+    setAnimate(true);
+    setPos((prev) => Math.min(prev + 1, slideCount + 1));
+  };
+
+  const goPrev = () => {
+    if (!isLooped) return;
+    setAnimate(true);
+    setPos((prev) => Math.max(prev - 1, 0));
+  };
+
+  const goTo = (idx: number) => {
+    setAnimate(true);
+    setPos(idx + 1);
+  };
+
+  // Setelah animasi ke clone selesai, lompat diam-diam ke foto aslinya
+  const handleTrackTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (pos === slideCount + 1) {
+      setAnimate(false);
+      setPos(1);
+    } else if (pos === 0) {
+      setAnimate(false);
+      setPos(slideCount);
+    }
+  };
 
   // Preload images in this room carousel
   useEffect(() => {
@@ -42,14 +83,12 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
 
   const prevSlide = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (imagesList.length <= 1) return;
-    setCurrentIdx((prev) => (prev === 0 ? imagesList.length - 1 : prev - 1));
+    goPrev();
   };
 
   const nextSlide = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (imagesList.length <= 1) return;
-    setCurrentIdx((prev) => (prev === imagesList.length - 1 ? 0 : prev + 1));
+    goNext();
   };
 
   // Touch Swipe Handlers for mobile
@@ -70,13 +109,13 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         // Swipe left -> next
         if (imagesList.length > 1) {
           e.stopPropagation();
-          setCurrentIdx((prev) => (prev === imagesList.length - 1 ? 0 : prev + 1));
+          goNext();
         }
       } else if (diffX < -minSwipeDistance) {
         // Swipe right -> prev
         if (imagesList.length > 1) {
           e.stopPropagation();
-          setCurrentIdx((prev) => (prev === 0 ? imagesList.length - 1 : prev - 1));
+          goPrev();
         }
       }
     }
@@ -104,16 +143,21 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
         onTouchEnd={handleTouchEnd}
       >
         <div
-          className="flex w-full h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
-          style={{ transform: `translateX(-${currentIdx * 100}%)` }}
+          className={`flex w-full h-full will-change-transform ${
+            animate ? 'transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]' : ''
+          }`}
+          style={{ transform: `translateX(-${trackPos * 100}%)` }}
+          onTransitionEnd={handleTrackTransitionEnd}
         >
-          {imagesList.map((imgUrl, idx) => {
+          {trackSlides.map((imgUrl, idx) => {
             const imgSrc = getRoomImageUrl(imgUrl) || imgUrl;
+            const isClone = isLooped && (idx === 0 || idx === trackSlides.length - 1);
+            const photoNo = isLooped ? ((idx - 1 + slideCount) % slideCount) + 1 : idx + 1;
             return (
-              <div key={idx} className="w-full h-full shrink-0 overflow-hidden">
+              <div key={idx} className="w-full h-full shrink-0 overflow-hidden" aria-hidden={isClone || undefined}>
                 <img
                   src={imgSrc}
-                  alt={language === 'en' ? `${room.name} - Photo ${idx + 1}` : `${room.name} - Foto ${idx + 1}`}
+                  alt={isClone ? '' : language === 'en' ? `${room.name} - Photo ${photoNo}` : `${room.name} - Foto ${photoNo}`}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
@@ -156,13 +200,13 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
             </button>
 
             {/* Counter Slide Kiri Bawah */}
-            <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-mono font-medium px-2 py-0.5 rounded-md border border-white/20 pointer-events-none z-10">
+            <span className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-mono font-medium px-2 py-0.5 rounded-md border border-white/20 pointer-events-none z-10">
               {currentIdx + 1}/{imagesList.length}
             </span>
 
             {/* Titik Indikator Dots di Bawah Tengah */}
             <div 
-              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center z-20 bg-black/45 backdrop-blur-md px-1 rounded-full border border-white/20 shadow-sm"
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center z-20"
               onClick={(e) => e.stopPropagation()}
             >
               {imagesList.map((_, idx) => (
@@ -172,7 +216,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
                   aria-label={language === 'en' ? `Photo slide ${idx + 1}` : `Slide foto ke-${idx + 1}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setCurrentIdx(idx);
+                    goTo(idx);
                   }}
                   aria-current={idx === currentIdx}
                   className="h-6 min-w-6 px-1 flex items-center justify-center cursor-pointer group/dot"
@@ -180,8 +224,8 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
                   <span
                     className={`block transition-all duration-300 rounded-full h-1.5 ${
                       idx === currentIdx
-                        ? "w-4 bg-[#C5A880] shadow-sm"
-                        : "w-1.5 bg-white/60 group-hover/dot:bg-white"
+                        ? "w-4 bg-[#C5A880] shadow-[0_0_3px_rgba(0,0,0,0.6)]"
+                        : "w-1.5 bg-white/80 shadow-[0_0_3px_rgba(0,0,0,0.6)] group-hover/dot:bg-white"
                     }`}
                   />
                 </button>
@@ -215,7 +259,7 @@ export function RoomCard({ room, onOpenGallery, onOpenDetail }: RoomCardProps) {
               const label = t.rooms.amenityLabels[rawName] || rawName;
               return (
                 <span key={i} className="text-[11px] bg-slate-50 border border-slate-200/60 rounded px-2 py-1 text-slate-600 truncate">
-                  ✓ {label}
+                  {label}
                 </span>
               );
             })}

@@ -5,6 +5,7 @@ import { MapPin, Phone, Mail, Instagram, ArrowUp, MessageSquare, Shield } from '
 import { useLanguage } from '../context/LanguageContext';
 import { useConsent } from '../context/ConsentContext';
 import { LEGAL_ROUTES, LEGAL_UI } from '../data/legalContent';
+import { SocialLinks } from './SocialLinks';
 import brandLogoImg from '../assets/images/regenerated_image_1789095966156.png';
 
 export const Footer: React.FC = () => {
@@ -20,7 +21,7 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-[#0F172A] text-slate-400 border-t border-slate-800 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8 pb-12 border-b border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-16 pb-12 border-b border-slate-800">
           
           {/* Col 1: Brand & Tagline */}
           <div className="space-y-4">
@@ -47,44 +48,15 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Col 2: Pilihan Kamar */}
+          {/* Col 2: Ikuti Kami (media sosial resmi) */}
           <div>
             <h2 className="font-serif text-base font-bold text-white mb-4">
-              {t.footer.rooms}
+              {t.footer.followUs}
             </h2>
-            <ul className="space-y-2.5 text-xs">
-              {HOTEL_CONFIG.rooms.map((room) => (
-                <li key={room.type}>
-                  <Link 
-                    to="/#kamar" 
-                    className="hover:text-white transition-colors flex items-center justify-between group"
-                  >
-                    <span className="group-hover:text-[#C5A880] transition-colors">{room.type}</span>
-                    <span className="text-slate-400 font-mono text-[11px]">{room.size}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <SocialLinks />
           </div>
 
-          {/* Col 3: Waktu Operasional & Akses */}
-          <div>
-            <h2 className="font-serif text-base font-bold text-white mb-4">
-              {t.footer.hoursAccess}
-            </h2>
-            <div className="space-y-3 text-xs">
-              <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                <span className="text-[11px] text-slate-400 block uppercase">Check-in / Check-out</span>
-                <span className="text-white font-semibold">In: {HOTEL_CONFIG.checkIn} · Out: {HOTEL_CONFIG.checkOut}</span>
-              </div>
-              <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                <span className="text-[11px] text-slate-400 block uppercase">{t.footer.frontDesk}</span>
-                <span className="text-white font-semibold">{t.footer.concierge}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Col 4: Kontak Resmi */}
+          {/* Col 3: Kontak Resmi */}
           <div>
             <h2 className="font-serif text-base font-bold text-white mb-4">
               {t.footer.contact}
@@ -96,13 +68,13 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-[#C5A880] shrink-0" />
-                <a href={`tel:${HOTEL_CONFIG.phones[0].replace(/\D/g, '')}`} className="text-slate-300 hover:text-white hover:underline">
+                <a href={`tel:${HOTEL_CONFIG.phones[0].replace(/\D/g, '')}`} className="inline-block py-1.5 text-slate-300 hover:text-white hover:underline">
                   {HOTEL_CONFIG.phones[0]}
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#C5A880] shrink-0" />
-                <a href={`mailto:${HOTEL_CONFIG.email}`} className="text-slate-300 hover:text-white hover:underline">
+                <a href={`mailto:${HOTEL_CONFIG.email}`} className="inline-block py-1.5 text-slate-300 hover:text-white hover:underline">
                   {HOTEL_CONFIG.email}
                 </a>
               </div>
@@ -112,7 +84,7 @@ export const Footer: React.FC = () => {
                   href={`https://instagram.com/${HOTEL_CONFIG.instagram.replace('@', '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-300 hover:text-white hover:underline"
+                  className="inline-block py-1.5 text-slate-300 hover:text-white hover:underline"
                 >
                   {HOTEL_CONFIG.instagram}
                 </a>
@@ -127,13 +99,13 @@ export const Footer: React.FC = () => {
           <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs">
             {(['privacy', 'terms', 'refund', 'cookies'] as const).map((page) => (
               <li key={page}>
-                <Link to={LEGAL_ROUTES[page]} className="text-slate-300 hover:text-white hover:underline">
+                <Link to={LEGAL_ROUTES[page]} className="inline-block py-1.5 text-slate-300 hover:text-white hover:underline">
                   {ui[page]}
                 </Link>
               </li>
             ))}
             <li>
-              <button type="button" onClick={openBanner} className="text-slate-300 hover:text-white hover:underline cursor-pointer">
+              <button type="button" onClick={openBanner} className="inline-block py-1.5 text-slate-300 hover:text-white hover:underline cursor-pointer">
                 {ui.cookieSettings}
               </button>
             </li>
@@ -152,7 +124,7 @@ export const Footer: React.FC = () => {
               href={HOTEL_CONFIG.googleMapsUrl}
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-slate-400 hover:text-white hover:underline"
+              className="inline-block py-1.5 text-slate-400 hover:text-white hover:underline"
             >
               Google Maps
             </a>
@@ -160,7 +132,7 @@ export const Footer: React.FC = () => {
               href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}`}
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-slate-400 hover:text-white hover:underline"
+              className="inline-block py-1.5 text-slate-400 hover:text-white hover:underline"
             >
               WhatsApp
             </a>
@@ -184,7 +156,7 @@ export const Footer: React.FC = () => {
           href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20bertanya%20mengenai%20reservasi`}
           target="_blank"
           rel="noopener noreferrer"
-          className="animate-floating-enter fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20ba59] text-slate-950 p-3.5 sm:px-5 sm:py-3.5 rounded-full shadow-[0_10px_30px_rgba(37,211,102,0.4)] hover:shadow-[0_14px_36px_rgba(37,211,102,0.55)] flex items-center gap-2.5 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 group border-2 border-white/30"
+          className={`animate-floating-enter fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20ba59] text-slate-950 p-3.5 sm:px-5 sm:py-3.5 rounded-full shadow-[0_10px_30px_rgba(37,211,102,0.4)] hover:shadow-[0_14px_36px_rgba(37,211,102,0.55)] flex items-center gap-2.5 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 group border-2 border-white/30`}
           aria-label={language === 'en' ? 'Chat with hotel reservations on WhatsApp' : 'Chat WhatsApp Reservasi Hotel'}
         >
           <MessageSquare className="w-5 h-5 text-slate-950 fill-slate-950 transition-transform duration-300 group-hover:rotate-6" />

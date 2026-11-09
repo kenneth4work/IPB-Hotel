@@ -38,7 +38,7 @@ class ReservationService
             'guest_count' => (int) $data['guest_count'],
             'with_breakfast' => (bool) $data['with_breakfast'],
             'special_request' => $data['special_request'] ?? null,
-            'promo_code' => $data['promo_code'] ?? null,
+            'promo_code' => null,
         ]);
         $fingerprintData = $data;
         unset($fingerprintData['request_id'], $fingerprintData['expected_total']);

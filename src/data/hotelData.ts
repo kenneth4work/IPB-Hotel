@@ -10,6 +10,9 @@ import galleryDiningImg from "../assets/images/regenerated_image_1789109942226.j
 import gallerySuiteImg from "../assets/images/regenerated_image_1789109946006.jpg";
 import galleryMallImg from "../assets/images/regenerated_image_1789109949049.jpg";
 import galleryLoungeImg from "../assets/images/regenerated_image_1789109954250.jpg";
+import galleryIiccImg from "../assets/images/iicc.jpeg";
+import galleryRestoImg from "../assets/images/resto.jpeg";
+import galleryHotelFacadeImg from "../assets/images/hotel-3-web.jpg";
 
 // Impor foto kamar lainnya
 import deluxe1 from "../assets/images/deluxe-1.jpg";
@@ -64,7 +67,6 @@ export const ROOMS_DATA: RoomData[] = [
             "Ruang Tamu",
             "Ranjang King",
             "Smart TV",
-            "Bathtub & Mini Bar",
         ],
         price: "Rp 1.350.000",
         priceUnit: "/malam",
@@ -224,11 +226,21 @@ export const HOTEL_CONFIG: HotelConfig = {
     phones: ["(0251) 834 5698", "(0251) 834 5699"],
     email: "info@ipbconventionhotel.com",
     instagram: "@ipbhotelbotanisquare",
+    // Akun media sosial di footer ("Ikuti Kami"). Isi url dengan akun resmi hotel;
+    // ikon dengan url kosong tidak ditampilkan agar tidak menautkan ke akun orang lain.
+    socials: [
+        { platform: "instagram", url: "https://www.instagram.com/ipbhotelbotanisquare/" },
+        { platform: "facebook", url: "" },
+        { platform: "youtube", url: "" },
+        { platform: "tiktok", url: "" },
+        { platform: "x", url: "" },
+        { platform: "linkedin", url: "" },
+    ],
     checkIn: "14:00 WIB",
     checkOut: "12:00 WIB",
     googleMapsUrl:
         "https://www.google.com/maps/place/IPB+Convention+Hotel+Botani+Square/@-6.6019596,106.8065591,17z/data=!3m1!4b1!4m6!3m5!1s0x2e69c5db56e8b071:0xc345ddc97086540e!8m2!3d-6.6019596!4d106.8065591",
-    whatsappNumber: "628111330659",
+    whatsappNumber: "628111110658",
     rooms: ROOMS_DATA.map((r) => ({
         id: r.id,
         name: r.name,
@@ -365,5 +377,26 @@ export const GALLERY_ITEMS: GalleryItem[] = [
         category: "Fasilitas Kerja",
         image: galleryLoungeImg,
         spanClass: "col-span-1 md:col-span-2 md:row-span-1",
+    },
+    {
+        id: "gal-7",
+        title: "IPB International Convention Center (IICC)",
+        category: "MICE & Acara",
+        image: galleryIiccImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
+    },
+    {
+        id: "gal-9",
+        title: "Restoran",
+        category: "Kuliner & Resto",
+        image: galleryRestoImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
+    },
+    {
+        id: "gal-10",
+        title: "Gedung IPB Convention Hotel",
+        category: "Lokasi & Eksterior",
+        image: galleryHotelFacadeImg,
+        spanClass: "col-span-1 md:col-span-1 md:row-span-1",
     },
 ];

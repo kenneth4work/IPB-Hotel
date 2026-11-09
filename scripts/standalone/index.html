@@ -3,6 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Default mode terang. Mode gelap hanya jika pengunjung pernah memilihnya (lihat ThemeContext.tsx);
+      // dipasang sebelum render agar tidak berkedip.
+      (function () {
+        var dark = false;
+        try { dark = localStorage.getItem('ipb_hotel_theme_preference') === 'dark'; } catch (e) {}
+        if (dark) document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+      })();
+    </script>
     <title>IPB Convention Hotel - Di Jantung Kota Bogor</title>
     <link rel="icon" type="image/png" href="../../public/images/favicon-32.png" />
     <meta name="description" content="Website resmi IPB Convention Hotel Bogor - Di Jantung Kota Bogor." />

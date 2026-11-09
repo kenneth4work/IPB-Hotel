@@ -4,16 +4,22 @@ import { HOTEL_CONFIG, roomCategories, getRoomImageUrl } from '../data/hotelData
 import { ArrowDown, Calendar } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { QuickAvailabilityBar } from './QuickAvailabilityBar';
+import { useIntroAnimation } from '../hooks/useIntroAnimation';
 
 export const HeroSection: React.FC = () => {
   const { t } = useLanguage();
   const suiteFirstPhoto = getRoomImageUrl(roomCategories["Suite"][0]);
+  const intro = useIntroAnimation();
+  // Muncul bertahap: judul, tagline, tombol, lalu kotak cek ketersediaan
+  const rise = (delayMs: number, blur = false) => intro
+    ? { className: blur ? 'intro-rise intro-blur' : 'intro-rise', style: { '--intro-delay': `${delayMs}ms` } as React.CSSProperties }
+    : { className: '', style: undefined };
 
   return (
     <section className="relative overflow-hidden bg-[#0F172A] text-white min-h-[100svh] lg:min-h-[820px] flex items-center pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24">
       {/* Background Hero Banner - Foto Kamar Suite Room Slide Pertama */}
       <div 
-        className="absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000"
+        className={`absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000 ${intro ? 'intro-bg' : ''}`}
         style={{
           backgroundImage: `url('${suiteFirstPhoto}')`
         }}
@@ -26,40 +32,40 @@ export const HeroSection: React.FC = () => {
         <div className="max-w-2xl">
 
           {/* Main Title */}
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight">
+          <h1 style={rise(250).style} className={`font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-4 leading-tight ${rise(250, true).className}`}>
             {HOTEL_CONFIG.name}
           </h1>
 
           {/* Tagline */}
-          <p className="font-serif italic text-lg sm:text-2xl text-[#EFE4D2] mb-9 font-normal">
+          <p style={rise(420).style} className={`font-serif italic text-lg sm:text-2xl text-[#EFE4D2] mb-9 font-normal ${rise(420, true).className}`}>
             "{t.hero.tagline}"
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-4">
+          <div style={rise(590).style} className={`grid grid-cols-2 sm:grid-cols-[repeat(2,15rem)] gap-3 sm:gap-4 w-full sm:w-auto ${rise(590).className}`}>
             {/* Tombol Lihat Pilihan Kamar - Liquid Glass Aesthetic */}
             <a
               id="hero-explore-rooms-button"
               href="#kamar"
-              className="group relative overflow-hidden w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-b from-white/25 via-white/12 to-white/8 hover:from-white/32 hover:via-white/18 hover:to-white/12 text-white text-xs font-bold uppercase tracking-widest backdrop-blur-xl backdrop-saturate-150 border border-white/35 hover:border-white/55 shadow-[inset_0_1px_1px_rgba(255,255,255,0.65),inset_0_-1px_2px_rgba(255,255,255,0.18),0_10px_30px_-5px_rgba(0,0,0,0.35)] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),inset_0_-1px_3px_rgba(197,168,128,0.3),0_14px_36px_-5px_rgba(0,0,0,0.45)] transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2.5 before:content-[''] before:absolute before:inset-0 before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700 before:ease-out before:bg-gradient-to-r before:from-transparent before:via-white/35 before:to-transparent after:content-[''] after:absolute after:inset-x-5 after:top-0 after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-white/80 after:to-transparent"
+              className="group relative overflow-hidden w-full min-h-11 sm:min-h-12 px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-full bg-gradient-to-b from-white/25 via-white/12 to-white/8 hover:from-white/32 hover:via-white/18 hover:to-white/12 text-white text-[10px] sm:text-xs leading-tight text-center whitespace-nowrap font-bold uppercase tracking-[0.12em] sm:tracking-widest backdrop-blur-xl backdrop-saturate-150 border border-white/35 hover:border-white/55 shadow-[inset_0_1px_1px_rgba(255,255,255,0.65),inset_0_-1px_2px_rgba(255,255,255,0.18),0_10px_30px_-5px_rgba(0,0,0,0.35)] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),inset_0_-1px_3px_rgba(197,168,128,0.3),0_14px_36px_-5px_rgba(0,0,0,0.45)] transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5 sm:gap-2.5 before:content-[''] before:absolute before:inset-0 before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700 before:ease-out before:bg-gradient-to-r before:from-transparent before:via-white/35 before:to-transparent after:content-[''] after:absolute after:inset-x-5 after:top-0 after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-white/80 after:to-transparent"
             >
               <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">{t.hero.ctaRooms}</span>
-              <ArrowDown className="relative z-10 w-4 h-4 text-[#EFE4D2] transition-transform duration-300 group-hover:translate-y-0.5" />
+              <ArrowDown className="relative z-10 shrink-0 w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#EFE4D2] transition-transform duration-300 group-hover:translate-y-0.5" />
             </a>
             {/* Tombol Pesan Sekarang - Liquid Glass Aesthetic */}
             <Link
               id="hero-whatsapp-booking-button"
               to="/reservasi"
-              className="group relative overflow-hidden w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-b from-white/25 via-white/12 to-white/8 hover:from-white/32 hover:via-white/18 hover:to-white/12 text-white text-xs font-bold uppercase tracking-widest backdrop-blur-xl backdrop-saturate-150 border border-white/35 hover:border-white/55 shadow-[inset_0_1px_1px_rgba(255,255,255,0.65),inset_0_-1px_2px_rgba(255,255,255,0.18),0_10px_30px_-5px_rgba(0,0,0,0.35)] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),inset_0_-1px_3px_rgba(197,168,128,0.3),0_14px_36px_-5px_rgba(0,0,0,0.45)] transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-2.5 before:content-[''] before:absolute before:inset-0 before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700 before:ease-out before:bg-gradient-to-r before:from-transparent before:via-white/35 before:to-transparent after:content-[''] after:absolute after:inset-x-5 after:top-0 after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-white/80 after:to-transparent"
+              className="group relative overflow-hidden w-full min-h-11 sm:min-h-12 px-3 sm:px-4 py-2.5 sm:py-3.5 rounded-full bg-gradient-to-b from-white/25 via-white/12 to-white/8 hover:from-white/32 hover:via-white/18 hover:to-white/12 text-white text-[10px] sm:text-xs leading-tight text-center whitespace-nowrap font-bold uppercase tracking-[0.12em] sm:tracking-widest backdrop-blur-xl backdrop-saturate-150 border border-white/35 hover:border-white/55 shadow-[inset_0_1px_1px_rgba(255,255,255,0.65),inset_0_-1px_2px_rgba(255,255,255,0.18),0_10px_30px_-5px_rgba(0,0,0,0.35)] hover:shadow-[inset_0_1px_2px_rgba(255,255,255,0.85),inset_0_-1px_3px_rgba(197,168,128,0.3),0_14px_36px_-5px_rgba(0,0,0,0.45)] transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center gap-1.5 sm:gap-2.5 before:content-[''] before:absolute before:inset-0 before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700 before:ease-out before:bg-gradient-to-r before:from-transparent before:via-white/35 before:to-transparent after:content-[''] after:absolute after:inset-x-5 after:top-0 after:h-[1px] after:bg-gradient-to-r after:from-transparent after:via-white/80 after:to-transparent"
             >
-              <Calendar className="relative z-10 w-4 h-4 text-[#C5A880] transition-transform duration-300 group-hover:scale-110" />
+              <Calendar className="relative z-10 shrink-0 w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C5A880] transition-transform duration-300 group-hover:scale-110" />
               <span className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">{t.navbar.bookNow}</span>
             </Link>
           </div>
         </div>
 
         {/* Cek Ketersediaan Kamar & Tarif Terbaik - di samping kanan judul hero */}
-        <QuickAvailabilityBar />
+        <QuickAvailabilityBar className={rise(760).className} style={rise(760).style} />
         </div>
       </div>
     </section>

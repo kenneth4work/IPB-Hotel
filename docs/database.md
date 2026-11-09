@@ -93,9 +93,9 @@ $reservation = app(App\Services\ReservationService::class)->hold([
 
 `guest_count` berarti total tamu dalam seluruh booking. Sarapan dihitung per tamu
 per malam, tidak dikalikan lagi dengan jumlah kamar. Tarif dan total dihitung
-server; nominal atau status yang disisipkan pemanggil diabaikan. Promo IPB2026 yang ditampilkan frontend dihitung server dari config/booking.php
-sebesar 10% subtotal kamar. Diskon tidak dikenakan pada sarapan dan disimpan
-sebagai discount_amount bersama promo_code pada reservasi.
+server; nominal atau status yang disisipkan pemanggil diabaikan. Kode promo tidak
+lagi dipakai: field promo_code yang dikirim diabaikan, sehingga kolom promo_code
+selalu null dan discount_amount selalu 0 pada reservasi baru.
 
 `hold()` memvalidasi kapasitas, pilihan kasur, tanggal, stok harian, dan status tipe
 kamar. Operasi ini menggunakan transaksi database dan row lock MySQL. Semua
@@ -126,7 +126,7 @@ callback browser atau dari sekadar insert transaksi pembayaran.
 Form React sudah terhubung ke endpoint web yang memakai session dan CSRF:
 `GET /booking/room-types`, `POST /booking/quote`, dan `POST /reservations`.
 Quote menghitung harga tanpa menahan stok. Submit memeriksa ulang seluruh malam,
-menyimpan reservasi pending, snapshot tarif, promo, dan kode booking server.
+menyimpan reservasi pending, snapshot tarif, dan kode booking server.
 
 Frontend mengirim UUID `request_id` untuk mencegah booking ganda pada pengiriman
 ulang. `expected_total` dibandingkan dengan hitungan server; harga yang berubah

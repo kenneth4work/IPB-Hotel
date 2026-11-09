@@ -11,7 +11,7 @@ interface FaqAccordionProps {
 
 const FaqAccordion: React.FC<FaqAccordionProps> = ({ items }) => {
   const baseId = useId();
-  const [openIdx, setOpenIdx] = useState<number | null>(0);
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
     <div className="space-y-3">

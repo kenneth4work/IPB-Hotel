@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AllowLocalFramePreview;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
@@ -15,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [HandleInertiaRequests::class, SecurityHeaders::class]);
+        // Global (di luar grup web) agar berjalan SETELAH SecurityHeaders pada response; no-op selain APP_ENV=local.
+        $middleware->append(AllowLocalFramePreview::class);
         // Provider pembayaran tidak punya token CSRF; webhook diverifikasi lewat callback token.
         $middleware->validateCsrfTokens(except: ['payments/webhook']);
     })

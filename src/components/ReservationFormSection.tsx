@@ -15,10 +15,7 @@ import {
   Phone,
   Mail,
   User,
-  ArrowRight,
-  Utensils,
-  Coffee,
-  Crown, ChevronLeft, ChevronRight, CreditCard
+  ArrowRight, ChevronLeft, ChevronRight, CreditCard
 } from 'lucide-react';
 import { HOTEL_CONFIG, roomCategories, getRoomImageUrl } from '../data/hotelData';
 import { useLanguage } from '../context/LanguageContext';
@@ -174,7 +171,7 @@ const RoomCarouselThumb: React.FC<{ room: ReservationRoom }> = ({ room }) => {
           </div>
         </>
       )}
-      <span className="absolute top-1 right-1 bg-black/70 backdrop-blur-xs text-white text-[9px] font-mono font-bold px-1 py-0.5 rounded pointer-events-none">
+      <span className="absolute top-1 right-1 bg-black/70 backdrop-blur-xs text-white text-[10px] font-mono font-bold px-1 py-0.5 rounded pointer-events-none">
         {room.size}
       </span>
     </div>
@@ -221,8 +218,6 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
     guestCount,
     roomCount,
     totalNights,
-    promoCode,
-    isPromoApplied,
     setCheckInDate,
     setCheckOutDate,
     setGuestCount,
@@ -231,10 +226,10 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
 
   const todayStr = useMemo(() => new Intl.DateTimeFormat('en-CA', {timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'}).format(new Date()), []);
 
-  // Form States
-  // Form States (selectedRoomId synced with BookingContext)
-  const [bedPreference, setSelectedBedType] = useState<BedTypeOption>('queen');
-  const [breakfastPlan, setBreakfastPlan] = useState<BreakfastOption>('room_only');
+  // Form States (selectedRoomId synced with BookingContext).
+  // Kamar, kasur, dan sarapan sengaja kosong sampai tamu memilihnya sendiri.
+  const [bedPreference, setSelectedBedType] = useState<BedTypeOption | null>(null);
+  const [breakfastPlan, setBreakfastPlan] = useState<BreakfastOption | null>(null);
 
   // Guest details
   const [fullName, setFullName] = useState<string>('');
@@ -267,24 +262,27 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
     roomCount: number;
     guestCount: number;
     roomTotal: number;
-    promoDiscount: number;
-    promoCode: string | null;
     breakfastTotal: number;
     totalPrice: number;
     specialRequest?: string;
   } | null>(null);
 
-  const selectedRoom = rooms.find(room => room.id === selectedRoomId) ?? rooms[0];
-  const allowedBeds = selectedRoom.allowedBeds ?? [];
-  const selectedBedType = allowedBeds.includes(bedPreference) ? bedPreference : allowedBeds[0];
-  const selection: BookingSelection = {
+  const selectedRoom = rooms.find(room => room.id === selectedRoomId) ?? null;
+  const allowedBeds = selectedRoom?.allowedBeds ?? [];
+  // Pilihan kasur gugur jika tidak tersedia di tipe kamar yang baru dipilih
+  const selectedBedType = bedPreference && allowedBeds.includes(bedPreference) ? bedPreference : null;
+  const missingChoices = [
+    !selectedRoom && (isEn ? 'room type' : 'tipe kamar'),
+    !selectedBedType && (isEn ? 'bed type' : 'tipe tempat tidur'),
+    !breakfastPlan && (isEn ? 'breakfast option' : 'opsi sarapan'),
+  ].filter((item): item is string => Boolean(item));
+  const selection: BookingSelection | null = selectedRoom && selectedBedType && breakfastPlan ? {
     room_type_id: selectedRoom.databaseId!, check_in: checkInDate, check_out: checkOutDate,
     room_count: roomCount, guest_count: guestCount, bed_type: selectedBedType,
-    with_breakfast: breakfastPlan === 'with_breakfast', promo_code: isPromoApplied ? promoCode : null,
-  };
+    with_breakfast: breakfastPlan === 'with_breakfast',
+  } : null;
   const {quote, error: quoteError, loading: quoteLoading, refresh: refreshQuote} = useReservationQuote(selection, !isSuccess);
   const totalRoomCost = quote?.room_total ?? 0;
-  const promoDiscountAmount = quote?.discount_amount ?? 0;
   const totalBreakfastCost = quote?.breakfast_total ?? 0;
   const estimatedTotal = quote?.total_amount ?? 0;
   const formatError = (error: unknown): string[] => {
@@ -337,7 +335,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
   const isNameValid = fullName.trim().length >= 2;
 
   const isFormValid = isNameValid && isEmailValid && isPhoneValid && termsAccepted && totalNights > 0;
-  const bookingPayload = {...selection, guest_name: fullName.trim(), guest_email: email.trim(), guest_phone: phone.trim(), special_request: specialRequest.trim() || null, terms_accepted: termsAccepted};
+  const bookingPayload = selection && {...selection, guest_name: fullName.trim(), guest_email: email.trim(), guest_phone: phone.trim(), special_request: specialRequest.trim() || null, terms_accepted: termsAccepted};
   const bookingPayloadKey = JSON.stringify(bookingPayload);
   const retryPending = pendingRequest.current?.payload === bookingPayloadKey;
   useEffect(() => {setSubmitError(null);}, [bookingPayloadKey]);
@@ -366,9 +364,9 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({name: true, email: true, phone: true, terms: true});
-    const firstInvalidField = !isNameValid ? 'res-name' : !isEmailValid ? 'res-email' : !isPhoneValid ? 'res-phone' : !termsAccepted ? 'res-terms' : null;
+    const firstInvalidField = !selectedRoom ? 'res-room-options' : !isNameValid ? 'res-name' : !isEmailValid ? 'res-email' : !isPhoneValid ? 'res-phone' : !termsAccepted ? 'res-terms' : null;
     if (firstInvalidField) document.getElementById(firstInvalidField)?.focus();
-    if (submitting.current || !isFormValid || (!retryPending && (!quote?.can_book || quoteLoading))) return;
+    if (submitting.current || !bookingPayload || !isFormValid || (!retryPending && (!quote?.can_book || quoteLoading))) return;
     submitting.current = true;
     setIsLoading(true);
     setSubmitError(null);
@@ -388,7 +386,6 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
         breakfastPlanLabel: getBreakfastLabel(saved.with_breakfast ? 'with_breakfast' : 'room_only', saved.guest_count),
         checkIn: saved.check_in, checkOut: saved.check_out, nights: saved.night_count,
         roomCount: saved.room_count, guestCount: saved.guest_count, roomTotal: saved.room_total,
-        promoDiscount: saved.discount_amount, promoCode: saved.promo_code,
         breakfastTotal: saved.breakfast_total, totalPrice: saved.total_amount,
         specialRequest: saved.special_request ?? undefined,
       });
@@ -429,6 +426,9 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
     setPhone('');
     setSpecialRequest('');
     setTermsAccepted(false);
+    setSelectedRoomId('');
+    setSelectedBedType(null);
+    setBreakfastPlan(null);
     setTouched({});
     setSubmitError(null);
     pendingRequest.current = null;
@@ -457,7 +457,6 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
       `*Check-out:* ${submittedData.checkOut}`,
       `*Duration:* ${submittedData.nights} night(s)`,
       `*Room Subtotal:* ${formatRupiah(submittedData.roomTotal)}`,
-      submittedData.promoDiscount > 0 ? `*Promo Discount (${submittedData.promoCode}):* -${formatRupiah(submittedData.promoDiscount)}` : '',
       submittedData.breakfastTotal > 0 ? `*Breakfast Subtotal:* ${formatRupiah(submittedData.breakfastTotal)}` : `*Breakfast:* Room Only`,
       `*Booking Total:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
       submittedData.specialRequest ? `*Special Request:* ${submittedData.specialRequest}` : '',
@@ -480,7 +479,6 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
       `*Check-out:* ${submittedData.checkOut}`,
       `*Durasi Menginap:* ${submittedData.nights} malam`,
       `*Subtotal Kamar:* ${formatRupiah(submittedData.roomTotal)}`,
-      submittedData.promoDiscount > 0 ? `*Diskon Promo (${submittedData.promoCode}):* -${formatRupiah(submittedData.promoDiscount)}` : '',
       submittedData.breakfastTotal > 0 ? `*Subtotal Sarapan:* ${formatRupiah(submittedData.breakfastTotal)}` : `*Sarapan:* Hanya Kamar (Room Only)`,
       `*Total Reservasi:* ${formatRupiah(submittedData.totalPrice)} (Nett)`,
       submittedData.specialRequest ? `*Permintaan Khusus:* ${submittedData.specialRequest}` : '',
@@ -492,7 +490,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
   };
 
   return (
-    <section id="reservasi" className="pt-8 pb-20 bg-gradient-to-b from-[#FDFBF7] via-white to-[#FDFBF7] relative scroll-mt-24 font-sans">
+    <section id="reservasi" className="pt-8 pb-28 sm:pb-32 bg-gradient-to-b from-[#FDFBF7] via-white to-[#FDFBF7] relative scroll-mt-24 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -555,27 +553,27 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-700">
                   <div>
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.guestNameLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.guestNameLabel}</span>
                     <span className="font-bold text-sm text-slate-900">{submittedData.guestName}</span>
                   </div>
                   <div>
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.phoneLabel} / {t.reservation.emailLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.phoneLabel} / {t.reservation.emailLabel}</span>
                     <span className="font-medium text-slate-800">{submittedData.phone} · {submittedData.email}</span>
                   </div>
                   <div>
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.roomTypeLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.roomTypeLabel}</span>
                     <span className="font-bold text-sm text-slate-900">{submittedData.roomName} ({submittedData.roomCount} {t.reservation.roomsSuffix})</span>
                   </div>
                   <div>
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.bedTypeLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.bedTypeLabel}</span>
                     <span className="font-bold text-sm text-[#1E3A2B]">{submittedData.bedTypeLabel}</span>
                   </div>
                   <div>
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.breakfastLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.breakfastLabel}</span>
                     <span className="font-bold text-sm text-amber-800">{submittedData.breakfastPlanLabel}</span>
                   </div>
                   <div>
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.durationLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.durationLabel}</span>
                     <span className="font-bold text-sm text-slate-900">
                       {submittedData.checkIn} → {submittedData.checkOut} ({submittedData.nights} {submittedData.nights > 1 ? t.reservation.nightPlural : t.reservation.nightSingular})
                     </span>
@@ -584,7 +582,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
 
                 {submittedData.specialRequest && (
                   <div className="mt-4 pt-3 border-t border-slate-200/60 text-xs">
-                    <span className="text-slate-600 font-semibold block text-[10px]">{t.reservation.specialRequestLabel}</span>
+                    <span className="text-slate-600 font-semibold block text-[11px]">{t.reservation.specialRequestLabel}</span>
                     <p className="text-slate-700 italic mt-0.5">"{submittedData.specialRequest}"</p>
                   </div>
                 )}
@@ -685,8 +683,8 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                 </div>
 
                 {/* Night duration indicator pill */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-[#FDFBF7] border border-[#E7D6C1]/70 text-xs">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 p-3 rounded-xl bg-[#FDFBF7] border border-[#E7D6C1]/70 text-xs">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span className="font-bold text-slate-800">
                       {totalNights} {totalNights > 1 ? t.reservation.nightPlural : t.reservation.nightSingular}
@@ -743,34 +741,15 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
               <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-xs">
                 
                 {/* 2A. Room Type Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5 pb-3 border-b border-slate-100">
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 leading-tight">
-                      {t.reservation.step2Title}
-                    </h3>
-                    <p className="text-xs text-slate-600">{t.reservation.step2Desc}</p>
-                  </div>
-
-                  {/* Quick Dropdown select on mobile/tablet */}
-                  <div className="w-full sm:w-auto">
-                    <select
-                      id="res-room-dropdown"
-                      value={selectedRoomId}
-                      onChange={(e) => setSelectedRoomId(e.target.value)}
-                      className="w-full sm:w-56 px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-slate-50 text-slate-800 font-bold focus:border-[#1E3A2B] focus:ring-1 focus:ring-[#1E3A2B] outline-hidden cursor-pointer"
-                      aria-label={t.reservation.selectRoomDropdown}
-                    >
-                      {rooms.map(r => (
-                        <option key={r.id} value={r.id}>
-                          {r.name} - {formatRupiah(r.pricePerNight)}/{isEn ? 'night' : 'mlm'}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div className="mb-5 pb-3 border-b border-slate-100">
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight">
+                    {t.reservation.step2Title}
+                  </h3>
+                  <p className="text-xs text-slate-600">{t.reservation.step2Desc}</p>
                 </div>
 
                 {/* Card Selection Grid (6 Room Types) */}
-                <div role="radiogroup" aria-label={t.reservation.step2Title} className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div id="res-room-options" tabIndex={-1} role="radiogroup" aria-label={t.reservation.step2Title} className="outline-hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                   {rooms.map((r) => {
                     const isSelected = r.id === selectedRoomId;
                     return (
@@ -796,11 +775,11 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                             className="sr-only"
                           />
                           <div className="flex items-center justify-between gap-1">
-                            <span className="text-[10px] font-bold text-[#7A5C33]">
+                            <span className="text-[11px] font-bold text-[#7A5C33]">
                               {r.badge}
                             </span>
                             {isSelected && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#1E3A2B] bg-emerald-100/70 px-1.5 py-0.5 rounded-full">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#1E3A2B] bg-emerald-100/70 px-1.5 py-0.5 rounded-full">
                                 <Check className="w-3 h-3" />
                                 <span>{t.reservation.selectedBadge}</span>
                               </span>
@@ -819,7 +798,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                             <span className="font-bold text-sm text-slate-900">
                               {formatRupiah(r.pricePerNight)}
                             </span>
-                            <span className="text-[10px] text-slate-600 font-medium">
+                            <span className="text-[11px] text-slate-600 font-medium">
                               / {t.reservation.nightSingular.toLowerCase()}
                             </span>
                           </div>
@@ -831,14 +810,13 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
 
                 {/* 2B. PILIHAN TIPE TEMPAT TIDUR (QUEEN BED, KING BED, TWIN BED) */}
                 <div className="mt-6 pt-5 border-t border-slate-100">
-                  <div className="flex items-center gap-2 mb-3.5">
-                    <BedDouble className="w-4 h-4 text-[#C5A880]" />
+                  <div className="mb-3.5">
                     <div>
                       <h4 id="res-bed-title" className="font-bold text-sm text-slate-900 leading-tight">
                         {t.reservation.bedPreferenceTitle}
                       </h4>
                       <p className="text-[11px] text-slate-600 font-medium">
-                        {t.reservation.bedPreferenceDesc}
+                        {selectedRoom ? t.reservation.bedPreferenceDesc : (isEn ? 'Choose a room type first to see the available beds.' : 'Pilih tipe kamar terlebih dahulu untuk melihat kasur yang tersedia.')}
                       </p>
                     </div>
                   </div>
@@ -863,10 +841,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         className="sr-only"
                       />
                       <div className="flex items-center justify-between mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-                          <Crown className="w-4 h-4" />
-                        </div>
-                        <span className="text-[10px] font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+                        <span className="text-[11px] font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
                           180/200×200
                         </span>
                       </div>
@@ -874,7 +849,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-slate-900">{t.reservation.kingBedTitle}</span>
                           {selectedBedType === 'king' && (
-                            <span className="w-4 h-4 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                            <span className="w-4 h-4 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center"><Check className="w-3 h-3" /></span>
                           )}
                         </div>
                         <p className="text-[11px] text-slate-600 mt-1 leading-snug">{t.reservation.kingBedDesc}</p>
@@ -900,10 +875,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         className="sr-only"
                       />
                       <div className="flex items-center justify-between mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-                          <BedDouble className="w-4 h-4" />
-                        </div>
-                        <span className="text-[10px] font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+                        <span className="text-[11px] font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
                           160×200
                         </span>
                       </div>
@@ -911,7 +883,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-slate-900">{t.reservation.queenBedTitle}</span>
                           {selectedBedType === 'queen' && (
-                            <span className="w-4 h-4 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                            <span className="w-4 h-4 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center"><Check className="w-3 h-3" /></span>
                           )}
                         </div>
                         <p className="text-[11px] text-slate-600 mt-1 leading-snug">{t.reservation.queenBedDesc}</p>
@@ -937,10 +909,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         className="sr-only"
                       />
                       <div className="flex items-center justify-between mb-2">
-                        <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-                          <Users className="w-4 h-4" />
-                        </div>
-                        <span className="text-[10px] font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+                        <span className="text-[11px] font-mono font-bold bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
                           2x 100×200
                         </span>
                       </div>
@@ -948,7 +917,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         <div className="flex items-center justify-between">
                           <span className="font-bold text-xs text-slate-900">{t.reservation.twinBedTitle}</span>
                           {selectedBedType === 'twin' && (
-                            <span className="w-4 h-4 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center text-[10px] font-bold">✓</span>
+                            <span className="w-4 h-4 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center"><Check className="w-3 h-3" /></span>
                           )}
                         </div>
                         <p className="text-[11px] text-slate-600 mt-1 leading-snug">{t.reservation.twinBedDesc}</p>
@@ -959,8 +928,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
 
                 {/* 2C. OPSI SARAPAN (TERMASUK SARAPAN BUFFET vs HANYA KAMAR) */}
                 <div className="mt-6 pt-5 border-t border-slate-100">
-                  <div className="flex items-center gap-2 mb-3.5">
-                    <Utensils className="w-4 h-4 text-[#C5A880]" />
+                  <div className="mb-3.5">
                     <div>
                       <h4 id="res-breakfast-title" className="font-bold text-sm text-slate-900 leading-tight">
                         {t.reservation.breakfastOptionTitle}
@@ -992,20 +960,17 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center shrink-0 shadow-2xs">
-                              <Utensils className="w-4 h-4" />
-                            </div>
                             <div>
                               <span className="font-bold text-xs sm:text-sm text-slate-900 block">
                                 {t.reservation.withBreakfastTitle}
                               </span>
-                              <span className="text-[10px] text-amber-700 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5">
+                              <span className="text-[11px] text-amber-700 font-bold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200/60 inline-block mt-0.5">
                                 {t.reservation.withBreakfastBadge}
                               </span>
                             </div>
                           </div>
                           {breakfastPlan === 'with_breakfast' && (
-                            <span className="w-5 h-5 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center text-xs shrink-0 font-bold">✓</span>
+                            <span className="w-5 h-5 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center shrink-0"><Check className="w-3.5 h-3.5" /></span>
                           )}
                         </div>
                         <p className="text-[11px] text-slate-600 leading-snug mb-3 font-medium">
@@ -1015,7 +980,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span className="text-slate-600 font-medium">{isEn ? 'Additional Cost:' : 'Tambahan Biaya:'}</span>
                         <span className="font-bold text-slate-800 font-mono">
-                          {formatRupiah(selectedRoom.breakfastPrice ?? 0)} <span className="text-[10px] font-normal text-slate-600">{isEn ? '/ guest / night' : '/ tamu / mlm'}</span>
+                          {formatRupiah(selectedRoom?.breakfastPrice ?? rooms[0]?.breakfastPrice ?? 0)} <span className="text-[11px] font-normal text-slate-600">{isEn ? '/ guest / night' : '/ tamu / mlm'}</span>
                         </span>
                       </div>
                     </label>
@@ -1040,20 +1005,17 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                       <div>
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 shadow-2xs">
-                              <Coffee className="w-4 h-4" />
-                            </div>
                             <div>
                               <span className="font-bold text-xs sm:text-sm text-slate-900 block">
                                 {t.reservation.roomOnlyTitle}
                               </span>
-                              <span className="text-[10px] text-slate-600 font-bold bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
+                              <span className="text-[11px] text-slate-600 font-bold bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
                                 {t.reservation.roomOnlyBadge}
                               </span>
                             </div>
                           </div>
                           {breakfastPlan === 'room_only' && (
-                            <span className="w-5 h-5 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center text-xs shrink-0 font-bold">✓</span>
+                            <span className="w-5 h-5 rounded-full bg-[#1E3A2B] text-white flex items-center justify-center shrink-0"><Check className="w-3.5 h-3.5" /></span>
                           )}
                         </div>
                         <p className="text-[11px] text-slate-600 leading-snug mb-3 font-medium">
@@ -1063,7 +1025,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                       <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span className="text-slate-600 font-medium">{isEn ? 'Breakfast Rate:' : 'Tarif Sarapan:'}</span>
                         <span className="font-bold text-slate-800 font-mono">
-                          Rp 0 <span className="text-[10px] font-normal text-slate-600">({isEn ? 'Base Rate' : 'Tarif Dasar'})</span>
+                          Rp 0 <span className="text-[11px] font-normal text-slate-600">({isEn ? 'Base Rate' : 'Tarif Dasar'})</span>
                         </span>
                       </div>
                     </label>
@@ -1245,11 +1207,11 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                 <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#1E3A2B] via-[#C5A880] to-[#1E3A2B]" />
 
                 <div className="border-b border-slate-100 pb-4 mb-4">
-                  <span className="text-[10px] font-bold text-[#7A5C33] block mb-1">
+                  <span className="text-[11px] font-bold text-[#7A5C33] block mb-1">
                     {t.reservation.summaryTitle}
                   </span>
                   <h3 className="text-xl font-bold text-slate-900">
-                    {selectedRoom.name}
+                    {selectedRoom ? selectedRoom.name : (isEn ? 'No room selected yet' : 'Belum memilih kamar')}
                   </h3>
                   <p className="text-xs text-slate-600 mt-0.5 font-medium">
                     {t.reservation.summarySubtitle}
@@ -1257,7 +1219,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                 </div>
 
                 {/* Selected Room Preview Snapshot */}
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/60 mb-5">
+                {selectedRoom && <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/60 mb-5">
                   <img
                     src={selectedRoom.image}
                     alt={selectedRoom.name}
@@ -1272,7 +1234,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                       {formatRupiah(selectedRoom.pricePerNight)} / {t.reservation.nightSingular.toLowerCase()}
                     </span>
                   </div>
-                </div>
+                </div>}
 
                 {/* Real-time Math Breakdown */}
                 <div className="space-y-2.5 text-xs text-slate-600 border-b border-slate-100 pb-4 mb-4">
@@ -1299,7 +1261,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                   <div className="flex justify-between items-center pt-1">
                     <span className="text-slate-600">{t.reservation.bedTypeLabel}:</span>
                     <span className="font-bold text-[#1E3A2B] bg-[#1E3A2B]/10 px-2 py-0.5 rounded-md text-[11px]">
-                      {getBedLabel(selectedBedType)}
+                      {selectedBedType ? getBedLabel(selectedBedType) : '—'}
                     </span>
                   </div>
 
@@ -1311,7 +1273,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                         ? 'text-amber-800 bg-amber-100/70' 
                         : 'text-slate-600 bg-slate-100'
                     }`}>
-                      {breakfastPlan === 'with_breakfast' ? t.reservation.withBreakfastTitle : t.reservation.roomOnlyTitle}
+                      {breakfastPlan === 'with_breakfast' ? t.reservation.withBreakfastTitle : breakfastPlan === 'room_only' ? t.reservation.roomOnlyTitle : '—'}
                     </span>
                   </div>
 
@@ -1321,18 +1283,13 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                     <span className="font-mono font-bold text-slate-900">{priceText(totalRoomCost)}</span>
                   </div>
 
-                  {/* Promo Diskon 10% IPB2026 */}
-                  {promoDiscountAmount > 0 && (
-                    <div className="flex justify-between items-center text-emerald-800 font-semibold bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200/80">
-                      <span className="flex items-center gap-1 text-[11px]">
-                        <span>{isEn ? `Promo Code (${promoCode} · 10% off):` : `Kode Promo (${promoCode} · Diskon 10%):`}</span>
-                      </span>
-                      <span className="font-mono font-bold text-emerald-700">-{formatRupiah(promoDiscountAmount)}</span>
-                    </div>
-                  )}
-
                   {/* Subtotal Sarapan Calculation */}
-                  {totalBreakfastCost > 0 ? (
+                  {!breakfastPlan ? (
+                    <div className="flex justify-between items-center text-slate-600">
+                      <span>{isEn ? 'Breakfast:' : 'Sarapan:'}</span>
+                      <span className="font-mono font-semibold">—</span>
+                    </div>
+                  ) : totalBreakfastCost > 0 ? (
                     <div className="flex justify-between items-center text-amber-900 font-medium">
                       <span>{isEn ? `Breakfast (${guestCount} guest(s) × ${totalNights} night(s)):` : `Sarapan (${guestCount} pax × ${totalNights} mlm):`}</span>
                       <span className="font-mono font-bold">{priceText(totalBreakfastCost)}</span>
@@ -1352,7 +1309,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
 
                 {/* Big Grand Total Callout */}
                 <div className="p-4 rounded-2xl bg-[#FDFBF7] border border-[#E7D6C1] mb-5">
-                  <span className="text-[10px] font-bold text-slate-600 block">
+                  <span className="text-[11px] font-bold text-slate-600 block">
                     {t.reservation.totalEstimate}
                   </span>
                   <div className="flex items-baseline justify-between mt-1">
@@ -1364,6 +1321,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                 </div>
 
                 <div aria-live="polite" className="mb-4 text-sm">
+                  {missingChoices.length > 0 && <p className="text-slate-600">{isEn ? `Choose your ${missingChoices.join(', ')} to see the price.` : `Pilih ${missingChoices.join(', ')} untuk melihat harga.`}</p>}
                   {quoteLoading && <p className="text-slate-600">{language === 'en' ? 'Checking availability and price…' : 'Memeriksa ketersediaan dan harga…'}</p>}
                   {quote && !quote.can_book && <p role="status" className="text-amber-800">{language === 'en' ? 'Not enough rooms are available for these dates. Choose other dates or contact the hotel.' : 'Kamar belum tersedia untuk tanggal dan jumlah ini. Pilih tanggal lain atau hubungi hotel.'}</p>}
                   {errorMessages.length > 0 && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-800">
@@ -1376,7 +1334,7 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                 <button
                   type="submit"
                   id="btn-submit-reservation"
-                  disabled={isLoading || (!retryPending && (quoteLoading || !quote?.can_book))}
+                  disabled={isLoading || !selection || (!retryPending && (quoteLoading || !quote?.can_book))}
                   className="w-full py-4 px-6 bg-[#1E3A2B] hover:bg-[#13261C] active:scale-[0.99] text-white text-xs font-bold rounded-xl transition-all shadow-md hover:shadow-xl flex items-center justify-center gap-2 border border-[#C5A880]/30 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isLoading ? (
@@ -1399,22 +1357,6 @@ const ReservationFormContent: React.FC<{rooms: ReservationRoom[]; paymentEnabled
                 </div>
               </div>
 
-              {/* Instant WhatsApp Help banner */}
-              <div className="bg-[#1E3A2B] text-white p-4 rounded-2xl border border-[#C5A880]/30 flex items-center justify-between gap-3 shadow-xs">
-                <div className="text-xs">
-                  <span className="font-bold text-[#EFE4D2] block">{isEn ? 'Group / MICE Booking?' : 'Reservasi Grup / MICE?'}</span>
-                  <span className="text-slate-300 text-[11px] font-medium">{isEn ? 'Chat directly with our officer on WhatsApp' : 'Chat langsung officer kami via WhatsApp'}</span>
-                </div>
-                <a
-                  href={`https://wa.me/${HOTEL_CONFIG.whatsappNumber}?text=Halo%20IPB%20Convention%20Hotel,%20saya%20ingin%20konsultasi%20reservasi%20kamar`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 bg-[#25D366] hover:bg-[#20bd5a] text-slate-950 font-bold text-xs rounded-lg transition-colors shrink-0 flex items-center gap-1 shadow-xs"
-                >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  <span>Chat WA</span>
-                </a>
-              </div>
             </div>
 
           </form>

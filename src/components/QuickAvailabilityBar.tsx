@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useBooking } from '../context/BookingContext';
 
-export const QuickAvailabilityBar: React.FC = () => {
+export const QuickAvailabilityBar: React.FC<{ className?: string; style?: React.CSSProperties }> = ({ className = '', style }) => {
   const { language, t } = useLanguage();
   const navigate = useNavigate();
   const {
@@ -32,7 +32,7 @@ export const QuickAvailabilityBar: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-md lg:max-w-[400px] lg:justify-self-end relative z-30 text-left">
+    <div style={style} className={`w-full max-w-md lg:max-w-[400px] lg:justify-self-end relative z-30 text-left ${className}`}>
       <div className="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-2xl border border-white/30 transition-all">
         
         {/* Top Header Row: dot + title */}
@@ -62,7 +62,7 @@ export const QuickAvailabilityBar: React.FC = () => {
                   value={checkInDate}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setCheckInDate(e.target.value)}
-                  className="w-full h-10 pl-3 pr-9 rounded-lg border border-slate-200/90 text-[13px] font-bold text-slate-800 bg-white hover:border-slate-300 focus:border-[#C86400] focus:ring-2 focus:ring-[#C86400]/20 outline-hidden transition-all cursor-pointer shadow-2xs"
+                  className="date-custom-icon w-full h-10 pl-3 pr-9 rounded-lg border border-slate-200/90 text-[13px] font-bold text-slate-800 bg-white hover:border-slate-300 focus:border-[#C86400] focus:ring-2 focus:ring-[#C86400]/20 outline-hidden transition-all cursor-pointer shadow-2xs"
                   required
                 />
                 <Calendar className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -84,7 +84,7 @@ export const QuickAvailabilityBar: React.FC = () => {
                   value={checkOutDate}
                   min={checkInDate}
                   onChange={(e) => setCheckOutDate(e.target.value)}
-                  className="w-full h-10 pl-3 pr-9 rounded-lg border border-slate-200/90 text-[13px] font-bold text-slate-800 bg-white hover:border-slate-300 focus:border-[#C86400] focus:ring-2 focus:ring-[#C86400]/20 outline-hidden transition-all cursor-pointer shadow-2xs"
+                  className="date-custom-icon w-full h-10 pl-3 pr-9 rounded-lg border border-slate-200/90 text-[13px] font-bold text-slate-800 bg-white hover:border-slate-300 focus:border-[#C86400] focus:ring-2 focus:ring-[#C86400]/20 outline-hidden transition-all cursor-pointer shadow-2xs"
                   required
                 />
                 <Calendar className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />

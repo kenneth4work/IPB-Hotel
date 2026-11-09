@@ -249,6 +249,7 @@ export const LEGAL_PAGES: Record<Language, Record<LegalPageId, LegalDocument>> =
           heading: 'Penyimpanan preferensi',
           bullets: [
             'ipb_hotel_language_preference (localStorage): menyimpan bahasa pilihan Anda.',
+            'ipb_hotel_theme_preference (localStorage): menyimpan pilihan mode terang atau gelap Anda.',
             'ipb_hotel_cookie_consent (localStorage): menyimpan pilihan cookie Anda.',
           ],
         },
@@ -414,6 +415,7 @@ export const LEGAL_PAGES: Record<Language, Record<LegalPageId, LegalDocument>> =
           heading: 'Preference storage',
           bullets: [
             'ipb_hotel_language_preference (localStorage): remembers your language.',
+            'ipb_hotel_theme_preference (localStorage): remembers your light or dark mode choice.',
             'ipb_hotel_cookie_consent (localStorage): remembers your cookie choice.',
           ],
         },

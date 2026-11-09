@@ -36,7 +36,7 @@ class PaymentFlowTest extends TestCase
         $this->postJson('/reservations', [
             'room_type_id' => $this->room()->id, 'check_in' => '2026-11-02', 'check_out' => '2026-11-04',
             'room_count' => $rooms, 'guest_count' => 2, 'bed_type' => 'queen', 'with_breakfast' => false,
-            'promo_code' => null, 'request_id' => (string) Str::uuid(), 'expected_total' => 1700000 * $rooms,
+            'request_id' => (string) Str::uuid(), 'expected_total' => 1700000 * $rooms,
             'guest_name' => 'Test Guest', 'guest_email' => 'guest@example.test', 'guest_phone' => '081234567890',
             'terms_accepted' => true,
         ])->assertCreated();

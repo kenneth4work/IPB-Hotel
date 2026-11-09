@@ -138,6 +138,7 @@ export interface TranslationDictionary {
     quickLinks: string;
     contactUs: string;
     contact: string;
+    followUs: string;
     copyright: string;
     hoursAccess: string;
     frontDesk: string;
@@ -245,8 +246,6 @@ export interface TranslationDictionary {
     durationPrefix: string;
     nightSingular: string;
     nightPlural: string;
-    promoCodeLabel: string;
-    promoDiscount: string;
     checkInLabel: string;
     checkOutLabel: string;
     guestsLabel: string;
@@ -281,7 +280,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       titleHighlight: 'Pusat Kota Bogor',
       subtitle: 'Menyatu untuk meleburkan batas antara kenyamanan rumah dan kemewahan hotel menjadi ruang favorit bagi perjalanan bisnis, momen kebersamaan keluarga, hingga perhelatan acara terbaik jantung Bogor.',
       tagline: 'Tempat peristirahatan pribadi Anda di jantung Kota Bogor - luas, tenang, dan terhubung dengan denyut nadi kota.',
-      ctaRooms: 'Lihat Pilihan Kamar',
+      ctaRooms: 'Lihat Kamar',
       ctaContact: 'Konsultasi & Reservasi',
       ctaWa: 'BOOKING VIA WHATSAPP',
       ratingText: 'Sangat Memuaskan · 1.200+ Tamu Terverifikasi',
@@ -327,7 +326,6 @@ export const translations: Record<Language, TranslationDictionary> = {
         'Ruang Tamu': 'Ruang Tamu Terpisah',
         'Ranjang King': 'Ranjang King Size',
         'Smart TV': 'Smart TV 43"',
-        'Bathtub & Mini Bar': 'Bathtub & Mini Bar',
         'Lounge Area': 'Lounge Area Eksklusif',
         'Smart TV 50"': 'Smart TV 50"',
         'Mesin Kopi & Teh': 'Mesin Kopi & Teh',
@@ -421,6 +419,18 @@ export const translations: Record<Language, TranslationDictionary> = {
         'gal-6': {
           title: 'Rooftop',
           category: 'Fasilitas Kerja'
+        },
+        'gal-7': {
+          title: 'IPB International Convention Center (IICC)',
+          category: 'MICE & Acara'
+        },
+        'gal-9': {
+          title: 'Restoran',
+          category: 'Kuliner & Resto'
+        },
+        'gal-10': {
+          title: 'Gedung IPB Convention Hotel',
+          category: 'Lokasi & Eksterior'
         }
       },
       closeAria: 'Tutup Galeri',
@@ -442,7 +452,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       conventionPill: 'Pusat Konvensi & Akomodasi',
       valetPill: 'Valet & Parkir Tersedia',
       mapComplexTitle: 'Kawasan Mall Botani Square & IICC',
-      mapBotanicalTag: '🌿 5 Menit ke Kebun Raya Bogor',
+      mapBotanicalTag: '5 Menit ke Kebun Raya Bogor',
       directionsHint: 'Dapatkan petunjuk rute navigasi instan menggunakan Google Maps / Waze.',
       directionsBtn: 'Petunjuk Arah',
       listTitle: 'Tempat Penting Sekitar Hotel',
@@ -563,7 +573,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         },
         {
           question: 'Bagaimana cara menghubungi hotel?',
-          answer: 'WhatsApp: +62 811-1330-659. Telepon: (0251) 834 5698 atau (0251) 834 5699. Email: info@ipbconventionhotel.com. Instagram: @ipbhotelbotanisquare.'
+          answer: 'WhatsApp: +62 811 1110658. Telepon: (0251) 834 5698 atau (0251) 834 5699. Email: info@ipbconventionhotel.com. Instagram: @ipbhotelbotanisquare.'
         }
       ]
     },
@@ -575,6 +585,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       quickLinks: 'Navigasi Cepat',
       contactUs: 'Pusat Informasi & Bantuan',
       contact: 'Kontak Resmi',
+      followUs: 'Ikuti Kami',
       copyright: 'Hak Cipta Dilindungi. IPB Hotel & Convention Center Bogor.',
       hoursAccess: 'Waktu & Akses',
       frontDesk: 'Front Desk 24 Jam',
@@ -633,7 +644,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       emailPlaceholder: 'cth. budi@gmail.com',
       emailError: 'Format email tidak valid (contoh: nama@domain.com)',
       phoneLabel: 'Nomor WhatsApp',
-      phonePlaceholder: 'cth. 08123456789 atau +62812xxxx',
+      phonePlaceholder: 'cth. 0812 3456 7890',
       phoneError: 'Nomor WhatsApp tidak valid (minimal 9 digit angka)',
       specialRequestLabel: 'Permintaan Khusus (Opsional)',
       specialRequestPlaceholder: 'cth. Lantai tinggi, non-smoking, twin bed...',
@@ -682,8 +693,6 @@ export const translations: Record<Language, TranslationDictionary> = {
       durationPrefix: 'Durasi Menginap:',
       nightSingular: 'Malam',
       nightPlural: 'Malam',
-      promoCodeLabel: 'Kode Promo Diskon 10%:',
-      promoDiscount: 'IPB2026',
       checkInLabel: 'Tanggal Check-in',
       checkOutLabel: 'Tanggal Check-out',
       guestsLabel: 'Jumlah Tamu',
@@ -762,7 +771,6 @@ export const translations: Record<Language, TranslationDictionary> = {
         'Ruang Tamu': 'Separate Living Room',
         'Ranjang King': 'King Size Bed',
         'Smart TV': '43" Smart TV',
-        'Bathtub & Mini Bar': 'Bathtub & Mini Bar',
         'Lounge Area': 'Executive Lounge Area',
         'Smart TV 50"': '50" Smart TV',
         'Mesin Kopi & Teh': 'Coffee & Tea Maker',
@@ -856,6 +864,18 @@ export const translations: Record<Language, TranslationDictionary> = {
         'gal-6': {
           title: 'Rooftop',
           category: 'Work Facilities'
+        },
+        'gal-7': {
+          title: 'IPB International Convention Center (IICC)',
+          category: 'MICE & Events'
+        },
+        'gal-9': {
+          title: 'Restaurant',
+          category: 'Dining & Restaurant'
+        },
+        'gal-10': {
+          title: 'IPB Convention Hotel Building',
+          category: 'Location & Exterior'
         }
       },
       closeAria: 'Close Gallery',
@@ -877,7 +897,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       conventionPill: 'Convention & Accommodation Center',
       valetPill: 'Valet & Parking Available',
       mapComplexTitle: 'Botani Square Mall & IICC Complex',
-      mapBotanicalTag: '🌿 5 Mins to Bogor Botanical Gardens',
+      mapBotanicalTag: '5 Mins to Bogor Botanical Gardens',
       directionsHint: 'Get instant turn-by-turn navigation directions via Google Maps or Waze.',
       directionsBtn: 'Get Directions',
       listTitle: 'Key Locations Around Hotel',
@@ -998,7 +1018,7 @@ export const translations: Record<Language, TranslationDictionary> = {
         },
         {
           question: 'How can I contact the hotel?',
-          answer: 'WhatsApp: +62 811-1330-659. Phone: (0251) 834 5698 or (0251) 834 5699. Email: info@ipbconventionhotel.com. Instagram: @ipbhotelbotanisquare.'
+          answer: 'WhatsApp: +62 811 1110658. Phone: (0251) 834 5698 or (0251) 834 5699. Email: info@ipbconventionhotel.com. Instagram: @ipbhotelbotanisquare.'
         }
       ]
     },
@@ -1010,6 +1030,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       quickLinks: 'Quick Links',
       contactUs: 'Help & Information Center',
       contact: 'Official Contacts',
+      followUs: 'Follow Us',
       copyright: 'All Rights Reserved. IPB Hotel & Convention Center Bogor.',
       hoursAccess: 'Hours & Access',
       frontDesk: '24/7 Front Desk',
@@ -1068,7 +1089,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       emailPlaceholder: 'e.g. johndoe@gmail.com',
       emailError: 'Invalid email address format (example: name@domain.com)',
       phoneLabel: 'WhatsApp / Phone Number',
-      phonePlaceholder: 'e.g. 08123456789 or +62812xxxx',
+      phonePlaceholder: 'e.g. 0812 3456 7890',
       phoneError: 'Invalid WhatsApp number (minimum 9 digits)',
       specialRequestLabel: 'Special Requests (Optional)',
       specialRequestPlaceholder: 'e.g. High floor, non-smoking, twin beds, early check-in...',
@@ -1117,8 +1138,6 @@ export const translations: Record<Language, TranslationDictionary> = {
       durationPrefix: 'Stay Duration:',
       nightSingular: 'Night',
       nightPlural: 'Nights',
-      promoCodeLabel: '10% Promo Code:',
-      promoDiscount: 'IPB2026',
       checkInLabel: 'Check-in Date',
       checkOutLabel: 'Check-out Date',
       guestsLabel: 'Guests',
