@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-// Animasi pembuka hanya diputar sekali, saat website pertama dibuka.
-// Kembali ke beranda dari halaman lain tidak memutarnya lagi.
+// true hanya pada kunjungan pertama (website baru dibuka). Navbar memakai ini agar animasinya
+// diputar sekali; HeroSection memakainya untuk mengatur jeda (hero sendiri selalu beranimasi).
 let introPlayed = false;
 
 export function useIntroAnimation(): boolean {

@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Payments\FakePaymentGateway;
 use App\Payments\PaymentGateway;
 use App\Payments\XenditPaymentGateway;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -31,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Middleware TrustProxies bawaan (global) membaca daftar ini; lihat config/security.php.
+        if ($proxies = config('security.trusted_proxies')) {
+            TrustProxies::at($proxies === '*' ? '*' : array_map('trim', explode(',', $proxies)));
+        }
     }
 }

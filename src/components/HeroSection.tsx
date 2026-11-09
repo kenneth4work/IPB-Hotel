@@ -9,17 +9,21 @@ import { useIntroAnimation } from '../hooks/useIntroAnimation';
 export const HeroSection: React.FC = () => {
   const { t } = useLanguage();
   const suiteFirstPhoto = getRoomImageUrl(roomCategories["Suite"][0]);
-  const intro = useIntroAnimation();
+  // Hero selalu beranimasi setiap kali beranda dibuka (termasuk kembali dari halaman lain).
+  // Kunjungan pertama menunggu animasi navbar; setelah itu jeda dipercepat karena navbar tidak turun lagi.
+  const firstVisit = useIntroAnimation();
+  const delayShift = firstVisit ? 0 : 200;
   // Muncul bertahap: judul, tagline, tombol, lalu kotak cek ketersediaan
-  const rise = (delayMs: number, blur = false) => intro
-    ? { className: blur ? 'intro-rise intro-blur' : 'intro-rise', style: { '--intro-delay': `${delayMs}ms` } as React.CSSProperties }
-    : { className: '', style: undefined };
+  const rise = (delayMs: number, blur = false) => ({
+    className: blur ? 'intro-rise intro-blur' : 'intro-rise',
+    style: { '--intro-delay': `${Math.max(delayMs - delayShift, 0)}ms` } as React.CSSProperties,
+  });
 
   return (
     <section className="relative overflow-hidden bg-[#0F172A] text-white min-h-[100svh] lg:min-h-[820px] flex items-center pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24">
       {/* Background Hero Banner - Foto Kamar Suite Room Slide Pertama */}
       <div 
-        className={`absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000 ${intro ? 'intro-bg' : ''}`}
+        className={`absolute inset-0 bg-cover bg-center scale-105 transform transition-transform duration-1000 intro-bg`}
         style={{
           backgroundImage: `url('${suiteFirstPhoto}')`
         }}

@@ -17,8 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [HandleInertiaRequests::class, SecurityHeaders::class]);
         // Global (di luar grup web) agar berjalan SETELAH SecurityHeaders pada response; no-op selain APP_ENV=local.
-        $middleware->append(AllowLocalFramePreview::class);
-        // Provider pembayaran tidak punya token CSRF; webhook diverifikasi lewat callback token.
+        $middleware->append(AllowLocalFramePreview::class);        // Provider pembayaran tidak punya token CSRF; webhook diverifikasi lewat callback token.
         $middleware->validateCsrfTokens(except: ['payments/webhook']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
